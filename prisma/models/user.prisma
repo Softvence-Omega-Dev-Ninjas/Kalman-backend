@@ -1,4 +1,30 @@
 model User {
     id String @id @default(uuid())
-    name String?
+    name String? 
+    email String
+    Phone String
+    password String
+    profile_image String?
+    profession String?
+    Bio String?
+    street_address String?
+    city String?
+    state String?
+    zip_code String?
+    is_deleted Boolean @default(false)
+    role Role @default(USER)
+    verification Status @default(PENDING)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+} 
+
+enum Role {
+    ADMIN
+    USER 
+    TRADER
+}
+
+enum Status {
+    PENDING
+    COMPLETE
 }
