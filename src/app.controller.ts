@@ -7,8 +7,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(@Res() res:any,): void{
-    const indexPath=join(process.cwd(), 'public', 'index.html')
-    res.sendFile(indexPath)
+  getHello(@Res() res: any): void {
+    const indexPath = join(process.cwd(), 'public', 'index.html');
+    res.sendFile(indexPath);
   }
 }

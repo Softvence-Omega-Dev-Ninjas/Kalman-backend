@@ -1,12 +1,9 @@
 // src/common/guards/roles.guard.ts
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
+
+export const ROLES_KEY = 'roles';
+export const Roles = (...roles: string[]) => Reflect.metadata(ROLES_KEY, roles);
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -17,17 +14,9 @@ export class RolesGuard implements CanActivate {
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
-
     if (!requiredRoles) return true;
 
     const { user } = context.switchToHttp().getRequest();
-    if (!user) throw new ForbiddenException('No user found');
-
-    // Match exact roles only
-    if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('Access denied (role mismatch)');
-    }
-
-    return true;
+    return requiredRoles.includes(user.role);
   }
 }

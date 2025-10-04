@@ -1,9 +1,11 @@
 // src/common/guards/jwt.guard.ts
+
 import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  UnauthorizedException, // Add this for explicit 401
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
@@ -19,6 +21,13 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     super();
   }
 
+  handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+    if (err || !user) {
+      throw err || new UnauthorizedException();
+    }
+    return user;
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
@@ -26,14 +35,21 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     ]);
 
     if (isPublic) return true;
-
-    const canProceed = await super.canActivate(context);
-    if (!canProceed) return false;
+    try {
+      const user = await super.canActivate(context);
+      const request = context.switchToHttp().getRequest();
+      request.user = user;
+    } catch (e) {
+      if (e instanceof UnauthorizedException) {
+        throw e;
+      }
+      throw new UnauthorizedException(
+        'Invalid token or authentication failed.',
+      );
+    }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-
-    // Check if user is active
     const existingUser = await this.prisma.user.findUnique({
       where: { id: user.id },
     });

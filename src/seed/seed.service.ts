@@ -32,11 +32,11 @@ export class SeederService implements OnApplicationBootstrap {
 
     await this.prisma.user.create({
       data: {
-        Phone:admin_phone,
+        Phone: admin_phone,
         email: adminEmail,
         password: hashedPassword,
         role: Role.ADMIN,
-        verification:Status.COMPLETE
+        verification: Status.COMPLETE,
       },
     });
 

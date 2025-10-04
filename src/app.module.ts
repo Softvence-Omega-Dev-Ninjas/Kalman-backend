@@ -1,16 +1,17 @@
+// AppModule
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaModule } from './module/prisma/prisma.module';
-import { MailModule } from './module/mail/mail.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './common/guard/jwt.guard';
+import { RolesGuard } from './common/guard/roles.guard';
+import { Reflector } from '@nestjs/core';
 import { PrismaService } from './module/prisma/prisma.service';
-import { TwilioModule } from './module/twilio/twilio.module';
-import { SeederService } from './seed/seed.service';
 import { AuthModule } from './module/auth/auth.module';
+import { PrismaModule } from './module/prisma/prisma.module';
+import { SeederService } from './seed/seed.service';
+import { TwilioModule } from './module/twilio/twilio.module';
 
 @Module({
-  imports: [PrismaModule, MailModule, TwilioModule, AuthModule],
-  controllers: [AppController],
-  providers: [AppService,PrismaService,SeederService],
+  imports: [AuthModule, PrismaModule,TwilioModule],
+  providers: [SeederService],
 })
 export class AppModule {}

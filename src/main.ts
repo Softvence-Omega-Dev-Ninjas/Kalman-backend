@@ -1,29 +1,51 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { JwtGuard } from './common/guard/jwt.guard';
-import { Prisma } from '@prisma/client';
-import { RolesGuard } from './common/guard/roles.guard';
-import { PrismaService } from './module/prisma/prisma.service';
 import * as express from 'express';
 import { join } from 'path';
+import { TransformInterceptor } from './common/interceptor/response.interceptor';
+import { ValidationPipe } from '@nestjs/common';
+import { PrismaService } from './module/prisma/prisma.service';
+import { JwtGuard } from './common/guard/jwt.guard';
+import { RolesGuard } from './common/guard/roles.guard';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const public_dir=join(process.cwd(), 'public');
-  // swager setup 
+
+  // Serve static files
+  const public_dir = join(process.cwd(), 'public');
+  app.use('/', express.static(public_dir));
+
+  // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('My API')
-    .setDescription('API documentation for my backend')
+    .setTitle('KalMan API')
+    .setDescription('API documentation for my KalMan Project')
     .setVersion('1.0')
     .addBearerAuth()
+    .addSecurityRequirements('bearer')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-   app.use('/', express.static(public_dir));
+  app.useGlobalInterceptors(new TransformInterceptor());
   const reflector = app.get(Reflector);
   const prisma = app.get(PrismaService);
-  app.useGlobalGuards(new JwtGuard(reflector, prisma), new RolesGuard(reflector));
+
+  app.useGlobalGuards(
+    new JwtGuard(reflector, prisma),
+    new RolesGuard(reflector),
+  );
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      skipUndefinedProperties: true,
+    }),
+  );
+
   await app.listen(process.env.PORT ?? 3000);
 }
+
 bootstrap();

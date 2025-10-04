@@ -9,6 +9,7 @@ model User {
     Bio String?
     street_address String?
     city String?
+    otp Int?
     state String?
     zip_code String?
     is_deleted Boolean @default(false)
