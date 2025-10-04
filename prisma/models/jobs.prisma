@@ -1,0 +1,16 @@
+model Jobs {
+    id String @id @default(uuid())
+    title String
+    category String[]
+    description String
+    location String
+    timeline String
+    preferred_date DateTime?
+    preferred_time DateTime?
+    image String[]
+    contact_method String
+    createdAt DateTime @default(now())
+    updateAt DateTime @updatedAt
+    userId String
+    user User @relation(fields: [userId],references: [id])
+}

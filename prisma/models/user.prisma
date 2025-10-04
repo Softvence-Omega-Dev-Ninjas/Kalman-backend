@@ -17,6 +17,7 @@ model User {
     verification Status @default(PENDING)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    jobs Jobs[]
 } 
 
 enum Role {
