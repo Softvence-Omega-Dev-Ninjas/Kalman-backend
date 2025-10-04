@@ -26,7 +26,7 @@ export class MailService {
   }) {
     // Destructure attachments again
     const { to, subject, html, from, attachments } = options;
-    const senderAddress = from || `MA FATE FACILE <${process.env.EMAIL_USER}>`;
+    const senderAddress = from || `KALMAN <${process.env.EMAIL_USER}>`;
 
     try {
       const info = await this.transporter.sendMail({

@@ -9,9 +9,10 @@ import { AuthModule } from './module/auth/auth.module';
 import { PrismaModule } from './module/prisma/prisma.module';
 import { SeederService } from './seed/seed.service';
 import { TwilioModule } from './module/twilio/twilio.module';
+import { MailModule } from './module/mail/mail.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule,TwilioModule],
+  imports: [AuthModule, PrismaModule, TwilioModule, MailModule],
   providers: [SeederService],
 })
 export class AppModule {}
