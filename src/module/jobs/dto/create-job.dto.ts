@@ -32,14 +32,16 @@ export class CreateJobDto {
 
   @ApiProperty({
     description: 'A detailed description of the job requirements and scope.',
-    example: 'Need a skilled React developer to build a responsive e-commerce front-end.',
+    example:
+      'Need a skilled React developer to build a responsive e-commerce front-end.',
   })
   @IsNotEmpty()
   @IsString()
   description: string;
 
   @ApiProperty({
-    description: 'The location where the job will be performed (e.g., Remote, City Name).',
+    description:
+      'The location where the job will be performed (e.g., Remote, City Name).',
     example: 'Remote',
   })
   @IsNotEmpty()
@@ -83,7 +85,8 @@ export class CreateJobDto {
   image?: string[];
 
   @ApiProperty({
-    description: 'The preferred method for contact (e.g., Email, Phone, Platform Chat).',
+    description:
+      'The preferred method for contact (e.g., Email, Phone, Platform Chat).',
     example: 'Platform Chat',
   })
   @IsNotEmpty()
@@ -109,4 +112,13 @@ export class CreateJobDto {
   @ArrayNotEmpty()
   @IsString({ each: true })
   skills_needed: string[];
+
+  @ApiProperty({
+    description: 'The price for the job.',
+    example: 100.0,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(0)
+  price: number;
 }

@@ -1,5 +1,3 @@
-
-
 import {
   Controller,
   Get,
@@ -10,19 +8,23 @@ import {
   Delete,
   Req,
   UseInterceptors,
-  UploadedFiles, 
+  UploadedFiles,
   BadRequestException,
-  Query, 
+  Query,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express'; 
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { GetJobsFilterDto } from './dto/getAllJobs';
 import { fileStorageOptions } from 'src/utils/index.multer';
-
 
 // -----------------------------------------------------------------------
 
@@ -49,6 +51,7 @@ export class JobsController {
             timeline: '3 days',
             contact_method: 'Email',
             skills_needed: ['Roofing', 'Waterproofing'],
+            price: 150.0,
           }),
         },
         images: {
@@ -64,12 +67,14 @@ export class JobsController {
     },
   })
   async create(
-    @Body('data') jobData: string, 
-    @UploadedFiles() files: Array<Express.Multer.File>, 
+    @Body('data') jobData: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
     if (!jobData) {
-        throw new BadRequestException('Job data is missing from the request body.');
+      throw new BadRequestException(
+        'Job data is missing from the request body.',
+      );
     }
     let createJobDto: CreateJobDto;
     try {
@@ -78,35 +83,33 @@ export class JobsController {
       throw new BadRequestException('Invalid JSON format for job data.');
     }
     const user = req.user;
-    return this.jobsService.create(createJobDto, user,files);
+    return this.jobsService.create(createJobDto, user, files);
   }
 
-
+  // ----------------------------------get all jobs using fillter-----------------------------
   @Get()
   @Public()
   @ApiOperation({ summary: 'Retrieve a list of jobs with optional filters' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'List of jobs retrieved successfully.',
   })
-  findAll(
-    @Query() filterDto: GetJobsFilterDto, 
-  ) { 
+  findAll(@Query() filterDto: GetJobsFilterDto) {
     return this.jobsService.findAll(filterDto);
   }
 
+  // -----------------------------------------get single jobs----------------------
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
-    return this.jobsService.findOne(+id);
+    return this.jobsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobsService.update(+id, updateJobDto);
-  }
-
+  // -------------------------------delete job by it's creator and admin--------------------
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobsService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    const user = req.user;
+    console.log(user);
+    return this.jobsService.remove(id, user);
   }
 }

@@ -16,14 +16,13 @@ async function bootstrap() {
   const public_dir = join(process.cwd(), 'public');
   const upload_dir = join(process.cwd(), 'uploads');
   app.use('/', express.static(public_dir));
-  
 
   // setup upload foler if not exist
-     if (!fs.existsSync(upload_dir)) {
+  if (!fs.existsSync(upload_dir)) {
     fs.mkdirSync(upload_dir, { recursive: true });
     console.log('Created uploads folder at', upload_dir);
   }
-app.use('/uploads',express.static(upload_dir))
+  app.use('/uploads', express.static(upload_dir));
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('KalMan API')
@@ -33,7 +32,6 @@ app.use('/uploads',express.static(upload_dir))
     .addSecurityRequirements('bearer')
     .build();
 
- 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
   app.useGlobalInterceptors(new TransformInterceptor());

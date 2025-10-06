@@ -23,9 +23,6 @@ export class AuthService {
   async signUp(createAuthDto: CreateAuthDto) {
     const { email, phone, password } = createAuthDto;
 
-
-
-
     // check the user validation
     const [isEmailExist, isPhoneExist] = await Promise.all([
       this.prisma.user.findFirst({
@@ -46,12 +43,15 @@ export class AuthService {
       throw new HttpException('Phone already exist', 400);
     }
     const hash_password = await bcrypt.hash(password, 10);
-
+    if(createAuthDto.role==="ADMIN"){
+      throw new HttpException('You are not allowed to create admin', 400);
+    }
     const user = await this.prisma.user.create({
       data: {
         email: email,
         Phone: phone,
         password: hash_password,
+        role:createAuthDto.role
       },
     });
     return user;
@@ -61,10 +61,6 @@ export class AuthService {
     const { phone } = otpDto;
     await this.twilio.sendOtp(phone, '1234');
   }
-
-
-
-
 
   // login user by email and password
   async login(loginDto: LoginDto) {
@@ -85,15 +81,13 @@ export class AuthService {
       email: user.email,
       id: user.id,
       phone: user.Phone,
+      roel: user.role,
     };
     const token = await this.jwtService.signAsync(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
     });
     return token;
   }
-
-
-
 
   // send 6 digit otp by email
   async send_verification_otp_by_email(otpDto: SendOtpDTO) {
@@ -130,9 +124,6 @@ export class AuthService {
     };
   }
 
-
-
-
   // verfiy all email otp from this service
   async verify_otp_by_email(otp: number) {
     const isExistUser = await this.prisma.user.findFirst({
@@ -158,12 +149,10 @@ export class AuthService {
     };
   }
 
-
-
   // reset password by email
-  async reset_password(resetPassDto:ResetPassworDto,user:any) {
-    const { old_password,new_password } = resetPassDto;
-    const {email}=user;
+  async reset_password(resetPassDto: ResetPassworDto, user: any) {
+    const { old_password, new_password } = resetPassDto;
+    const { email } = user;
     const isExistUser = await this.prisma.user.findFirst({
       where: {
         email: email,

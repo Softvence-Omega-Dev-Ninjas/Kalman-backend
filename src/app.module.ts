@@ -16,7 +16,7 @@ import { JobsModule } from './module/jobs/jobs.module';
     TwilioModule,
     MailModule,
     TradesmanModule,
-    JobsModule
+    JobsModule,
   ],
   providers: [SeederService],
 })
