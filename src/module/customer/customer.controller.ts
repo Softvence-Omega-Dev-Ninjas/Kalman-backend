@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -7,19 +7,17 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.create(createCustomerDto);
-  }
 
   @Get()
-  findAll() {
-    return this.customerService.findAll();
+  find_all_jobs(@Req() req:any) {
+    const user = req.user;
+    return this.customerService.find_All_jobs_with_stat(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customerService.findOne(+id);
+  @Get('get-me')
+  get_me(@Req() req:any) {
+    const user=req.user
+    return this.customerService.get_me(user);
   }
 
   @Patch(':id')

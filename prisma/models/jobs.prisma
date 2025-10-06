@@ -18,6 +18,7 @@ model Jobs {
   customer       User          @relation(fields: [userId], references: [id])
   proposal Proposal[]
   jobActivity    Job_Activity?
+  userJobShortList JobShortlist[]
   isComplete Boolean @default(false)
 }
 
@@ -27,4 +28,20 @@ model Job_Activity {
   shortlisted   Int      @default(0)
   jobId         String   @unique
   jobs          Jobs     @relation(fields: [jobId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobShortlist {
+  customerId        String 
+  jobId         String 
+  tradesmanId   String 
+
+  user          User     @relation("JobSeekerAction", fields: [customerId], references: [id])
+  job           Jobs     @relation(fields: [jobId], references: [id])
+  tradesman     User     @relation("TradesmanTarget", fields: [tradesmanId], references: [id])
+  
+  createdAt     DateTime @default(now())
+
+  @@id([customerId, tradesmanId, jobId]) 
 }

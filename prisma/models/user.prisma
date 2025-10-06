@@ -20,6 +20,8 @@ model User {
     updatedAt DateTime @updatedAt
     jobs Jobs[]
     proposal Proposal[]
+    userJobShortList JobShortlist[] @relation("JobSeekerAction")
+    tradesman JobShortlist[] @relation("TradesmanTarget")
 } 
 
 enum Role {

@@ -1,19 +1,77 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { User } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CustomerService {
-  create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
+ constructor(private prisma:PrismaService){}
+
+  async find_All_jobs_with_stat(user:User) {
+    const userId = user.id;
+    const startOfCurrentMonth = new Date(new Date().setDate(1));
+    
+    const [jobs,jobOfThisMonth,sortListedThisMonth]=await Promise.all([
+        this.prisma.jobs.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }),
+    this.prisma.jobs.count({
+      where:{
+        createdAt:{
+          gte:startOfCurrentMonth
+        },
+        userId:userId
+      }
+    }),
+    this.prisma.jobShortlist.count({
+      where:{
+        createdAt:{
+          gte:startOfCurrentMonth
+        },
+        customerId:userId
+      }
+    })
+    ])
+
+    return{
+      totalJobs:jobs.length,
+      jobOfThisMonth,
+      sortListedThisMonth,
+      jobs
+    };
   }
 
-  findAll() {
-    return `This action returns all customer`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+ async get_me(user:User) {
+    const userId=user.id;
+    
+    const [activeJobs,profile,totalJobs]=await Promise.all([
+      this.prisma.jobs.count({
+        where:{
+          userId:userId,
+          isComplete:false
+        }
+      }),
+     this.prisma.user.findFirst({
+      where:{
+        id:userId
+      }
+    }),
+    this.prisma.jobs.count({
+      where:{
+        userId:userId
+      }
+    })
+    ])
+    return{
+      activeJobs,
+      completeJobs:totalJobs-activeJobs,
+       profile,
+    }
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
