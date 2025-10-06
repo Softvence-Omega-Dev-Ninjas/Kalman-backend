@@ -9,6 +9,7 @@ model Jobs {
   preferred_time DateTime?
   image          String[]
   contact_method String
+  shortlist_fee Float @default(20)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   userId         String
