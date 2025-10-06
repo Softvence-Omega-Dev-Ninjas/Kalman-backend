@@ -14,7 +14,7 @@ model Jobs {
   updatedAt      DateTime      @updatedAt
   userId         String
   skills_needed  String[]
-  
+  price Float?
   customer       User          @relation(fields: [userId], references: [id])
   proposal Proposal[]
   jobActivity    Job_Activity?
@@ -25,6 +25,5 @@ model Job_Activity {
   total_interested Int   @default(0)
   shortlisted   Int      @default(0)
   jobId         String   @unique
-  
   jobs          Jobs     @relation(fields: [jobId], references: [id])
 }
