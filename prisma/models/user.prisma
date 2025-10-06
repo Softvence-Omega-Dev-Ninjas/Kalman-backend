@@ -13,7 +13,7 @@ model User {
     state String?
     zip_code String?
     is_deleted Boolean @default(false)
-    role Role @default(USER)
+    role Role @default(CUSTOMER)
     trader TradesMan?
     verification Status @default(PENDING)
     createdAt DateTime @default(now())
@@ -24,8 +24,8 @@ model User {
 
 enum Role {
     ADMIN
-    USER 
-    TRADER
+    CUSTOMER
+    TRADESMAN
 }
 
 enum Status {
