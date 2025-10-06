@@ -1,0 +1,18 @@
+model Proposal {
+    id String @id @default(uuid())
+    description String
+    jobId String
+    jobs Jobs @relation(fields: [jobId],references: [id])
+    userId String
+    status ProposalStatus @default(PENDING)
+    user User @relation(fields: [userId],references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+}
+
+enum ProposalStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
