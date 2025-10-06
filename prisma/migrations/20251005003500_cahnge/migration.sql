@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Jobs" ADD COLUMN     "shortlist_fee" DOUBLE PRECISION NOT NULL DEFAULT 20;

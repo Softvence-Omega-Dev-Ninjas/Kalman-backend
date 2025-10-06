@@ -1,6 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { SendOtpDTO } from './dto/otp.dto';
@@ -22,9 +21,6 @@ export class AuthService {
   ) {}
   async signUp(createAuthDto: CreateAuthDto) {
     const { email, phone, password } = createAuthDto;
-
-
-
 
     // check the user validation
     const [isEmailExist, isPhoneExist] = await Promise.all([
@@ -62,10 +58,6 @@ export class AuthService {
     await this.twilio.sendOtp(phone, '1234');
   }
 
-
-
-
-
   // login user by email and password
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -91,9 +83,6 @@ export class AuthService {
     });
     return token;
   }
-
-
-
 
   // send 6 digit otp by email
   async send_verification_otp_by_email(otpDto: SendOtpDTO) {
@@ -130,9 +119,6 @@ export class AuthService {
     };
   }
 
-
-
-
   // verfiy all email otp from this service
   async verify_otp_by_email(otp: number) {
     const isExistUser = await this.prisma.user.findFirst({
@@ -158,12 +144,10 @@ export class AuthService {
     };
   }
 
-
-
   // reset password by email
-  async reset_password(resetPassDto:ResetPassworDto,user:any) {
-    const { old_password,new_password } = resetPassDto;
-    const {email}=user;
+  async reset_password(resetPassDto: ResetPassworDto, user: any) {
+    const { old_password, new_password } = resetPassDto;
+    const { email } = user;
     const isExistUser = await this.prisma.user.findFirst({
       where: {
         email: email,

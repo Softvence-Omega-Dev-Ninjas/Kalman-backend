@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './module/prisma/prisma.service';
 import { JwtGuard } from './common/guard/jwt.guard';
 import { RolesGuard } from './common/guard/roles.guard';
+// import { AllExceptionsFilter } from './utils/catchAsync';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,6 +45,7 @@ async function bootstrap() {
       skipUndefinedProperties: true,
     }),
   );
+  // app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }
