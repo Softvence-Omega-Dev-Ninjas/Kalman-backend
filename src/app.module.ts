@@ -8,6 +8,7 @@ import { MailModule } from './module/mail/mail.module';
 import { TradesmanModule } from './module/tradesman/tradesman.module';
 import { AuthModule } from './module/auth/auth.module';
 import { JobsModule } from './module/jobs/jobs.module';
+import { CustomerModule } from './module/customer/customer.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JobsModule } from './module/jobs/jobs.module';
     MailModule,
     TradesmanModule,
     JobsModule,
+    CustomerModule,
   ],
   providers: [SeederService],
 })

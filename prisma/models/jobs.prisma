@@ -18,6 +18,7 @@ model Jobs {
   customer       User          @relation(fields: [userId], references: [id])
   proposal Proposal[]
   jobActivity    Job_Activity?
+  isComplete Boolean @default(false)
 }
 
 model Job_Activity {
