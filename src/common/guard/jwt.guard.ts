@@ -5,7 +5,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-  UnauthorizedException, // Add this for explicit 401
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
@@ -20,12 +20,11 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
   ) {
     super();
   }
-
   handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
     if (err || !user) {
-      throw err || new UnauthorizedException();
+      throw err || new UnauthorizedException('Authentication failed.');
     }
-    return user;
+    return user; 
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -36,9 +35,8 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
 
     if (isPublic) return true;
     try {
-      const user = await super.canActivate(context);
-      const request = context.switchToHttp().getRequest();
-      request.user = user;
+      await super.canActivate(context); 
+
     } catch (e) {
       if (e instanceof UnauthorizedException) {
         throw e;
@@ -47,9 +45,11 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
         'Invalid token or authentication failed.',
       );
     }
-
+    
+  
     const request = context.switchToHttp().getRequest();
     const user = request.user;
+    
     const existingUser = await this.prisma.user.findFirst({
       where: { id: user.id },
     });
@@ -57,7 +57,6 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     if (!existingUser || existingUser.is_deleted) {
       throw new ForbiddenException('Your account is deactivated or not found');
     }
-
     return true;
   }
 }

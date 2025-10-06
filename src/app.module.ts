@@ -7,6 +7,7 @@ import { TwilioModule } from './module/twilio/twilio.module';
 import { MailModule } from './module/mail/mail.module';
 import { TradesmanModule } from './module/tradesman/tradesman.module';
 import { AuthModule } from './module/auth/auth.module';
+import { JobsModule } from './module/jobs/jobs.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from './module/auth/auth.module';
     TwilioModule,
     MailModule,
     TradesmanModule,
+    JobsModule
   ],
   providers: [SeederService],
 })
