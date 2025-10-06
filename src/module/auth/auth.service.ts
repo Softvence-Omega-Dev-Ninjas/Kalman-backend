@@ -42,12 +42,15 @@ export class AuthService {
       throw new HttpException('Phone already exist', 400);
     }
     const hash_password = await bcrypt.hash(password, 10);
-
+    if(createAuthDto.role==="ADMIN"){
+      throw new HttpException('You are not allowed to create admin', 400);
+    }
     const user = await this.prisma.user.create({
       data: {
         email: email,
         Phone: phone,
         password: hash_password,
+        role:createAuthDto.role
       },
     });
     return user;
@@ -77,6 +80,7 @@ export class AuthService {
       email: user.email,
       id: user.id,
       phone: user.Phone,
+      roel: user.role,
     };
     const token = await this.jwtService.signAsync(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,

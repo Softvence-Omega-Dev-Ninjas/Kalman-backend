@@ -8,15 +8,21 @@ import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './module/prisma/prisma.service';
 import { JwtGuard } from './common/guard/jwt.guard';
 import { RolesGuard } from './common/guard/roles.guard';
-// import { AllExceptionsFilter } from './utils/catchAsync';
-
+import * as fs from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Serve static files
   const public_dir = join(process.cwd(), 'public');
+  const upload_dir = join(process.cwd(), 'uploads');
   app.use('/', express.static(public_dir));
 
+  // setup upload foler if not exist
+  if (!fs.existsSync(upload_dir)) {
+    fs.mkdirSync(upload_dir, { recursive: true });
+    console.log('Created uploads folder at', upload_dir);
+  }
+  app.use('/uploads', express.static(upload_dir));
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('KalMan API')

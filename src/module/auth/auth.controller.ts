@@ -34,7 +34,7 @@ export class AuthController {
   @Public()
   @ApiBody({ type: LoginDto })
   async login(@Body() loginDto: LoginDto) {
-    const res=await this.authService.login(loginDto);
+    const res = await this.authService.login(loginDto);
     return {
       message: 'User logged in successfully',
       status: 200,
@@ -76,12 +76,11 @@ export class AuthController {
     return this.authService.verify_otp_by_email(boyd.otp);
   }
 
-
   // reset password route
   @Post('reset-password')
-  @ApiBody({type:ResetPassworDto})
-  async resetPassword(@Body()resetPassDto:ResetPassworDto,@Req() req:any) {
-    const user=req.user;
-    return this.authService.reset_password(resetPassDto,user);
+  @ApiBody({ type: ResetPassworDto })
+  async resetPassword(@Body() resetPassDto: ResetPassworDto, @Req() req: any) {
+    const user = req.user;
+    return this.authService.reset_password(resetPassDto, user);
   }
 }
