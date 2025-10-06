@@ -24,7 +24,7 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
     if (err || !user) {
       throw err || new UnauthorizedException('Authentication failed.');
     }
-    return user; 
+    return user;
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -35,8 +35,7 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
 
     if (isPublic) return true;
     try {
-      await super.canActivate(context); 
-
+      await super.canActivate(context);
     } catch (e) {
       if (e instanceof UnauthorizedException) {
         throw e;
@@ -45,11 +44,10 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
         'Invalid token or authentication failed.',
       );
     }
-    
-  
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    
+
     const existingUser = await this.prisma.user.findFirst({
       where: { id: user.id },
     });
