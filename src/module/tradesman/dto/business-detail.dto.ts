@@ -1,19 +1,37 @@
-import { IsString, IsOptional, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsArray } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateBusinessDetailDto {
+  @ApiPropertyOptional({ example: 'John Plumbing Services' })
   @IsOptional()
   @IsString()
   businessName?: string;
 
-  @IsOptional()
-  @IsEmail()
-  businessEmail?: string;
+  @ApiProperty({ example: 5.5 })
+  @IsNumber()
+  yearsOfExperience: number;
 
+  @ApiPropertyOptional({ example: 'Individual Contractor' })
   @IsOptional()
   @IsString()
-  businessLicense?: string;
+  businessType?: string;
 
+  @ApiPropertyOptional({ example: '$50/hr' })
   @IsOptional()
   @IsString()
-  verifyIdentity?: string; // URL or file path
+  hourlyRate?: string;
+
+  @ApiProperty({
+    example: ['Plumbing', 'Electrical'],
+    type: [String],
+  })
+  @IsArray()
+  services: string[];
+
+  @ApiPropertyOptional({
+    example: 'Experienced professional specializing in residential plumbing.',
+  })
+  @IsOptional()
+  @IsString()
+  professionalDescription?: string;
 }

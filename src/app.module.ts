@@ -9,6 +9,8 @@ import { TradesmanModule } from './module/tradesman/tradesman.module';
 import { AuthModule } from './module/auth/auth.module';
 import { JobsModule } from './module/jobs/jobs.module';
 import { CustomerModule } from './module/customer/customer.module';
+// import { StripeModule } from './stripe/stripe.module';
+import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
 
 @Module({
@@ -20,6 +22,7 @@ import { AdminModule } from './module/admin/admin.module';
     TradesmanModule,
     JobsModule,
     CustomerModule,
+    StripeModule,
     AdminModule,
   ],
   providers: [SeederService],

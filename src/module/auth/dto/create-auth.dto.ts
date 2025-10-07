@@ -31,5 +31,5 @@ export class CreateAuthDto {
   })
   @IsOptional()
   @IsNotEmpty()
-  role: Role
+  role: Role;
 }
