@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { buildFileUrl } from 'src/helpers/urlBuilder';
 
 @Injectable()
 export class CustomerService {
@@ -74,8 +75,18 @@ export class CustomerService {
     }
   }
 
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
+  async update_profile(id: string, updateCustomerDto: UpdateCustomerDto,files) {
+    const filePath=files.map(file=>buildFileUrl(file.filename))
+    return this.prisma.user.update({
+      where:{
+        id:id
+      },
+      data:{
+        ...updateCustomerDto,
+        profile_image:filePath[0]
+      }
+    })
+
   }
 
   remove(id: number) {

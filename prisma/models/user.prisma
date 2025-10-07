@@ -2,11 +2,11 @@ model User {
     id String @id @default(uuid())
     name String? 
     email String
-    Phone String
+    phone String
     password String
     profile_image String?
     profession String?
-    Bio String?
+    bio String?
     street_address String?
     city String?
     otp Int?

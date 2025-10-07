@@ -32,7 +32,7 @@ export class AuthService {
       }),
       this.prisma.user.findFirst({
         where: {
-          Phone: phone,
+          phone:phone,
         },
       }),
     ]);
@@ -49,7 +49,7 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: {
         email: email,
-        Phone: phone,
+        phone: phone,
         password: hash_password,
         role:createAuthDto.role
       },
@@ -80,7 +80,7 @@ export class AuthService {
     const payload = {
       email: user.email,
       id: user.id,
-      phone: user.Phone,
+      phone: user.phone,
       roel: user.role,
     };
     const token = await this.jwtService.signAsync(payload, {
