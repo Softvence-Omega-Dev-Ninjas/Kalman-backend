@@ -5,7 +5,7 @@ import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 export class CreateAuthDto {
   @ApiProperty({
     description: 'Here will go user email',
-    example: 'ab@gmail.com',
+    example: 'milon@gmail.com',
   })
   @IsEmail()
   @IsNotEmpty()
@@ -27,7 +27,7 @@ export class CreateAuthDto {
 
   @ApiProperty({
     description: 'Here will role',
-    example: 'user',
+    example: Role.CUSTOMER,
   })
   @IsOptional()
   @IsNotEmpty()

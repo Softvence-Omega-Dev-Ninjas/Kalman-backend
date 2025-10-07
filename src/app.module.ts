@@ -9,6 +9,7 @@ import { TradesmanModule } from './module/tradesman/tradesman.module';
 import { AuthModule } from './module/auth/auth.module';
 import { JobsModule } from './module/jobs/jobs.module';
 import { CustomerModule } from './module/customer/customer.module';
+import { AdminModule } from './module/admin/admin.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CustomerModule } from './module/customer/customer.module';
     TradesmanModule,
     JobsModule,
     CustomerModule,
+    AdminModule,
   ],
   providers: [SeederService],
 })
