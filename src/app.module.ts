@@ -10,6 +10,7 @@ import { AuthModule } from './module/auth/auth.module';
 import { JobsModule } from './module/jobs/jobs.module';
 import { CustomerModule } from './module/customer/customer.module';
 import { AdminModule } from './module/admin/admin.module';
+import { CommisionModule } from './module/commision/commision.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AdminModule } from './module/admin/admin.module';
     JobsModule,
     CustomerModule,
     AdminModule,
+    CommisionModule,
   ],
   providers: [SeederService],
 })

@@ -1,0 +1,8 @@
+model Commision {
+    id String @id @default(uuid())
+    commision_rate Float?
+    minimum_hourly_rate Float?
+    maximum_hourly_rate Float?
+    createdAt DateTime @default(now())
+    updateAt DateTime @updatedAt
+}

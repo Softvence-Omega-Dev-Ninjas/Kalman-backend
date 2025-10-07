@@ -9,8 +9,18 @@ import { GetJobsFilterDto } from './dto/getAllJobs';
 export class JobsService {
   constructor(private prisma: PrismaService) {}
   async create(createJobDto: CreateJobDto, user: User, files: any) {
+    // const userExist = await this.prisma.user.findFirst({
+    //   where: {
+    //     id: user.id,
+    //   },
+    // });
+    // if(userExist?.verification==="PENDING"){
+    //   throw new HttpException("Your account is not verified",400)
+    // }
     const filePaths = files.map((file) => buildFileUrl(file.filename));
-
+    const commisionRate=await this.prisma.commision.findFirst()
+     const percentCalculetion = commisionRate?.commision_rate ? (commisionRate.commision_rate / 100) : 0
+     const commisionAmount = createJobDto.price * percentCalculetion
     const res = await this.prisma.jobs.create({
       data: {
         title: createJobDto.title,
@@ -22,7 +32,7 @@ export class JobsService {
         preferred_time: createJobDto.preferred_time,
         image: filePaths,
         contact_method: createJobDto.contact_method,
-        shortlist_fee: createJobDto.shortlist_fee,
+        shortlist_fee: commisionAmount,
         skills_needed: createJobDto.skills_needed,
         userId: user.id,
         price: createJobDto.price,
