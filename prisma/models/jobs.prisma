@@ -19,6 +19,7 @@ model Jobs {
   proposal Proposal[]
   jobActivity    Job_Activity?
   userJobShortList JobShortlist[]
+  customerStatus CustomerStatus @default(ACTIVE)
   isComplete Boolean @default(false)
 }
 
@@ -44,4 +45,11 @@ model JobShortlist {
   createdAt     DateTime @default(now())
 
   @@id([customerId, tradesmanId, jobId]) 
+}
+
+enum CustomerStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVE
+
 }
