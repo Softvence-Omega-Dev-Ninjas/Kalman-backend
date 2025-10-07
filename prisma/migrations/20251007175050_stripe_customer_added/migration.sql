@@ -2,7 +2,7 @@
 CREATE TYPE "ProposalStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'USER', 'TRADER');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'CUSTOMER', 'TRADESMAN');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('PENDING', 'COMPLETE');
@@ -24,6 +24,8 @@ CREATE TABLE "Jobs" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
     "skills_needed" TEXT[],
+    "price" DOUBLE PRECISION,
+    "isComplete" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Jobs_pkey" PRIMARY KEY ("id")
 );
@@ -64,6 +66,7 @@ CREATE TABLE "TradesMan" (
     "state" TEXT,
     "zipCode" TEXT,
     "ProfessionalQualifications" TEXT,
+    "stripeCustomerId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -144,7 +147,7 @@ CREATE TABLE "User" (
     "state" TEXT,
     "zip_code" TEXT,
     "is_deleted" BOOLEAN NOT NULL DEFAULT false,
-    "role" "Role" NOT NULL DEFAULT 'USER',
+    "role" "Role" NOT NULL DEFAULT 'CUSTOMER',
     "verification" "Status" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

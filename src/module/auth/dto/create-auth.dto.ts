@@ -27,9 +27,9 @@ export class CreateAuthDto {
 
   @ApiProperty({
     description: 'Here will role',
-    example: 'user',
+    example: 'TRADER',
   })
   @IsOptional()
   @IsNotEmpty()
-  role: Role
+  role: Role;
 }

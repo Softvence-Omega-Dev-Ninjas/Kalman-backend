@@ -8,13 +8,14 @@ model TradesMan {
   address                String?  
   city                   String?
   state                  String?
-  zipCode                String?
-  ProfessionalQualifications String?
+  zipCode                Int?
+  professionalQualifications String?
+  stripeCustomerId       String
   docs                   Docs? 
   businessDetail         BusinessDetail?
   serviceArea            ServiceArea?
   paymentMethod          PaymentMethod?
-  userId                 String @unique @default(uuid())
+  userId                 String @unique 
   user                   User @relation(fields: [userId], references: [id])
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt

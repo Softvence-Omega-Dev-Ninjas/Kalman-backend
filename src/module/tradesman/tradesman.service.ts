@@ -4,38 +4,83 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-// import { CreateTradesmanDto } from './dto/create-tradesman.dto';
-// import { UpdateTradesmanDto } from './dto/update-tradesman.dto';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTradesManDto } from './dto/create-tradesman.dto';
 import { UpdateTradesManDto } from './dto/update-tradesman.dto';
-import { AppError } from 'src/error/AppError';
-
+import { StripeService } from '../stripe/stripe.service';
+import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
 @Injectable()
 export class TradesmanService {
-  constructor(private prisma: PrismaService) {}
-  async create(createTradesmanDto: CreateTradesManDto) {
+  constructor(
+    private prisma: PrismaService,
+    private stripeService: StripeService,
+  ) {}
+
+  async create(
+    createTradesmanDto: CreateTradesManDto,
+    files: Express.Multer.File[],
+  ) {
     const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
       createTradesmanDto;
-
     try {
-      const isUserExist = await this.prisma.tradesMan.findUnique({
+      if (!files?.find((el) => el.fieldname === 'doc')!) {
+        throw new HttpException(
+          'Upload your document first',
+          HttpStatus.NOT_ACCEPTABLE,
+        );
+      }
+      const isUserExist = await this.prisma.user.findFirst({
         where: {
-          email: restData?.email,
+          email: createTradesmanDto?.email,
         },
       });
-
-      if (isUserExist) {
-        throw new HttpException('User already exist ', HttpStatus.BAD_REQUEST);
+      if (!isUserExist) {
+        throw new HttpException(
+          'No account found. Register first ',
+          HttpStatus.BAD_REQUEST,
+        );
       }
+
+      const isTradesManExist = await this.prisma.tradesMan.findUnique({
+        where: {
+          email: createTradesmanDto?.email,
+        },
+      });
+      if (isTradesManExist) {
+        throw new HttpException(
+          'This email is already used',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const doc = await saveFileAndGetUrl(
+        files?.find((el) => el.fieldname === 'doc')!,
+      );
+      if (files?.find((el) => el.fieldname === 'credential')!) {
+        restData.professionalQualifications = await saveFileAndGetUrl(
+          files?.find((el) => el.fieldname === 'credential')!,
+        );
+      }
+
+      const stripeCustomer = await this.stripeService.createCustomer(
+        restData?.email,
+        restData?.firstName + ' ' + restData?.lastName,
+      );
+
+      restData.zipCode = Number(restData?.zipCode);
+      delete restData.credential;
       const tradesman = await this.prisma.tradesMan.create({
         data: {
           ...restData,
+          userId: isUserExist?.id,
+
+          stripeCustomerId: stripeCustomer?.id,
           docs: docs
             ? {
                 create: {
                   type: docs.type,
-                  url: docs.url,
+                  url: doc,
                 },
               }
             : undefined,

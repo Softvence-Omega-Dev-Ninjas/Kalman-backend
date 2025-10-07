@@ -7,24 +7,142 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseInterceptors,
+  UploadedFiles,
+  Query,
 } from '@nestjs/common';
 import { TradesmanService } from './tradesman.service';
 import { CreateTradesManDto } from './dto/create-tradesman.dto';
 import { UpdateTradesManDto } from './dto/update-tradesman.dto';
 import { Public } from 'src/common/decorators/public.decorator';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+// import { diskStorage } from 'multer';
+// import { extname } from 'path';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 @Controller('tradesman')
 export class TradesmanController {
   constructor(private readonly tradesmanService: TradesmanService) {}
 
   @Post()
   @Public()
-  async create(@Body(ValidationPipe) createTradesmanDto: CreateTradesManDto) {
-    return this.tradesmanService.create(createTradesmanDto);
-  }
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'doc', maxCount: 1 },
+      { name: 'credential', maxCount: 1 },
+    ]),
+  )
+  @ApiBody({
+    description: 'Create tradesman with file uploads',
+    schema: {
+      type: 'object',
+      properties: {
+        doc: { type: 'string', format: 'binary' },
+        credential: { type: 'string', format: 'binary' },
+        firstName: { type: 'string' },
+        lastName: { type: 'string' },
+        email: { type: 'string' },
+        phoneNumber: { type: 'string' },
+        dateOfBirth: { type: 'string', format: 'date-time' },
+        address: { type: 'string' },
+        city: { type: 'string' },
+        state: { type: 'string' },
+        zipCode: { type: 'number' },
+        docs: {
+          type: 'object',
+          properties: {
+            type: { type: 'string' },
+          },
+        },
+        // ProfessionalQualifications: { type: 'string' },
 
+        // 👇 Nested objects (will come as JSON strings)
+        businessDetail: {
+          type: 'object',
+          properties: {
+            businessName: { type: 'string' },
+            yearsOfExperience: { type: 'number' },
+            businessType: { type: 'string' },
+            hourlyRate: { type: 'string' },
+            services: { type: 'array', items: { type: 'string' } },
+            professionalDescription: { type: 'string' },
+          },
+        },
+        serviceArea: {
+          type: 'object',
+          properties: {
+            address: { type: 'string' },
+            latitude: { type: 'number' },
+            longitude: { type: 'number' },
+            radius: { type: 'number' },
+          },
+        },
+        paymentMethod: {
+          type: 'object',
+          properties: {
+            methodType: { type: 'string' },
+            provider: { type: 'string' },
+            cardHolderName: { type: 'string' },
+            cardNumber: { type: 'string' },
+            expiryDate: { type: 'string' },
+            cvv: { type: 'string' },
+            saveCard: { type: 'boolean' },
+            streetAddress: { type: 'string' },
+            city: { type: 'string' },
+            postCode: { type: 'string' },
+            agreedToTerms: { type: 'boolean' },
+          },
+        },
+      },
+    },
+  })
+  async create(
+    @UploadedFiles()
+    files: {
+      doc?: Express.Multer.File[];
+      credential?: Express.Multer.File[];
+    },
+    @Body() createTradesmanDto: any,
+  ) {
+    const parseJSONField = (field: string) => {
+      try {
+        return field ? JSON.parse(field) : undefined;
+      } catch (err) {
+        console.warn(`Failed to parse ${field}:`, err);
+        return undefined;
+      }
+    };
+
+    createTradesmanDto.businessDetail = parseJSONField(
+      createTradesmanDto.businessDetail,
+    );
+    createTradesmanDto.docs = parseJSONField(createTradesmanDto.docs);
+    createTradesmanDto.serviceArea = parseJSONField(
+      createTradesmanDto.serviceArea,
+    );
+    createTradesmanDto.paymentMethod = parseJSONField(
+      createTradesmanDto.paymentMethod,
+    );
+
+    // Combine doc and background files into a single array
+    const allFiles: Express.Multer.File[] = [
+      ...(files.doc ?? []),
+      ...(files.credential ?? []),
+    ];
+
+    return this.tradesmanService.create(createTradesmanDto, allFiles);
+  }
   @Get()
   @Public()
-  findAll() {
+  findAll(
+    @Query()
+    query: {
+      limit: string;
+      skip: string;
+      search: string;
+      category: string;
+    },
+  ) {
     return this.tradesmanService.findAll();
   }
 

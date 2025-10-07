@@ -44,6 +44,10 @@ export class CreateTradesManDto {
   @IsString()
   address?: string;
 
+  @ApiPropertyOptional({ example: 'NID' })
+  @IsString()
+  docType?: string;
+
   @ApiPropertyOptional({ example: 'Dhaka' })
   @IsOptional()
   @IsString()
@@ -54,15 +58,9 @@ export class CreateTradesManDto {
   @IsString()
   state?: string;
 
-  @ApiPropertyOptional({ example: '1206' })
+  @ApiPropertyOptional({ example: 1206 })
   @IsOptional()
-  @IsString()
-  zipCode?: string;
-
-  @ApiPropertyOptional({ example: 'Certified Electrician' })
-  @IsOptional()
-  @IsString()
-  ProfessionalQualifications?: string;
+  zipCode?: number;
 
   @ApiPropertyOptional({ type: () => CreateDocsDto })
   @IsOptional()
@@ -87,4 +85,12 @@ export class CreateTradesManDto {
   @ValidateNested()
   @Type(() => CreatePaymentMethodDto)
   paymentMethod?: CreatePaymentMethodDto;
+
+  @IsOptional()
+  @IsString()
+  professionalQualifications?: string;
+
+  @IsOptional()
+  @IsString()
+  credential?: string;
 }
