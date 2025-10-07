@@ -39,8 +39,7 @@ async function bootstrap() {
   const prisma = app.get(PrismaService);
 
   app.useGlobalGuards(
-    new JwtGuard(reflector, prisma),
-    new RolesGuard(reflector),
+    new JwtGuard(reflector, prisma)
   );
 
   app.useGlobalPipes(

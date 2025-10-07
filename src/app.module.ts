@@ -11,6 +11,7 @@ import { JobsModule } from './module/jobs/jobs.module';
 import { CustomerModule } from './module/customer/customer.module';
 // import { StripeModule } from './stripe/stripe.module';
 import { StripeModule } from './module/stripe/stripe.module';
+import { AdminModule } from './module/admin/admin.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { StripeModule } from './module/stripe/stripe.module';
     JobsModule,
     CustomerModule,
     StripeModule,
+    AdminModule,
   ],
   providers: [SeederService],
 })
