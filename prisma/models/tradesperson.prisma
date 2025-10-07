@@ -11,10 +11,12 @@ model TradesMan {
   zipCode                Int?
   professionalQualifications String?
   stripeCustomerId       String
+  isVerified             Boolean @default(false)
   docs                   Docs? 
   businessDetail         BusinessDetail?
   serviceArea            ServiceArea?
   paymentMethod          PaymentMethod?
+  review                 Review[]
   userId                 String @unique 
   user                   User @relation(fields: [userId], references: [id])
   createdAt              DateTime @default(now())

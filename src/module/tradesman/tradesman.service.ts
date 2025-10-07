@@ -149,7 +149,8 @@ export class TradesmanService {
     }
   }
 
-  async findAll() {
+  async findAll(query: Record<string, unknown>) {
+    console.log({ query });
     const result = await this.prisma.tradesMan.findMany({
       include: {
         docs: true,
@@ -176,7 +177,14 @@ export class TradesmanService {
     return result;
   }
 
-  update(id: number, updateTradesmanDto: UpdateTradesManDto) {
+  update(
+    id: string,
+    updateTradesmanDto: UpdateTradesManDto,
+    files: {
+      doc?: Express.Multer.File[] | undefined;
+      credential?: Express.Multer.File[];
+    },
+  ) {
     console.log({ updateTradesmanDto });
     return `This action updates a #${id} tradesman`;
   }
