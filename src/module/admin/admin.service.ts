@@ -103,7 +103,7 @@ async get_dashboard() {
 
   // Total counts (overall)
   const totalUser = await this.prisma.user.count();
-  const totalJob = await this.prisma.jobs.count({
+  const totalCompletedJobs = await this.prisma.jobs.count({
     where: { isComplete: true },
   });
 
@@ -159,15 +159,22 @@ async get_dashboard() {
       : ((thisMonthJobCount - lastMonthJobCount) / lastMonthJobCount) * 100;
   
       const totlaVerifiedTradesman=await this.prisma.tradesMan.count({
-       
+       where:{
+        isVerified:true
+       }
       })
+      const totalJobs=await this.prisma.jobs.count()
+      const jobCompilationRate=(totalCompletedJobs/totalJobs)*100
+      
   return {
     totalUser,
-    totalJob,
+    totalCompletedJobs,
     userGrowth: userGrowth.toFixed(2) + '%',
     jobGrowth: jobGrowth.toFixed(2) + '%',
     montlyRevenue:0,
+    totalRevenue:0,
     totlaVerifiedTradesman,
+    jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%"
   };
 }
 

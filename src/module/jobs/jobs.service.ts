@@ -50,23 +50,22 @@ export class JobsService {
     };
   }
 
-
-async findAll(filterDto: GetJobsFilterDto) {
-    const { 
-        search, 
-        category, 
-        subCategory, 
-        location, 
-        minPrice, 
-        maxPrice, 
-        page = 1,
-        limit = 10,
+  async findAll(filterDto: GetJobsFilterDto) {
+    const {
+      search,
+      category,
+      subCategory,
+      location,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
     } = filterDto;
     const take = limit;
     const skip = (page - 1) * limit;
 
     const where: any = {};
-    
+
     // --- (Existing Filter Logic - Uses the 'where' object for all filters) ---
     if (search) {
       where.OR = [
@@ -95,13 +94,13 @@ async findAll(filterDto: GetJobsFilterDto) {
       }
     }
     const totalCount = await this.prisma.jobs.count({
-        where, 
+      where,
     });
 
     // 3. Fetch the paginated jobs
     const jobs = await this.prisma.jobs.findMany({
-      where, 
-      skip,  
+      where,
+      skip,
       take,
       include: {
         customer: {
@@ -112,27 +111,25 @@ async findAll(filterDto: GetJobsFilterDto) {
             profile_image: true,
           },
         },
-        jobActivity:true
+        jobActivity: true,
       },
-      
     });
     const totalPages = Math.ceil(totalCount / limit);
 
     return {
-        data: jobs,
-        meta: {
-            total: totalCount,
-            limit: limit,
-            currentPage: page,
-            totalPages: totalPages,
-            hasNextPage: page < totalPages,
-            hasPreviousPage: page > 1,
-        },
+      data: jobs,
+      meta: {
+        total: totalCount,
+        limit: limit,
+        currentPage: page,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     };
-}
+  }
 
-
-// --------------------------------find single product-------------------------------------------
+  // --------------------------------find single product-------------------------------------------
   findOne(id: string) {
     const res = this.prisma.jobs.findFirst({
       where: {
