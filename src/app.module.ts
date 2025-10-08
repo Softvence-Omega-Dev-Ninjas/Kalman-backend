@@ -15,6 +15,7 @@ import { AdminModule } from './module/admin/admin.module';
 import { CommisionModule } from './module/commision/commision.module';
 import { BlogModule } from './module/blog/blog.module';
 import { NewsLetterModule } from './module/news-letter/news-letter.module';
+import { ChatModule } from './module/chat/chat.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { NewsLetterModule } from './module/news-letter/news-letter.module';
     CommisionModule,
     BlogModule,
     NewsLetterModule,
+    ChatModule,
   ],
   providers: [SeederService],
 })
