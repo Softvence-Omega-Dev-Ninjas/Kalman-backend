@@ -12,6 +12,10 @@ import { CustomerModule } from './module/customer/customer.module';
 // import { StripeModule } from './stripe/stripe.module';
 import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
+import { ReviewModule } from './module/review/review.module';
+import { CategoryModule } from './module/category/category.module';
+// import { CategoryModule } from './mudule/category/category.module';
+// import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { AdminModule } from './module/admin/admin.module';
     CustomerModule,
     StripeModule,
     AdminModule,
+    ReviewModule,
+    CategoryModule,
   ],
   providers: [SeederService],
 })

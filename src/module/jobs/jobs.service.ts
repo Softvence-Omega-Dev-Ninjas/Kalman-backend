@@ -14,7 +14,7 @@ export class JobsService {
     const res = await this.prisma.jobs.create({
       data: {
         title: createJobDto.title,
-        category: createJobDto.category,
+        categoryId: createJobDto.categoryId,
         description: createJobDto.description,
         location: createJobDto.location,
         timeline: createJobDto.timeline,
@@ -26,6 +26,10 @@ export class JobsService {
         skills_needed: createJobDto.skills_needed,
         userId: user.id,
         price: createJobDto.price,
+        subCategories: createJobDto.subCategories,
+      },
+      include: {
+        category: true,
       },
     });
     const job_id = res.id;

@@ -16,9 +16,7 @@ import { CreateTradesManDto } from './dto/create-tradesman.dto';
 import { UpdateTradesManDto } from './dto/update-tradesman.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-// import { diskStorage } from 'multer';
-// import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 @Controller('tradesman')
 export class TradesmanController {
   constructor(private readonly tradesmanService: TradesmanService) {}
@@ -142,11 +140,11 @@ export class TradesmanController {
     example: '10',
   })
   @ApiQuery({
-    name: 'skip',
+    name: 'page',
     required: false,
     type: String,
     description: 'Number of records to skip (for pagination)',
-    example: '0',
+    example: '1',
   })
   @ApiQuery({
     name: 'search',
@@ -166,7 +164,7 @@ export class TradesmanController {
     @Query()
     query: {
       limit: string;
-      skip: string;
+      page: string;
       search: string;
       category: string;
     },
@@ -181,125 +179,12 @@ export class TradesmanController {
   }
 
   @Patch(':id')
-  @ApiParam({
-    name: 'id',
-    description: 'Tradesman ID to update',
-    required: true,
-    example: 'clw2x2sh0000y1x9k3v1t1u2f',
-  })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'doc', maxCount: 1 },
-      { name: 'credential', maxCount: 1 },
-    ]),
-  )
-  @ApiBody({
-    description: 'Update tradesman fields selectively with file uploads',
-    schema: {
-      type: 'object',
-      properties: {
-        doc: { type: 'string', format: 'binary' },
-        credential: { type: 'string', format: 'binary' },
-        firstName: { type: 'string', nullable: true },
-        lastName: { type: 'string', nullable: true },
-        email: { type: 'string', nullable: true },
-        phoneNumber: { type: 'string', nullable: true },
-        dateOfBirth: { type: 'string', format: 'date', nullable: true },
-        address: { type: 'string', nullable: true },
-        city: { type: 'string', nullable: true },
-        state: { type: 'string', nullable: true },
-        zipCode: { type: 'number', nullable: true },
-        docs: {
-          type: 'object',
-          properties: {
-            type: { type: 'string', nullable: true },
-          },
-          nullable: true,
-        },
-        businessDetail: {
-          type: 'object',
-          properties: {
-            businessName: { type: 'string', nullable: true },
-            yearsOfExperience: { type: 'number', nullable: true },
-            businessType: { type: 'string', nullable: true },
-            hourlyRate: { type: 'string', nullable: true },
-            services: {
-              type: 'array',
-              items: { type: 'string' },
-              nullable: true,
-            },
-            professionalDescription: { type: 'string', nullable: true },
-          },
-          nullable: true,
-        },
-        serviceArea: {
-          type: 'object',
-          properties: {
-            address: { type: 'string', nullable: true },
-            latitude: { type: 'number', nullable: true },
-            longitude: { type: 'number', nullable: true },
-            radius: { type: 'number', nullable: true },
-          },
-          nullable: true,
-        },
-        paymentMethod: {
-          type: 'object',
-          properties: {
-            methodType: { type: 'string', nullable: true },
-            provider: { type: 'string', nullable: true },
-            cardHolderName: { type: 'string', nullable: true },
-            cardNumber: { type: 'string', nullable: true },
-            expiryDate: { type: 'string', nullable: true },
-            cvv: { type: 'string', nullable: true },
-            saveCard: { type: 'boolean', nullable: true },
-            streetAddress: { type: 'string', nullable: true },
-            city: { type: 'string', nullable: true },
-            postCode: { type: 'string', nullable: true },
-            agreedToTerms: { type: 'boolean', nullable: true },
-          },
-          nullable: true,
-        },
-      },
-    },
-  })
-  async update(
+  @Public()
+  update(
     @Param('id') id: string,
-    @UploadedFiles()
-    files: {
-      doc?: Express.Multer.File[];
-      credential?: Express.Multer.File[];
-    },
     @Body() updateTradesmanDto: UpdateTradesManDto,
   ) {
-    // ✅ Clean the DTO before passing to service
-    const cleanData = this.removeEmptyFields(updateTradesmanDto);
-
-    return this.tradesmanService.update(id, cleanData, files);
-  }
-
-  /**
-   * Remove null, undefined, and empty fields recursively
-   */
-  private removeEmptyFields(obj: any): any {
-    if (typeof obj !== 'object' || obj === null) return obj;
-
-    const cleaned: any = Array.isArray(obj) ? [] : {};
-    for (const key in obj) {
-      const value = obj[key];
-      if (
-        value !== null &&
-        value !== undefined &&
-        value !== '' &&
-        !(
-          typeof value === 'object' &&
-          Object.keys(this.removeEmptyFields(value)).length === 0
-        )
-      ) {
-        cleaned[key] = this.removeEmptyFields(value);
-      }
-    }
-    return cleaned;
+    return this.tradesmanService.update(id, updateTradesmanDto);
   }
 
   @Delete(':id')
