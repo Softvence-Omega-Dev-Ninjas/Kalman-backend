@@ -1,7 +1,7 @@
 model Jobs {
   id             String        @id @default(uuid())
   title          String
-  category       String[]
+     
   description    String
   location       String
   timeline       String
@@ -21,6 +21,11 @@ model Jobs {
   userJobShortList JobShortlist[]
   customerStatus CustomerStatus @default(ACTIVE)
   isComplete Boolean @default(false)
+
+  categoryId     String?
+  category       Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  subCategories   String[]
 }
 
 model Job_Activity {
