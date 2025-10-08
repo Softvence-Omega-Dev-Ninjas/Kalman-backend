@@ -14,6 +14,7 @@ import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
 import { CommisionModule } from './module/commision/commision.module';
 import { BlogModule } from './module/blog/blog.module';
+import { NewsLetterModule } from './module/news-letter/news-letter.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BlogModule } from './module/blog/blog.module';
     AdminModule,
     CommisionModule,
     BlogModule,
+    NewsLetterModule,
   ],
   providers: [SeederService],
 })
