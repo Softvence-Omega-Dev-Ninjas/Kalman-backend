@@ -23,6 +23,7 @@ model User {
     proposal Proposal[]
     userJobShortList JobShortlist[] @relation("JobSeekerAction")
     tradesman JobShortlist[] @relation("TradesmanTarget")
+    blog Blog[]
 } 
 
 enum Role {

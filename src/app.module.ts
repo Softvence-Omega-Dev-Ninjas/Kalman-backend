@@ -13,6 +13,7 @@ import { CustomerModule } from './module/customer/customer.module';
 import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
 import { CommisionModule } from './module/commision/commision.module';
+import { BlogModule } from './module/blog/blog.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CommisionModule } from './module/commision/commision.module';
     StripeModule,
     AdminModule,
     CommisionModule,
+    BlogModule,
   ],
   providers: [SeederService],
 })
