@@ -13,7 +13,7 @@ export class CreateCategoryDto {
   name: string;
 
   @IsArray()
-  @IsString({ each: true })
+//   @IsString({ each: true })
   @IsOptional()
   subCategories?: string[];
 }
