@@ -72,6 +72,9 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User not found', 400);
     }
+    if (user.verification != Status.COMPLETE) {
+      throw new HttpException('You are not verified', 400);
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new HttpException('Password not matched', 400);
