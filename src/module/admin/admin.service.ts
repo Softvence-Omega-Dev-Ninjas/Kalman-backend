@@ -91,4 +91,91 @@ constructor(private readonly prisma: PrismaService) {}
       message:"User deleted successfully",
     }
   }
+
+
+
+async get_dashboard() {
+  // Current date and last month's date
+  const now = new Date();
+  const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+
+  // Total counts (overall)
+  const totalUser = await this.prisma.user.count();
+  const totalCompletedJobs = await this.prisma.jobs.count({
+    where: { isComplete: true },
+  });
+
+  // Counts for last month
+  const lastMonthUserCount = await this.prisma.user.count({
+    where: {
+      createdAt: {
+        gte: startOfLastMonth,
+        lte: endOfLastMonth,
+      },
+    },
+  });
+
+  const lastMonthJobCount = await this.prisma.jobs.count({
+    where: {
+      isComplete: true,
+      createdAt: {
+        gte: startOfLastMonth,
+        lte: endOfLastMonth,
+      },
+    },
+  });
+
+  // Counts for this month
+  const thisMonthUserCount = await this.prisma.user.count({
+    where: {
+      createdAt: {
+        gte: startOfThisMonth,
+        lte: now,
+      },
+    },
+  });
+
+  const thisMonthJobCount = await this.prisma.jobs.count({
+    where: {
+      isComplete: true,
+      createdAt: {
+        gte: startOfThisMonth,
+        lte: now,
+      },
+    },
+  });
+
+  // Calculate growth percentage safely
+  const userGrowth =
+    lastMonthUserCount === 0
+      ? 100
+      : ((thisMonthUserCount - lastMonthUserCount) / lastMonthUserCount) * 100;
+
+  const jobGrowth =
+    lastMonthJobCount === 0
+      ? 100
+      : ((thisMonthJobCount - lastMonthJobCount) / lastMonthJobCount) * 100;
+  
+      const totlaVerifiedTradesman=await this.prisma.tradesMan.count({
+       where:{
+        isVerified:true
+       }
+      })
+      const totalJobs=await this.prisma.jobs.count()
+      const jobCompilationRate=(totalCompletedJobs/totalJobs)*100
+      
+  return {
+    totalUser,
+    totalCompletedJobs,
+    userGrowth: userGrowth.toFixed(2) + '%',
+    jobGrowth: jobGrowth.toFixed(2) + '%',
+    montlyRevenue:0,
+    totalRevenue:0,
+    totlaVerifiedTradesman,
+    jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%"
+  };
+}
+
 }

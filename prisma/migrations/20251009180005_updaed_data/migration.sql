@@ -11,10 +11,46 @@ CREATE TYPE "Role" AS ENUM ('ADMIN', 'CUSTOMER', 'TRADESMAN');
 CREATE TYPE "Status" AS ENUM ('PENDING', 'COMPLETE');
 
 -- CreateTable
+CREATE TABLE "Blog" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "imeges" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Blog_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Category" (
+    "id" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "subCategories" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Commision" (
+    "id" TEXT NOT NULL,
+    "commision_rate" DOUBLE PRECISION,
+    "minimum_hourly_rate" DOUBLE PRECISION,
+    "maximum_hourly_rate" DOUBLE PRECISION,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updateAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Commision_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Jobs" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "category" TEXT[],
     "description" TEXT NOT NULL,
     "location" TEXT NOT NULL,
     "timeline" TEXT NOT NULL,
@@ -30,6 +66,8 @@ CREATE TABLE "Jobs" (
     "price" DOUBLE PRECISION,
     "customerStatus" "CustomerStatus" NOT NULL DEFAULT 'ACTIVE',
     "isComplete" BOOLEAN NOT NULL DEFAULT false,
+    "categoryId" TEXT,
+    "subCategories" TEXT[],
 
     CONSTRAINT "Jobs_pkey" PRIMARY KEY ("id")
 );
@@ -57,6 +95,30 @@ CREATE TABLE "JobShortlist" (
 );
 
 -- CreateTable
+CREATE TABLE "Message" (
+    "id" TEXT NOT NULL,
+    "senderId" TEXT NOT NULL,
+    "reciverId" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "News_letter" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "acceptedTerms" BOOLEAN NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "News_letter_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Proposal" (
     "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -72,10 +134,10 @@ CREATE TABLE "Proposal" (
 -- CreateTable
 CREATE TABLE "Review" (
     "id" TEXT NOT NULL,
-    "rating" INTEGER NOT NULL,
+    "rating" DOUBLE PRECISION NOT NULL,
     "text" TEXT NOT NULL,
-    "senderId" TEXT NOT NULL,
-    "receiverId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
+    "tradesManId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -186,6 +248,9 @@ CREATE TABLE "User" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Job_Activity_jobId_key" ON "Job_Activity"("jobId");
 
 -- CreateIndex
@@ -207,7 +272,13 @@ CREATE UNIQUE INDEX "ServiceArea_userId_key" ON "ServiceArea"("userId");
 CREATE UNIQUE INDEX "PaymentMethod_userId_key" ON "PaymentMethod"("userId");
 
 -- AddForeignKey
+ALTER TABLE "Blog" ADD CONSTRAINT "Blog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Jobs" ADD CONSTRAINT "Jobs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Jobs" ADD CONSTRAINT "Jobs_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Job_Activity" ADD CONSTRAINT "Job_Activity_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -222,16 +293,22 @@ ALTER TABLE "JobShortlist" ADD CONSTRAINT "JobShortlist_jobId_fkey" FOREIGN KEY 
 ALTER TABLE "JobShortlist" ADD CONSTRAINT "JobShortlist_tradesmanId_fkey" FOREIGN KEY ("tradesmanId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Message" ADD CONSTRAINT "Message_reciverId_fkey" FOREIGN KEY ("reciverId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Review" ADD CONSTRAINT "Review_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Review" ADD CONSTRAINT "Review_receiverId_fkey" FOREIGN KEY ("receiverId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Review" ADD CONSTRAINT "Review_tradesManId_fkey" FOREIGN KEY ("tradesManId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TradesMan" ADD CONSTRAINT "TradesMan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
