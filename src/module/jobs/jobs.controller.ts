@@ -30,10 +30,11 @@ import { fileStorageOptions } from 'src/utils/index.multer';
 
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(private readonly jobsService: JobsService) {} 
 
   @Post()
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
+  // @Public()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new job posting with multiple images.' })
   @ApiBody({
@@ -45,7 +46,7 @@ export class JobsController {
           description: 'The job data (CreateJobDto) as a JSON string.',
           example: JSON.stringify({
             title: 'Fix Leaky Roof',
-            category: ['Construction'],
+            categoryId: '',
             description: 'Roof repair on a two-story house.',
             location: 'Suburb X',
             timeline: '3 days',
@@ -71,6 +72,7 @@ export class JobsController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
+    console.log({ jobData });
     if (!jobData) {
       throw new BadRequestException(
         'Job data is missing from the request body.',
@@ -80,9 +82,11 @@ export class JobsController {
     try {
       createJobDto = JSON.parse(jobData);
     } catch (e) {
+      console.log({ e });
       throw new BadRequestException('Invalid JSON format for job data.');
     }
     const user = req.user;
+    console.log({ user });
     return this.jobsService.create(createJobDto, user, files);
   }
 

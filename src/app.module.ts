@@ -16,6 +16,10 @@ import { CommisionModule } from './module/commision/commision.module';
 import { BlogModule } from './module/blog/blog.module';
 import { NewsLetterModule } from './module/news-letter/news-letter.module';
 import { ChatModule } from './module/chat/chat.module';
+import { ReviewModule } from './module/review/review.module';
+import { CategoryModule } from './module/category/category.module';
+// import { CategoryModule } from './mudule/category/category.module';
+// import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -32,6 +36,8 @@ import { ChatModule } from './module/chat/chat.module';
     BlogModule,
     NewsLetterModule,
     ChatModule,
+    ReviewModule,
+    CategoryModule,
   ],
   providers: [SeederService],
 })

@@ -28,7 +28,7 @@ export class CreateJobDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  category: string[];
+  categoryId: string;
 
   @ApiProperty({
     description: 'A detailed description of the job requirements and scope.',
@@ -112,6 +112,11 @@ export class CreateJobDto {
   @ArrayNotEmpty()
   @IsString({ each: true })
   skills_needed: string[];
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsString({ each: true })
+  subCategories: string[];
 
   @ApiProperty({
     description: 'The price for the job.',
