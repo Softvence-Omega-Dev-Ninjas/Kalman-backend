@@ -64,4 +64,9 @@ export class AdminController {
   remove_jobs(@Param('id') id: string) {
     return this.adminService.remove_job(id);
   }
+
+  @Get('system-status')
+  async get_system_status() {
+    return this.adminService.get_system_status()
+  }
 }

@@ -178,4 +178,16 @@ async get_dashboard() {
   };
 }
 
+async get_system_status(){
+  const totalUser = await this.prisma.user.count({
+    where:{
+      createdAt:{
+        gte:new Date(new Date().setDate(new Date().getDate() - 7))
+      }
+    }
+  });
+  return {
+    lastSavenDayUser:totalUser
+  }
+}
 }
