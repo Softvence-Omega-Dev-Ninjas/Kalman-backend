@@ -2,27 +2,36 @@ model User {
     id String @id @default(uuid())
     name String? 
     email String
-    Phone String
+    phone String
     password String
     profile_image String?
     profession String?
-    Bio String?
+    bio String?
     street_address String?
     city String?
     otp Int?
     state String?
     zip_code String?
     is_deleted Boolean @default(false)
-    role Role @default(USER)
+    role Role @default(CUSTOMER)
+    trader TradesMan?
+    review Review[]
     verification Status @default(PENDING)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    jobs Jobs[]
+    proposal Proposal[]
+    userJobShortList JobShortlist[] @relation("JobSeekerAction")
+    tradesman JobShortlist[] @relation("TradesmanTarget")
+    blog Blog[]
+    sendMessage Message[] @relation("SentMessages")
+    reciveMessage Message[] @relation("ReceivedMessages")
 } 
 
 enum Role {
     ADMIN
-    USER 
-    TRADER
+    CUSTOMER
+    TRADESMAN
 }
 
 enum Status {

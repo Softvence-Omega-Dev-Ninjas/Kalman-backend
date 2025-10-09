@@ -1,0 +1,60 @@
+model Jobs {
+  id             String        @id @default(uuid())
+  title          String
+     
+  description    String
+  location       String
+  timeline       String
+  preferred_date DateTime?
+  preferred_time DateTime?
+  image          String[]
+  contact_method String
+  shortlist_fee Float @default(20)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  userId         String
+  skills_needed  String[]
+  price Float?
+  customer       User          @relation(fields: [userId], references: [id])
+  proposal Proposal[]
+  jobActivity    Job_Activity?
+  userJobShortList JobShortlist[]
+  customerStatus CustomerStatus @default(ACTIVE)
+  isComplete Boolean @default(false)
+
+  categoryId     String?
+  category       Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  subCategories   String[]
+}
+
+model Job_Activity {
+  id            String   @id @default(uuid())
+  total_interested Int   @default(0)
+  shortlisted   Int      @default(0)
+  jobId         String   @unique
+  jobs          Jobs     @relation(fields: [jobId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobShortlist {
+  customerId        String 
+  jobId         String 
+  tradesmanId   String 
+
+  user          User     @relation("JobSeekerAction", fields: [customerId], references: [id])
+  job           Jobs     @relation(fields: [jobId], references: [id])
+  tradesman     User     @relation("TradesmanTarget", fields: [tradesmanId], references: [id])
+  
+  createdAt     DateTime @default(now())
+
+  @@id([customerId, tradesmanId, jobId]) 
+}
+
+enum CustomerStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVE
+
+}
