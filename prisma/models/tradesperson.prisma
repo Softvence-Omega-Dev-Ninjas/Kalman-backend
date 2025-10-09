@@ -1,5 +1,5 @@
 model TradesMan {
-  id                     String   @id @default(cuid())
+  id                     String   @id @default(uuid())
   firstName              String
   lastName               String
   email                  String   @unique
