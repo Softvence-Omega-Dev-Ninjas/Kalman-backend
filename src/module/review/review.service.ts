@@ -1,19 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-
+import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class ReviewService {
-  create(createReviewDto: CreateReviewDto) {
-    return 'This action adds a new review';
+  constructor(private prisma: PrismaService) {}
+  async create(createReviewDto: CreateReviewDto) {
+    const result = await this.prisma.review.create({
+      data: createReviewDto,
+    });
+
+    return result;
   }
 
-  findAll() {
-    return `This action returns all review`;
+  async findAll() {
+    const result = await this.prisma.review.findMany({});
+    return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} review`;
+  async findMyReview(id: string) {
+    const result = await this.prisma.review.findMany({
+      where: {
+        tradesManId: id,
+      },
+    });
+    if (!result) {
+      throw new HttpException('Review not found', HttpStatus.NOT_FOUND);
+    }
+    return result;
+  }
+
+  async findOne(id: string) {
+    const result = await this.prisma.review.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!result) {
+      throw new HttpException('Review not found', HttpStatus.NOT_FOUND);
+    }
+    return;
   }
 
   update(id: number, updateReviewDto: UpdateReviewDto) {
