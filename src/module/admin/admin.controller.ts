@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Param, Delete, UseGuards, Query, Post, Body } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 
 import { Role } from '@prisma/client';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guard/roles.guard';
 import { GetAllUserDto } from './dto/getAllUser.dto';
+import { SystemActivityDto } from './dto/system_activity.dto';
+
 
 @Controller('admin')
 export class AdminController {
@@ -68,5 +70,14 @@ export class AdminController {
   @Get('system-status')
   async get_system_status() {
     return this.adminService.get_system_status()
+  }
+
+  @Post('system-activity')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Set system activity If it exist already then it will update' })
+  @ApiBody({type:SystemActivityDto})
+  async set_system_activity(@Body() system_activity_dto:SystemActivityDto){
+    return this.adminService.set_system_activity(system_activity_dto)
   }
 }

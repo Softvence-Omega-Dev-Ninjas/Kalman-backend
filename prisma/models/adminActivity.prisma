@@ -1,0 +1,10 @@
+model Admin_activity {
+    id String @id @default(uuid())
+    maximum_attempt Int?
+    session_timeout Int?
+    maintenance_mode Boolean @default(false)
+    new_registration Boolean @default(false)
+    admin_notication Boolean @default(true)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
