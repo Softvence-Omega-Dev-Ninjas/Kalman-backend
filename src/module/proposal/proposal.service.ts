@@ -1,24 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProposalDto } from './dto/create-proposal.dto';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class ProposalService {
   constructor(private prisma: PrismaService) {}
-  create(createProposalDto: CreateProposalDto) {
-    console.log({ createProposalDto });
-    return createProposalDto;
+  async create(createProposalDto: CreateProposalDto) {
+    const result = await this.prisma.proposal.create({
+      data: createProposalDto,
+    });
+    return result;
   }
 
-  findAll() {
-    return `This action returns all proposal`;
+  async findAll() {
+    const result = this.prisma.proposal.findMany({
+      include: {
+        user: true,
+        jobs: true,
+      },
+    });
+    return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} proposal`;
+  findOne(id: string) {
+    const result = this.prisma.proposal.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!result) {
+      throw new HttpException('No proposal found', HttpStatus.NOT_FOUND);
+    }
   }
 
-  update(id: number, updateProposalDto: UpdateProposalDto) {
+  update(id: string, updateProposalDto: UpdateProposalDto) {
     return `This action updates a #${id} proposal`;
   }
 

@@ -29,7 +29,7 @@ export class ProposalController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.proposalService.findOne(+id);
+    return this.proposalService.findOne(id);
   }
 
   @Patch(':id')
@@ -37,7 +37,7 @@ export class ProposalController {
     @Param('id') id: string,
     @Body() updateProposalDto: UpdateProposalDto,
   ) {
-    return this.proposalService.update(+id, updateProposalDto);
+    return this.proposalService.update(id, updateProposalDto);
   }
 
   @Delete(':id')

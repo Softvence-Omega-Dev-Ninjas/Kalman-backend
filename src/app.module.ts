@@ -14,9 +14,6 @@ import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
 import { ReviewModule } from './module/review/review.module';
 import { CategoryModule } from './module/category/category.module';
-// import { CategoryModule } from './mudule/category/category.module';
-// import { CategoryModule } from './module/category/category.module';
-import { ProposalModule } from './proposal/proposal.module';
 import { ProposalModule } from './module/proposal/proposal.module';
 
 @Module({

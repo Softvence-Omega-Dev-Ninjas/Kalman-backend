@@ -12,7 +12,6 @@ export class CreateProposalDto {
   @ApiProperty({
     example:
       'A well-detailed proposal describing my approach to complete the job efficiently.',
-    description: 'Description of the proposal provided by the user.',
   })
   @IsString()
   @IsNotEmpty()
@@ -20,7 +19,6 @@ export class CreateProposalDto {
 
   @ApiProperty({
     example: 'c1e2f3a4-b5d6-7890-1234-56789abcdef0',
-    description: 'ID of the job this proposal is related to.',
   })
   @IsUUID()
   @IsNotEmpty()
@@ -28,7 +26,6 @@ export class CreateProposalDto {
 
   @ApiProperty({
     example: 'a1b2c3d4-e5f6-7890-1234-56789abcdef0',
-    description: 'ID of the user submitting the proposal.',
   })
   @IsUUID()
   @IsNotEmpty()
