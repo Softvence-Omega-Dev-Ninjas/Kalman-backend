@@ -12,6 +12,10 @@ import { CustomerModule } from './module/customer/customer.module';
 // import { StripeModule } from './stripe/stripe.module';
 import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
+import { CommisionModule } from './module/commision/commision.module';
+import { BlogModule } from './module/blog/blog.module';
+import { NewsLetterModule } from './module/news-letter/news-letter.module';
+import { ChatModule } from './module/chat/chat.module';
 import { ReviewModule } from './module/review/review.module';
 import { CategoryModule } from './module/category/category.module';
 import { ProposalModule } from './module/proposal/proposal.module';
@@ -27,6 +31,10 @@ import { ProposalModule } from './module/proposal/proposal.module';
     CustomerModule,
     StripeModule,
     AdminModule,
+    CommisionModule,
+    BlogModule,
+    NewsLetterModule,
+    ChatModule,
     ReviewModule,
     CategoryModule,
     ProposalModule,

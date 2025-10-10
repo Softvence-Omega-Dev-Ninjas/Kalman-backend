@@ -11,6 +11,12 @@ import { GetAllUserDto } from './dto/getAllUser.dto';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
+  @Get("dasboard")
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  get_dasboard(){
+    return this.adminService.get_dashboard()
+  }
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)

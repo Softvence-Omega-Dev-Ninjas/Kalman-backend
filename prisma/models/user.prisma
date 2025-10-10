@@ -23,6 +23,9 @@ model User {
     proposal Proposal[]
     userJobShortList JobShortlist[] @relation("JobSeekerAction")
     tradesman JobShortlist[] @relation("TradesmanTarget")
+    blog Blog[]
+    sendMessage Message[] @relation("SentMessages")
+    reciveMessage Message[] @relation("ReceivedMessages")
 } 
 
 enum Role {
