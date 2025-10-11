@@ -24,7 +24,7 @@ export class SeederService implements OnApplicationBootstrap {
     });
 
     if (supperAdmin) {
-      this.logger.log('Admin is already exists, skipping seeding.');
+      this.logger.log('Admin is already exists, skipping seeding...');
       return;
     }
 

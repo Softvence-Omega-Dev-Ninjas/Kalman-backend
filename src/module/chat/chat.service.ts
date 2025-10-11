@@ -6,33 +6,29 @@ import { Message } from '@prisma/client';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  // ✅ Save new message to DB
   async saveMessage(data: {
     senderId: string;
     reciverId: string;
-    content: string;
-    exchangeRequestId?: string;
-  }) {
-    const senderExists = await this.prisma.user.findFirst({
-      where: { id: data.senderId },
-    });
-    const receiverExists = await this.prisma.user.findFirst({
-      where: { id: data.reciverId },
-    });
+    content?: string;
+    file?: string;
+  }): Promise<Message> {
+    const senderExists = await this.prisma.user.findUnique({ where: { id: data.senderId } });
+    const receiverExists = await this.prisma.user.findUnique({ where: { id: data.reciverId } });
 
     if (!senderExists || !receiverExists) {
-      throw new Error('Sender or receiver does not exist in User table');
+      throw new Error('Sender or receiver does not exist');
     }
-    console.log(data)
-    // Save message
-   const res=await this.prisma.message.create({
+
+    const message = await this.prisma.message.create({
       data: {
         senderId: data.senderId,
         reciverId: data.reciverId,
-        message: data.content,
+        message: data.content || null,
+        file: data.file || null,
       },
     });
-    console.log(res)
+
+    return message;
   }
 
   // Get all messages that involve a user
