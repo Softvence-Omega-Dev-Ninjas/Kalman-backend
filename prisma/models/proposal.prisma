@@ -3,9 +3,11 @@ model Proposal {
     description String
     jobId String
     jobs Jobs @relation(fields: [jobId],references: [id])
+    tradesManId String
+    tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
     userId String
+    user User @relation(fields: [userId], references: [id])
     status ProposalStatus @default(PENDING)
-    user User @relation(fields: [userId],references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

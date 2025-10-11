@@ -8,9 +8,14 @@ model TradesMan {
   address                String?  
   city                   String?
   state                  String?
+  street                 String?
+  bio                    String?
+  images                 String[]
+  profession            String?
   zipCode                Int?
   professionalQualifications String?
   stripeCustomerId       String
+  stripeConnectId        String
   isVerified             Boolean @default(false)
   docs                   Docs? 
   businessDetail         BusinessDetail?
@@ -19,6 +24,7 @@ model TradesMan {
   review                 Review[]
   userId                 String @unique 
   user                   User @relation(fields: [userId], references: [id])
+  proposal               Proposal[]
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 }

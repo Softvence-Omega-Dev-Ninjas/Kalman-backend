@@ -29,14 +29,9 @@ export class CreateProposalDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  userId: string;
+  tradesManId: string;
 
-  //   @ApiProperty({
-  //     example: ProposalStatus.PENDING,
-  //     enum: ProposalStatus,
-  //     description: 'Current status of the proposal.',
-  //   })
-  //   @IsEnum(ProposalStatus)
-  //   @IsOptional()
-  //   status?: ProposalStatus;
+  @IsOptional()
+  @IsEnum(ProposalStatus)
+  status?: ProposalStatus;
 }

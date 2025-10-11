@@ -68,6 +68,17 @@ export class TradesmanService {
         restData?.firstName + ' ' + restData?.lastName,
       );
 
+      const stripeConnect = await this.stripeService.createConnectedAccount(
+        restData?.email,
+      );
+
+      // 9️⃣ Generate Stripe login link for Express account verification
+      // const loginLink = await this.stripeService.createLoginLink(
+      //   stripeConnect.id,
+      // );
+
+      // console.log({ stripeConnect, loginLink });
+
       restData.zipCode = Number(restData?.zipCode);
       delete restData.credential;
       const tradesman = await this.prisma.tradesMan.create({
@@ -76,6 +87,8 @@ export class TradesmanService {
           userId: isUserExist?.id,
 
           stripeCustomerId: stripeCustomer?.id,
+          stripeConnectId: stripeConnect.id,
+          // images: undefined,
           docs: docs
             ? {
                 create: {
@@ -149,6 +162,140 @@ export class TradesmanService {
     }
   }
 
+  async getOverView(id: string) {
+    const tradesman = await this.prisma.tradesMan.findUnique({
+      where: { userId: id },
+    });
+
+    if (!tradesman) throw new Error('Tradesman not found');
+
+    const tradesManId = tradesman.id;
+
+    // 📅 Define time periods
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    // 🧾 Fetch my accepted proposals
+    const myShortlist = await this.prisma.proposal.findMany({
+      where: {
+        tradesManId,
+        status: 'ACCEPTED',
+      },
+      include: {
+        user: true,
+        jobs: true,
+      },
+    });
+
+    // 🕒 Fetch recent accepted proposals
+    const recentShortlist = await this.prisma.proposal.findMany({
+      where: { status: 'ACCEPTED' },
+      orderBy: { createdAt: 'desc' },
+      take: 3,
+      include: {
+        jobs: true,
+        user: true,
+      },
+    });
+
+    // 📊 === ACTIVITY (All proposals created by this tradesman) ===
+    const [activityMonth, activity6Month, activityYear] = await Promise.all([
+      this.prisma.proposal.count({
+        where: {
+          tradesManId,
+          createdAt: { gte: startOfMonth },
+        },
+      }),
+      this.prisma.proposal.count({
+        where: {
+          tradesManId,
+          createdAt: { gte: sixMonthsAgo },
+        },
+      }),
+      this.prisma.proposal.count({
+        where: {
+          tradesManId,
+          createdAt: { gte: startOfYear },
+        },
+      }),
+    ]);
+
+    // ✅ === COMPLETED JOBS (Jobs where isComplete = true) ===
+    const [completedMonth, completed6Month, completedYear] = await Promise.all([
+      this.prisma.jobs.count({
+        where: {
+          isComplete: true,
+          updatedAt: { gte: startOfMonth },
+          proposal: { some: { tradesManId } },
+        },
+      }),
+      this.prisma.jobs.count({
+        where: {
+          isComplete: true,
+          updatedAt: { gte: sixMonthsAgo },
+          proposal: { some: { tradesManId } },
+        },
+      }),
+      this.prisma.jobs.count({
+        where: {
+          isComplete: true,
+          updatedAt: { gte: startOfYear },
+          proposal: { some: { tradesManId } },
+        },
+      }),
+    ]);
+
+    // ⭐ === SHORTLISTED (Accepted proposals) ===
+    const [shortlistedMonth, shortlisted6Month, shortlistedYear] =
+      await Promise.all([
+        this.prisma.proposal.count({
+          where: {
+            tradesManId,
+            status: 'ACCEPTED',
+            createdAt: { gte: startOfMonth },
+          },
+        }),
+        this.prisma.proposal.count({
+          where: {
+            tradesManId,
+            status: 'ACCEPTED',
+            createdAt: { gte: sixMonthsAgo },
+          },
+        }),
+        this.prisma.proposal.count({
+          where: {
+            tradesManId,
+            status: 'ACCEPTED',
+            createdAt: { gte: startOfYear },
+          },
+        }),
+      ]);
+
+    return {
+      myShortlist,
+      recentShortlist,
+      stats: {
+        activity: {
+          month: activityMonth,
+          sixMonths: activity6Month,
+          year: activityYear,
+        },
+        completed: {
+          month: completedMonth,
+          sixMonths: completed6Month,
+          year: completedYear,
+        },
+        shortlisted: {
+          month: shortlistedMonth,
+          sixMonths: shortlisted6Month,
+          year: shortlistedYear,
+        },
+      },
+    };
+  }
+
   async findAll(query: Record<string, unknown>) {
     const limit = query.limit ? Number(query.limit) : 10;
     const page = query?.page ? Number(query?.page) : 1;
@@ -219,162 +366,50 @@ export class TradesmanService {
 
   async update(
     id: string,
-    updateTradesmanDto: any,
-    files?: Express.Multer.File[],
+    updateTradesmanDto: UpdateTradesManDto,
+    files?: { images: Express.Multer.File[] },
   ) {
-    const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
-      updateTradesmanDto;
-    console.log({ updateTradesmanDto });
-    try {
-      // Check if the tradesman exists
-      const existingTradesman = await this.prisma.tradesMan.findUnique({
-        where: { id },
-        include: {
-          docs: true,
-          businessDetail: true,
-          serviceArea: true,
-          paymentMethod: true,
-        },
-      });
-
-      if (!existingTradesman) {
-        throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
-      }
-
-      // --- Handle file updates ---
-      let docUrl = existingTradesman.docs?.url;
-      if (files?.find((el) => el.fieldname === 'doc')) {
-        docUrl = await saveFileAndGetUrl(
-          files.find((el) => el.fieldname === 'doc')!,
-        );
-      }
-
-      if (files?.find((el) => el.fieldname === 'credential')) {
-        restData.professionalQualifications = await saveFileAndGetUrl(
-          files.find((el) => el.fieldname === 'credential')!,
-        );
-      }
-
-      restData.zipCode = Number(restData?.zipCode);
-      delete restData.credential;
-
-      // --- Update tradesman with nested relations ---
-      const updatedTradesman = await this.prisma.tradesMan.update({
-        where: { id },
-        data: {
-          ...restData,
-
-          docs: docs
-            ? {
-                upsert: {
-                  create: {
-                    type: docs.type,
-                    url: docUrl,
-                  },
-                  update: {
-                    type: docs.type,
-                    url: docUrl,
-                  },
-                },
-              }
-            : undefined,
-
-          businessDetail: businessDetail
-            ? {
-                upsert: {
-                  create: {
-                    businessName: businessDetail.businessName,
-                    yearsOfExperience: businessDetail.yearsOfExperience,
-                    businessType: businessDetail.businessType,
-                    hourlyRate: businessDetail.hourlyRate,
-                    services: businessDetail.services,
-                    professionalDescription:
-                      businessDetail.professionalDescription,
-                  },
-                  update: {
-                    businessName: businessDetail.businessName,
-                    yearsOfExperience: businessDetail.yearsOfExperience,
-                    businessType: businessDetail.businessType,
-                    hourlyRate: businessDetail.hourlyRate,
-                    services: businessDetail.services,
-                    professionalDescription:
-                      businessDetail.professionalDescription,
-                  },
-                },
-              }
-            : undefined,
-
-          serviceArea: serviceArea
-            ? {
-                upsert: {
-                  create: {
-                    address: serviceArea.address,
-                    latitude: serviceArea.latitude,
-                    longitude: serviceArea.longitude,
-                    radius: serviceArea.radius,
-                  },
-                  update: {
-                    address: serviceArea.address,
-                    latitude: serviceArea.latitude,
-                    longitude: serviceArea.longitude,
-                    radius: serviceArea.radius,
-                  },
-                },
-              }
-            : undefined,
-
-          paymentMethod: paymentMethod
-            ? {
-                upsert: {
-                  create: {
-                    methodType: paymentMethod.methodType,
-                    provider: paymentMethod.provider,
-                    cardHolderName: paymentMethod.cardHolderName,
-                    cardNumber: paymentMethod.cardNumber,
-                    expiryDate: paymentMethod.expiryDate,
-                    cvv: paymentMethod.cvv,
-                    saveCard: paymentMethod.saveCard,
-                    streetAddress: paymentMethod.streetAddress,
-                    city: paymentMethod.city,
-                    postCode: paymentMethod.postCode,
-                    agreedToTerms: paymentMethod.agreedToTerms,
-                  },
-                  update: {
-                    methodType: paymentMethod.methodType,
-                    provider: paymentMethod.provider,
-                    cardHolderName: paymentMethod.cardHolderName,
-                    cardNumber: paymentMethod.cardNumber,
-                    expiryDate: paymentMethod.expiryDate,
-                    cvv: paymentMethod.cvv,
-                    saveCard: paymentMethod.saveCard,
-                    streetAddress: paymentMethod.streetAddress,
-                    city: paymentMethod.city,
-                    postCode: paymentMethod.postCode,
-                    agreedToTerms: paymentMethod.agreedToTerms,
-                  },
-                },
-              }
-            : undefined,
-        },
-        include: {
-          docs: true,
-          businessDetail: true,
-          serviceArea: true,
-          paymentMethod: true,
-        },
-      });
-
-      return {
-        success: true,
-        message: 'Tradesman updated successfully',
-        data: updatedTradesman,
-      };
-    } catch (error) {
-      console.error({ error });
-      throw new BadRequestException(
-        error?.response || 'Failed to update tradesman',
+    // let arr: string[] = [];
+    const data: {
+      images?: string[];
+      phoneNumber?: string;
+      email?: string;
+      firstName?: string;
+      profession?: string;
+      bio?: string;
+      city?: string;
+      state?: string;
+      zipCode?: number;
+      street?: string;
+    } = {};
+    console.log({ files });
+    let imagesLinks = [];
+    data.images = imagesLinks;
+    data.phoneNumber = updateTradesmanDto?.phone;
+    ((data.email = updateTradesmanDto?.email),
+      (data.firstName = updateTradesmanDto?.fullName));
+    data.profession = updateTradesmanDto?.profession;
+    data.bio = updateTradesmanDto?.bio;
+    data.city = updateTradesmanDto?.city;
+    data.state = updateTradesmanDto?.state;
+    data.zipCode = updateTradesmanDto?.zipCode;
+    data.street = updateTradesmanDto?.street;
+    if (files?.images) {
+      const arr = await Promise.all(
+        files.images.map(async (el) => {
+          return await saveFileAndGetUrl(el);
+        }),
       );
+      data.images = arr;
+      console.log({ arr });
     }
+    const result = await this.prisma.tradesMan.update({
+      where: {
+        userId: id,
+      },
+      data,
+    });
+    return result;
   }
 
   remove(id: number) {

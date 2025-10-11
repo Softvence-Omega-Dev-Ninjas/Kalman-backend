@@ -37,6 +37,7 @@ export class ProposalController {
     @Param('id') id: string,
     @Body() updateProposalDto: UpdateProposalDto,
   ) {
+    console.log({ updateProposalDto });
     return this.proposalService.update(id, updateProposalDto);
   }
 

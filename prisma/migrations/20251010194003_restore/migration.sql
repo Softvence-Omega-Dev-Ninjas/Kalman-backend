@@ -123,6 +123,7 @@ CREATE TABLE "Proposal" (
     "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "jobId" TEXT NOT NULL,
+    "tradesManId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "status" "ProposalStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -158,6 +159,7 @@ CREATE TABLE "TradesMan" (
     "zipCode" INTEGER,
     "professionalQualifications" TEXT,
     "stripeCustomerId" TEXT NOT NULL,
+    "stripeConnectId" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -300,6 +302,9 @@ ALTER TABLE "Message" ADD CONSTRAINT "Message_reciverId_fkey" FOREIGN KEY ("reci
 
 -- AddForeignKey
 ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_tradesManId_fkey" FOREIGN KEY ("tradesManId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
+// import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
+import { CreateCategoryDto } from './dto/create-category.dto';
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}

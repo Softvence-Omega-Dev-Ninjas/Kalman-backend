@@ -1,19 +1,27 @@
-// create-category.dto.ts
-import {
-  IsString,
-  IsNotEmpty,
-  IsArray,
-  IsOptional,
-  IsUrl,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateCategoryDto {
+  @ApiProperty({ example: 'Sample Item' })
   @IsString()
   @IsNotEmpty()
   name: string;
 
+  @ApiProperty({ example: ['tag1', 'tag2'] })
   @IsArray()
-//   @IsString({ each: true })
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
+  subCategories: string[];
+
+  @ApiProperty({
+    description: 'Image file URL or base64 string',
+    type: 'string',
+    format: 'binary'
+   
+  })
+  @IsString()
   @IsOptional()
-  subCategories?: string[];
+  image: string;
 }

@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Query,
+  Req,
 } from '@nestjs/common';
 import { TradesmanService } from './tradesman.service';
 import { CreateTradesManDto } from './dto/create-tradesman.dto';
@@ -160,7 +161,7 @@ export class TradesmanController {
     description: 'Filter tradesmen by category',
     example: 'Electrician',
   })
-  findAll(
+  async findAll(
     @Query()
     query: {
       limit: string;
@@ -172,6 +173,14 @@ export class TradesmanController {
     return this.tradesmanService.findAll(query);
   }
 
+  @Get('overview')
+  async getOverview(@Req() req: any) {
+    const user = req.user;
+    console.log({ user });
+    const result = await this.tradesmanService.getOverView(user?.id);
+    return result;
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
@@ -180,11 +189,15 @@ export class TradesmanController {
 
   @Patch(':id')
   @Public()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   update(
     @Param('id') id: string,
     @Body() updateTradesmanDto: UpdateTradesManDto,
+    @UploadedFiles()
+    files?: { images: Express.Multer.File[] },
   ) {
-    return this.tradesmanService.update(id, updateTradesmanDto);
+    return this.tradesmanService.update(id, updateTradesmanDto, files);
   }
 
   @Delete(':id')
