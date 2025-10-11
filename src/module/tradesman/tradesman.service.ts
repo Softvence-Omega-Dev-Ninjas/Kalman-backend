@@ -72,12 +72,9 @@ export class TradesmanService {
         restData?.email,
       );
 
-      // 9️⃣ Generate Stripe login link for Express account verification
-      // const loginLink = await this.stripeService.createLoginLink(
-      //   stripeConnect.id,
-      // );
-
-      // console.log({ stripeConnect, loginLink });
+      const onboardingUrl = await this.stripeService.createOnboardingLink(
+        stripeConnect.id,
+      );
 
       restData.zipCode = Number(restData?.zipCode);
       delete restData.credential;
@@ -152,7 +149,10 @@ export class TradesmanService {
       return {
         success: true,
         message: 'Tradesman created successfully',
-        data: tradesman,
+        data: {
+          tradesman,
+          onboardingUrl,
+        },
       };
     } catch (error) {
       console.error({ error });
@@ -171,13 +171,7 @@ export class TradesmanService {
 
     const tradesManId = tradesman.id;
 
-    // 📅 Define time periods
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
-    const startOfYear = new Date(now.getFullYear(), 0, 1);
-
-    // 🧾 Fetch my accepted proposals
+    
     const myShortlist = await this.prisma.proposal.findMany({
       where: {
         tradesManId,
@@ -187,112 +181,40 @@ export class TradesmanService {
         user: true,
         jobs: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
+    const participate = await this.prisma.proposal.count({
+      where: { tradesManId },
+    });
     // 🕒 Fetch recent accepted proposals
     const recentShortlist = await this.prisma.proposal.findMany({
       where: { status: 'ACCEPTED' },
       orderBy: { createdAt: 'desc' },
-      take: 3,
       include: {
         jobs: true,
         user: true,
       },
     });
-
-    // 📊 === ACTIVITY (All proposals created by this tradesman) ===
-    const [activityMonth, activity6Month, activityYear] = await Promise.all([
-      this.prisma.proposal.count({
-        where: {
-          tradesManId,
-          createdAt: { gte: startOfMonth },
-        },
-      }),
-      this.prisma.proposal.count({
-        where: {
-          tradesManId,
-          createdAt: { gte: sixMonthsAgo },
-        },
-      }),
-      this.prisma.proposal.count({
-        where: {
-          tradesManId,
-          createdAt: { gte: startOfYear },
-        },
-      }),
-    ]);
-
-    // ✅ === COMPLETED JOBS (Jobs where isComplete = true) ===
-    const [completedMonth, completed6Month, completedYear] = await Promise.all([
-      this.prisma.jobs.count({
-        where: {
-          isComplete: true,
-          updatedAt: { gte: startOfMonth },
-          proposal: { some: { tradesManId } },
-        },
-      }),
-      this.prisma.jobs.count({
-        where: {
-          isComplete: true,
-          updatedAt: { gte: sixMonthsAgo },
-          proposal: { some: { tradesManId } },
-        },
-      }),
-      this.prisma.jobs.count({
-        where: {
-          isComplete: true,
-          updatedAt: { gte: startOfYear },
-          proposal: { some: { tradesManId } },
-        },
-      }),
-    ]);
-
-    // ⭐ === SHORTLISTED (Accepted proposals) ===
-    const [shortlistedMonth, shortlisted6Month, shortlistedYear] =
-      await Promise.all([
-        this.prisma.proposal.count({
-          where: {
-            tradesManId,
-            status: 'ACCEPTED',
-            createdAt: { gte: startOfMonth },
-          },
-        }),
-        this.prisma.proposal.count({
-          where: {
-            tradesManId,
-            status: 'ACCEPTED',
-            createdAt: { gte: sixMonthsAgo },
-          },
-        }),
-        this.prisma.proposal.count({
-          where: {
-            tradesManId,
-            status: 'ACCEPTED',
-            createdAt: { gte: startOfYear },
-          },
-        }),
-      ]);
+    const invitations = await this.prisma.invitation.findMany({
+      where: {
+        tradesManId,
+      },
+      include: {
+        job: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
     return {
       myShortlist,
       recentShortlist,
-      stats: {
-        activity: {
-          month: activityMonth,
-          sixMonths: activity6Month,
-          year: activityYear,
-        },
-        completed: {
-          month: completedMonth,
-          sixMonths: completed6Month,
-          year: completedYear,
-        },
-        shortlisted: {
-          month: shortlistedMonth,
-          sixMonths: shortlisted6Month,
-          year: shortlistedYear,
-        },
-      },
+      participate,
+      invitations,
     };
   }
 

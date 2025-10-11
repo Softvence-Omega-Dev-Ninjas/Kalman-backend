@@ -6,20 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ProposalService } from './proposal.service';
 import { CreateProposalDto } from './dto/create-proposal.dto';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
-import { Public } from 'src/common/decorators/public.decorator';
+import { Request } from 'express';
 
 @Controller('proposal')
 export class ProposalController {
   constructor(private readonly proposalService: ProposalService) {}
 
   @Post()
-  @Public()
-  create(@Body() createProposalDto: CreateProposalDto) {
-    return this.proposalService.create(createProposalDto);
+  // @Public()
+  create(@Body() createProposalDto: CreateProposalDto, @Req() req: any) {
+    return this.proposalService.create(createProposalDto, req.user);
   }
 
   @Get()
@@ -36,9 +37,10 @@ export class ProposalController {
   update(
     @Param('id') id: string,
     @Body() updateProposalDto: UpdateProposalDto,
+    @Req() req: any,
   ) {
     console.log({ updateProposalDto });
-    return this.proposalService.update(id, updateProposalDto);
+    return this.proposalService.update(id, updateProposalDto, req.user);
   }
 
   @Delete(':id')

@@ -1,5 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateProposalDto } from './create-proposal.dto';
-import { ProposalStatus } from '@prisma/client';
+import { $Enums } from '@prisma/client';
 
-export class UpdateProposalDto extends PartialType(CreateProposalDto) {}
+export class UpdateProposalDto extends PartialType(CreateProposalDto) {
+  status?: $Enums.ProposalStatus | undefined;
+}

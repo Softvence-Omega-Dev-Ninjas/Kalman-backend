@@ -22,6 +22,8 @@ model TradesMan {
   serviceArea            ServiceArea?
   paymentMethod          PaymentMethod?
   review                 Review[]
+  payments               Payment[]
+  invitations            Invitation[]
   userId                 String @unique 
   user                   User @relation(fields: [userId], references: [id])
   proposal               Proposal[]
