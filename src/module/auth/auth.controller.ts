@@ -2,7 +2,7 @@ import { Controller, Post, Body, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { Public } from 'src/common/decorators/public.decorator';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { SendOtpDTO } from './dto/otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { ResetPassworDto } from './dto/reset_pass.dto';
@@ -82,5 +82,17 @@ export class AuthController {
   async resetPassword(@Body() resetPassDto: ResetPassworDto, @Req() req: any) {
     const user = req.user;
     return this.authService.reset_password(resetPassDto, user);
+  }
+
+  @Post('admin-login')
+  @Public()
+  @ApiOperation({summary:"By this api just admin can login to system"})
+  async adminLogin(@Body() loginDto: LoginDto) {
+    const res = await this.authService.adminLogin(loginDto);
+    return {
+      message: 'User logged in successfully',
+      status: 200,
+      data: res,
+    };
   }
 }
