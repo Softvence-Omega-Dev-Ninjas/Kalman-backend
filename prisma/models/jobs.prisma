@@ -26,6 +26,9 @@ model Jobs {
   category       Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   subCategories   String[]
+
+  payments Payment[]
+  invitations Invitation[]
 }
 
 model Job_Activity {

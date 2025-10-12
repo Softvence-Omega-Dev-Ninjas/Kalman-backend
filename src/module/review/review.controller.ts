@@ -6,20 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
-  @Public()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  create(@Body() createReviewDto: CreateReviewDto, @Req() req: any) {
+    const user = req?.user;
+    console.log({ userwefs: user });
+    return this.reviewService.create(createReviewDto, user?.id);
   }
 
   @Get()

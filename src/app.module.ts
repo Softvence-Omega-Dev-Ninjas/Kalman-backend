@@ -18,8 +18,8 @@ import { NewsLetterModule } from './module/news-letter/news-letter.module';
 import { ChatModule } from './module/chat/chat.module';
 import { ReviewModule } from './module/review/review.module';
 import { CategoryModule } from './module/category/category.module';
-// import { CategoryModule } from './mudule/category/category.module';
-// import { CategoryModule } from './module/category/category.module';
+import { ProposalModule } from './module/proposal/proposal.module';
+import { InvitationModule } from './module/invitation/invitation.module';
 
 @Module({
   imports: [
@@ -38,6 +38,8 @@ import { CategoryModule } from './module/category/category.module';
     ChatModule,
     ReviewModule,
     CategoryModule,
+    ProposalModule,
+    InvitationModule,
   ],
   providers: [SeederService],
 })

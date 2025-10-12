@@ -1,0 +1,19 @@
+model Payment {
+    id String @id @default(uuid())
+    jobId String 
+    job   Jobs @relation(fields: [jobId], references: [id])
+
+    amount  Float
+    transactionId String
+    tradesManId String
+    tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
+    type PaymentType @default(SHORTLISTED_FEE)
+
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+}
+
+enum PaymentType {
+    SHORTLISTED_FEE
+    TASK_COMPLETE_FEE
+}
