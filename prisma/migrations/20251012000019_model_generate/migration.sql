@@ -2,6 +2,9 @@
 CREATE TYPE "CustomerStatus" AS ENUM ('ACTIVE', 'SUSPENDED', 'DEACTIVE');
 
 -- CreateEnum
+CREATE TYPE "PaymentType" AS ENUM ('SHORTLISTED_FEE', 'TASK_COMPLETE_FEE');
+
+-- CreateEnum
 CREATE TYPE "ProposalStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
 -- CreateEnum
@@ -9,6 +12,20 @@ CREATE TYPE "Role" AS ENUM ('ADMIN', 'CUSTOMER', 'TRADESMAN');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('PENDING', 'COMPLETE');
+
+-- CreateTable
+CREATE TABLE "Admin_activity" (
+    "id" TEXT NOT NULL,
+    "maximum_attempt" INTEGER,
+    "session_timeout" INTEGER,
+    "maintenance_mode" BOOLEAN NOT NULL DEFAULT false,
+    "new_registration" BOOLEAN NOT NULL DEFAULT false,
+    "admin_notication" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Admin_activity_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Blog" (
@@ -45,6 +62,18 @@ CREATE TABLE "Commision" (
     "updateAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Commision_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Invitation" (
+    "id" TEXT NOT NULL,
+    "jobId" TEXT NOT NULL,
+    "tradesManId" TEXT NOT NULL,
+    "messgae" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Invitation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -99,7 +128,8 @@ CREATE TABLE "Message" (
     "id" TEXT NOT NULL,
     "senderId" TEXT NOT NULL,
     "reciverId" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
+    "message" TEXT,
+    "file" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
@@ -116,6 +146,20 @@ CREATE TABLE "News_letter" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "News_letter_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Payment" (
+    "id" TEXT NOT NULL,
+    "jobId" TEXT NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "transactionId" TEXT NOT NULL,
+    "tradesManId" TEXT NOT NULL,
+    "type" "PaymentType" NOT NULL DEFAULT 'SHORTLISTED_FEE',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -249,6 +293,8 @@ CREATE TABLE "User" (
     "verification" "Status" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "max_login_attampt" INTEGER NOT NULL DEFAULT 0,
+    "suspenstion_time" TIMESTAMP(3),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -281,6 +327,12 @@ CREATE UNIQUE INDEX "PaymentMethod_userId_key" ON "PaymentMethod"("userId");
 ALTER TABLE "Blog" ADD CONSTRAINT "Blog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Invitation" ADD CONSTRAINT "Invitation_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Invitation" ADD CONSTRAINT "Invitation_tradesManId_fkey" FOREIGN KEY ("tradesManId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Jobs" ADD CONSTRAINT "Jobs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -303,6 +355,12 @@ ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("sende
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_reciverId_fkey" FOREIGN KEY ("reciverId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_tradesManId_fkey" FOREIGN KEY ("tradesManId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Proposal" ADD CONSTRAINT "Proposal_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
