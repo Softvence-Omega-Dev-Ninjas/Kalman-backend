@@ -19,6 +19,8 @@ export class AdminController {
   get_dasboard(){
     return this.adminService.get_dashboard()
   }
+
+
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
@@ -96,4 +98,6 @@ export class AdminController {
   async get_platfrom_performence() {
     return this.adminService.get_platfrom_performence()
   }
+
+  
 }

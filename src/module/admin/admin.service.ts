@@ -183,6 +183,11 @@ async get_dashboard() {
       })
       const totalJobs=await this.prisma.jobs.count()
       const jobCompilationRate=(totalCompletedJobs/totalJobs)*100
+      const avg_ratting=await this.prisma.review.aggregate({
+        _avg:{
+          rating:true
+        }
+      })
       
   return {
     totalUser,
@@ -192,7 +197,8 @@ async get_dashboard() {
     montlyRevenue:totalRevenueThisMonth._sum.amount,
     totalRevenue:totalRevenue._sum.amount,
     totlaVerifiedTradesman,
-    jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%"
+    jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%",
+    avg_ratting:avg_ratting._avg.rating
   };
 }
 
