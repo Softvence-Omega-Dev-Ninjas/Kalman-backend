@@ -149,6 +149,22 @@ async get_dashboard() {
     },
   });
 
+  const totalRevenue=await this.prisma.payment.aggregate({
+    _sum:{
+      amount:true
+    }
+  })
+
+  const totalRevenueThisMonth=await this.prisma.payment.aggregate({
+    where:{
+      createdAt:{
+        gte:startOfThisMonth
+      }
+    },
+    _sum:{
+      amount:true
+    }
+  })
   // Calculate growth percentage safely
   const userGrowth =
     lastMonthUserCount === 0
@@ -173,8 +189,8 @@ async get_dashboard() {
     totalCompletedJobs,
     userGrowth: userGrowth.toFixed(2) + '%',
     jobGrowth: jobGrowth.toFixed(2) + '%',
-    montlyRevenue:0,
-    totalRevenue:0,
+    montlyRevenue:totalRevenueThisMonth._sum.amount,
+    totalRevenue:totalRevenue._sum.amount,
     totlaVerifiedTradesman,
     jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%"
   };
@@ -223,5 +239,51 @@ async set_system_activity(systemActivity:SystemActivityDto){
   })
   return res
  }
+}
+
+// get payments history of this platfrom
+async get_all_payments(){
+  const payments=await this.prisma.payment.findMany({
+    orderBy:{
+      createdAt:'desc'
+    },
+    include:{
+      tradesMan:true,
+      job:true,
+    }
+  })
+  return payments
+}
+
+
+// get plaftform performence
+async get_platfrom_performence(){
+  const [totalJobs,totalTradesMan,AllShortList,reviews,totalUser]=await Promise.all([
+     this.prisma.jobs.count(),
+     this.prisma.proposal.count(),
+     this.prisma.proposal.count({
+      where:{
+        status:'ACCEPTED'
+      }
+     }),
+     this.prisma.review.count({
+      where:{
+        rating:{
+          gte:3
+        }
+      }
+     }  
+     ),
+     this.prisma.user.count(),
+    
+  ])
+  const aplicationRate=(totalTradesMan/totalJobs)*100
+  const shortListRate=(AllShortList/totalJobs)*100
+  const satisfiedCustomerRate=(reviews/totalUser)*100
+  return{
+    aplicationRate:aplicationRate.toFixed(2)+"%",
+    shortListRate:shortListRate.toFixed(2)+"%",
+    satisfiedCustomer:satisfiedCustomerRate.toFixed(2)+"%"
+  }
 }
 }
