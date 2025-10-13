@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCommisionDto } from './dto/create-commision.dto';
-import { UpdateCommisionDto } from './dto/update-commision.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CommisionService {
   constructor(private prisma:PrismaService){}
 
+  // create the commission if alredy exist the commision will update
  async create(createCommisionDto: CreateCommisionDto) {
   const comTable=await this.prisma.commision.findFirst()
   if(comTable){
@@ -32,6 +32,7 @@ export class CommisionService {
     return res
   }
 
+  // get commision table to admin table
   async getCommisionRate(){
     const res=await this.prisma.commision.findFirst()
     return res

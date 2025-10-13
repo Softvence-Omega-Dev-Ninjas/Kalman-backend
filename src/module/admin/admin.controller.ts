@@ -99,5 +99,11 @@ export class AdminController {
     return this.adminService.get_platfrom_performence()
   }
 
-  
+  @Get('top-category-service')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async get_top_category_service() {
+    return this.adminService.get_top_category_service()
+  }
+
 }

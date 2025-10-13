@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetAllUserDto } from './dto/getAllUser.dto';
 import { SystemActivityDto } from './dto/system_activity.dto';
-import e from 'express';
 
 @Injectable()
 export class AdminService {
 constructor(private readonly prisma: PrismaService) {}
 
+// find all user by admin
   async find_all_users(filterDto: GetAllUserDto) {
     const { page=1, limit=10 } = filterDto;
     const skip = (page - 1) * limit;
@@ -29,6 +29,8 @@ constructor(private readonly prisma: PrismaService) {}
     return users;
   }
 
+
+// admin can see the single user details
   async user_details(id: string) {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -39,7 +41,7 @@ constructor(private readonly prisma: PrismaService) {}
   }
 
 
-
+// admin can remore any user from his platform
   remove(id:string) {
     const res = this.prisma.user.delete({
       where: {
@@ -54,8 +56,7 @@ constructor(private readonly prisma: PrismaService) {}
 
 
 
-
-
+// find all jobs by admin
   async find_all_jobs(filterDto: GetAllUserDto) {
     const { page=1, limit=10 } = filterDto;
     const skip = (page - 1) * limit;
@@ -71,6 +72,9 @@ constructor(private readonly prisma: PrismaService) {}
     return jobs;
   }
 
+
+
+// admin can see single job details
   async job_details(id: string) {
     const job = await this.prisma.jobs.findFirst({
       where: {
@@ -81,7 +85,7 @@ constructor(private readonly prisma: PrismaService) {}
   }
 
 
-
+// admin can remove any job from his platfrom
   async remove_job(id:string) {
     const res = await this.prisma.jobs.delete({
       where: {
@@ -96,6 +100,8 @@ constructor(private readonly prisma: PrismaService) {}
 
 
 
+
+// get all dashboard stats
 async get_dashboard() {
   // Current date and last month's date
   const now = new Date();
@@ -128,7 +134,6 @@ async get_dashboard() {
       },
     },
   });
-
   // Counts for this month
   const thisMonthUserCount = await this.prisma.user.count({
     where: {
@@ -202,6 +207,9 @@ async get_dashboard() {
   };
 }
 
+
+
+// get system status
 async get_system_status(){
   const totalUser = await this.prisma.user.count({
     where:{
@@ -210,14 +218,32 @@ async get_system_status(){
       }
     }
   });
+  const totalJobs = await this.prisma.jobs.count({
+    where:{
+      createdAt:{
+        gte:new Date(new Date().setDate(new Date().getDate() - 1))
+      }
+    }
+  });
+
+  const lastJobCompleted = await this.prisma.jobs.findFirst({
+    where:{
+      isComplete:true
+    },
+    orderBy:{
+      createdAt:'desc'
+    }
+  })
   return {
-    lastSavenDayUser:totalUser
+    lastSavenDayUser:totalUser,
+    lastOneDayTotalJobs:totalJobs,
+    lastJobCompleted:lastJobCompleted
   }
 }
 
 
-// set the system activity of this platfomr
 
+// set the system activity of this platfomr
 async set_system_activity(systemActivity:SystemActivityDto){
   
  const activity_table=await this.prisma.admin_activity.findFirst()
@@ -247,6 +273,9 @@ async set_system_activity(systemActivity:SystemActivityDto){
  }
 }
 
+
+
+
 // get payments history of this platfrom
 async get_all_payments(){
   const payments=await this.prisma.payment.findMany({
@@ -260,6 +289,8 @@ async get_all_payments(){
   })
   return payments
 }
+
+
 
 
 // get plaftform performence
@@ -292,4 +323,30 @@ async get_platfrom_performence(){
     satisfiedCustomer:satisfiedCustomerRate.toFixed(2)+"%"
   }
 }
+
+
+
+
+// get top category service with job percentage for every product
+async get_top_category_service() {
+  const categories = await this.prisma.category.findMany({
+    include: {
+      _count: {
+        select: { jobs: true },
+      },
+    },
+  });
+  const totalJobs = categories.reduce((sum, cat) => sum + cat._count.jobs, 0);
+
+  const categoriesWithPercentage = categories.map((cat) => {
+    const percentage = totalJobs > 0 ? (cat._count.jobs / totalJobs) * 100 : 0;
+    return {
+      catgoreName:cat.name,
+      jobPercentage: parseFloat(percentage.toFixed(2)),
+    };
+  });
+
+  return categoriesWithPercentage;
+}
+
 }

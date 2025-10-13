@@ -19,6 +19,9 @@ export class AuthService {
     private otpTemplate: OtpTemplateService,
     private jwtService: JwtService,
   ) {}
+
+  
+  // sing up logic
   async signUp(createAuthDto: CreateAuthDto) {
     const { email, phone, password } = createAuthDto;
 
@@ -60,10 +63,14 @@ export class AuthService {
     return user;
   }
 
+
+  // send otp by phone
   async send_otp(otpDto: SendOtpDTO) {
     const { phone } = otpDto;
     await this.twilio.sendOtp(phone, '1234');
   }
+
+
 
   // login user by email and password
   async login(loginDto: LoginDto) {
@@ -177,6 +184,8 @@ export class AuthService {
     };
   }
 
+
+
   // verfiy all email otp from this service
   async verify_otp_by_email(otp: number) {
     const isExistUser = await this.prisma.user.findFirst({
@@ -201,6 +210,8 @@ export class AuthService {
       message: 'OTP verified successfully',
     };
   }
+
+
 
   // reset password by email
   async reset_password(resetPassDto: ResetPassworDto, user: any) {
@@ -303,4 +314,5 @@ export class AuthService {
 
     return token;
   }
+
 }
