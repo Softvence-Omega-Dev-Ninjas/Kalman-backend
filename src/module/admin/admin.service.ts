@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetAllUserDto } from './dto/getAllUser.dto';
+import { SystemActivityDto } from './dto/system_activity.dto';
+import e from 'express';
 
 @Injectable()
 export class AdminService {
@@ -178,4 +180,48 @@ async get_dashboard() {
   };
 }
 
+async get_system_status(){
+  const totalUser = await this.prisma.user.count({
+    where:{
+      createdAt:{
+        gte:new Date(new Date().setDate(new Date().getDate() - 7))
+      }
+    }
+  });
+  return {
+    lastSavenDayUser:totalUser
+  }
+}
+
+
+// set the system activity of this platfomr
+
+async set_system_activity(systemActivity:SystemActivityDto){
+  
+ const activity_table=await this.prisma.admin_activity.findFirst()
+ if(activity_table){
+  const res=await this.prisma.admin_activity.update({
+    where:{
+      id:activity_table.id
+    },
+    data:{
+      maximum_attempt:systemActivity.maximum_attempt,
+      session_timeout:systemActivity.session_timeout,
+      maintenance_mode:systemActivity.maintenance_mode,
+      new_registration:systemActivity.new_registration
+    }
+  })
+  return res
+ }else{
+  const res=await this.prisma.admin_activity.create({
+    data:{
+      maximum_attempt:systemActivity.maximum_attempt,
+      session_timeout:systemActivity.session_timeout,
+      maintenance_mode:systemActivity.maintenance_mode,
+      new_registration:systemActivity.new_registration
+    }
+  })
+  return res
+ }
+}
 }

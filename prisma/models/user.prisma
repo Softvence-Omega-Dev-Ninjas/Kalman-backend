@@ -26,6 +26,8 @@ model User {
     blog Blog[]
     sendMessage Message[] @relation("SentMessages")
     reciveMessage Message[] @relation("ReceivedMessages")
+    max_login_attampt Int @default(0)
+    suspenstion_time DateTime?
 } 
 
 enum Role {

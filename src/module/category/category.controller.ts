@@ -11,11 +11,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+// import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -25,45 +26,35 @@ export class CategoryController {
   @Public()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiBody({
-    description: 'Create Category with image',
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        subCategories: {
-          type: 'array',
-          items: { type: 'string' },
-          example: ['sub1', 'sub2'],
-        },
-        image: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-      required: ['name', 'image'],
-    },
-  })
   async create(
-    @Body() createCategoryDto: any,
+    @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const parseJSONField = (field: string) => {
-      try {
-        return field ? JSON.parse(field) : undefined;
-      } catch (err) {
-        console.warn(`Failed to parse ${field}:`, err);
-        return undefined;
-      }
-    };
-    const parsedCategory = parseJSONField(createCategoryDto.subCategories);
-    // console.log({ createCategoryDto, parsedCategory, file });
-    // return createCategoryDto;
-    return this.categoryService.create(
-      { name: createCategoryDto?.name, subCategories: parsedCategory },
-      file,
-    );
+    return this.categoryService.create(createCategoryDto, file);
   }
+  @Get()
+  @Public()
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: String,
+    description: 'Number of records to return per page',
+    example: '10',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: String,
+    description: 'Number of records to skip (for pagination)',
+    example: '1',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search tradesmen by name, email, or any related field',
+    example: 'Category 1',
+  })
   @Get()
   @Public()
   @ApiQuery({

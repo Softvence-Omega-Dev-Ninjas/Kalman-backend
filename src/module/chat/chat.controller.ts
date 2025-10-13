@@ -1,8 +1,12 @@
-import { Controller, Get, Param, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Message } from '@prisma/client';
 import { Public } from 'src/common/decorators/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { buildFileUrl } from 'src/helpers/urlBuilder';
 
 @Controller('chat')
 export class ChatController {
@@ -36,5 +40,32 @@ export class ChatController {
   async getChatPartners(@Req() req:any) {
     const userId = req.user.id;
     return this.chatService.getChatPartnersWithUser(userId);
+  }
+
+   @Post('upload')
+   @Public()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads', // VPS folder
+        filename: (req, file, cb) => {
+          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueName + extname(file.originalname));
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith('image/')) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    
+    const buildUrl=buildFileUrl(file.filename)
+    console.log(buildUrl);
+    return { url:buildUrl};
   }
 }

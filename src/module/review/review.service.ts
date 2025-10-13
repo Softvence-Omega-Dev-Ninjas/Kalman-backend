@@ -5,16 +5,24 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class ReviewService {
   constructor(private prisma: PrismaService) {}
-  async create(createReviewDto: CreateReviewDto) {
+  async create(createReviewDto: CreateReviewDto, id: string) {
     const result = await this.prisma.review.create({
-      data: createReviewDto,
+      data: {
+        ...createReviewDto,
+        customerId: id,
+      },
     });
 
     return result;
   }
 
   async findAll() {
-    const result = await this.prisma.review.findMany({});
+    const result = await this.prisma.review.findMany({
+      include: {
+        customer: true,
+        tradesMan: true,
+      },
+    });
     return result;
   }
 
@@ -22,6 +30,10 @@ export class ReviewService {
     const result = await this.prisma.review.findMany({
       where: {
         tradesManId: id,
+      },
+      include: {
+        customer: true,
+        tradesMan: true,
       },
     });
     if (!result) {

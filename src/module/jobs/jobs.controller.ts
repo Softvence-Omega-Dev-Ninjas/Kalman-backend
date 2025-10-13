@@ -30,11 +30,10 @@ import { fileStorageOptions } from 'src/utils/index.multer';
 
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {} 
+  constructor(private readonly jobsService: JobsService) {}
 
   @Post()
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
-  // @Public()
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new job posting with multiple images.' })
   @ApiBody({

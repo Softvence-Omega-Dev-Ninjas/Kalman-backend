@@ -7,8 +7,8 @@ import { TransformInterceptor } from './common/interceptor/response.interceptor'
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './module/prisma/prisma.service';
 import { JwtGuard } from './common/guard/jwt.guard';
-import { RolesGuard } from './common/guard/roles.guard';
 import * as fs from 'fs';
+import { MaintenanceGuard } from './common/guard/maintence.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -39,7 +39,8 @@ async function bootstrap() {
   const prisma = app.get(PrismaService);
 
   app.useGlobalGuards(
-    new JwtGuard(reflector, prisma)
+    new JwtGuard(reflector, prisma),
+    new MaintenanceGuard(prisma)
   );
 
   app.useGlobalPipes(
@@ -52,11 +53,11 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: ["http://localhost:3001"],
+    origin: ["http://localhost:3000"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 5000);
 }
 
 bootstrap();

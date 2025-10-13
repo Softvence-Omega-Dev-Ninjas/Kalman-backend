@@ -68,6 +68,14 @@ export class TradesmanService {
         restData?.firstName + ' ' + restData?.lastName,
       );
 
+      const stripeConnect = await this.stripeService.createConnectedAccount(
+        restData?.email,
+      );
+
+      const onboardingUrl = await this.stripeService.createOnboardingLink(
+        stripeConnect.id,
+      );
+
       restData.zipCode = Number(restData?.zipCode);
       delete restData.credential;
       const tradesman = await this.prisma.tradesMan.create({
@@ -76,6 +84,8 @@ export class TradesmanService {
           userId: isUserExist?.id,
 
           stripeCustomerId: stripeCustomer?.id,
+          stripeConnectId: stripeConnect.id,
+          // images: undefined,
           docs: docs
             ? {
                 create: {
@@ -139,7 +149,10 @@ export class TradesmanService {
       return {
         success: true,
         message: 'Tradesman created successfully',
-        data: tradesman,
+        data: {
+          tradesman,
+          onboardingUrl,
+        },
       };
     } catch (error) {
       console.error({ error });
@@ -147,6 +160,62 @@ export class TradesmanService {
         error?.response || 'Failed to create tradesman',
       );
     }
+  }
+
+  async getOverView(id: string) {
+    const tradesman = await this.prisma.tradesMan.findUnique({
+      where: { userId: id },
+    });
+
+    if (!tradesman) throw new Error('Tradesman not found');
+
+    const tradesManId = tradesman.id;
+
+    
+    const myShortlist = await this.prisma.proposal.findMany({
+      where: {
+        tradesManId,
+        status: 'ACCEPTED',
+      },
+      include: {
+        user: true,
+        jobs: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const participate = await this.prisma.proposal.count({
+      where: { tradesManId },
+    });
+    // 🕒 Fetch recent accepted proposals
+    const recentShortlist = await this.prisma.proposal.findMany({
+      where: { status: 'ACCEPTED' },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        jobs: true,
+        user: true,
+      },
+    });
+    const invitations = await this.prisma.invitation.findMany({
+      where: {
+        tradesManId,
+      },
+      include: {
+        job: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return {
+      myShortlist,
+      recentShortlist,
+      participate,
+      invitations,
+    };
   }
 
   async findAll(query: Record<string, unknown>) {
@@ -219,162 +288,50 @@ export class TradesmanService {
 
   async update(
     id: string,
-    updateTradesmanDto: any,
-    files?: Express.Multer.File[],
+    updateTradesmanDto: UpdateTradesManDto,
+    files?: { images: Express.Multer.File[] },
   ) {
-    const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
-      updateTradesmanDto;
-    console.log({ updateTradesmanDto });
-    try {
-      // Check if the tradesman exists
-      const existingTradesman = await this.prisma.tradesMan.findUnique({
-        where: { id },
-        include: {
-          docs: true,
-          businessDetail: true,
-          serviceArea: true,
-          paymentMethod: true,
-        },
-      });
-
-      if (!existingTradesman) {
-        throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
-      }
-
-      // --- Handle file updates ---
-      let docUrl = existingTradesman.docs?.url;
-      if (files?.find((el) => el.fieldname === 'doc')) {
-        docUrl = await saveFileAndGetUrl(
-          files.find((el) => el.fieldname === 'doc')!,
-        );
-      }
-
-      if (files?.find((el) => el.fieldname === 'credential')) {
-        restData.professionalQualifications = await saveFileAndGetUrl(
-          files.find((el) => el.fieldname === 'credential')!,
-        );
-      }
-
-      restData.zipCode = Number(restData?.zipCode);
-      delete restData.credential;
-
-      // --- Update tradesman with nested relations ---
-      const updatedTradesman = await this.prisma.tradesMan.update({
-        where: { id },
-        data: {
-          ...restData,
-
-          docs: docs
-            ? {
-                upsert: {
-                  create: {
-                    type: docs.type,
-                    url: docUrl,
-                  },
-                  update: {
-                    type: docs.type,
-                    url: docUrl,
-                  },
-                },
-              }
-            : undefined,
-
-          businessDetail: businessDetail
-            ? {
-                upsert: {
-                  create: {
-                    businessName: businessDetail.businessName,
-                    yearsOfExperience: businessDetail.yearsOfExperience,
-                    businessType: businessDetail.businessType,
-                    hourlyRate: businessDetail.hourlyRate,
-                    services: businessDetail.services,
-                    professionalDescription:
-                      businessDetail.professionalDescription,
-                  },
-                  update: {
-                    businessName: businessDetail.businessName,
-                    yearsOfExperience: businessDetail.yearsOfExperience,
-                    businessType: businessDetail.businessType,
-                    hourlyRate: businessDetail.hourlyRate,
-                    services: businessDetail.services,
-                    professionalDescription:
-                      businessDetail.professionalDescription,
-                  },
-                },
-              }
-            : undefined,
-
-          serviceArea: serviceArea
-            ? {
-                upsert: {
-                  create: {
-                    address: serviceArea.address,
-                    latitude: serviceArea.latitude,
-                    longitude: serviceArea.longitude,
-                    radius: serviceArea.radius,
-                  },
-                  update: {
-                    address: serviceArea.address,
-                    latitude: serviceArea.latitude,
-                    longitude: serviceArea.longitude,
-                    radius: serviceArea.radius,
-                  },
-                },
-              }
-            : undefined,
-
-          paymentMethod: paymentMethod
-            ? {
-                upsert: {
-                  create: {
-                    methodType: paymentMethod.methodType,
-                    provider: paymentMethod.provider,
-                    cardHolderName: paymentMethod.cardHolderName,
-                    cardNumber: paymentMethod.cardNumber,
-                    expiryDate: paymentMethod.expiryDate,
-                    cvv: paymentMethod.cvv,
-                    saveCard: paymentMethod.saveCard,
-                    streetAddress: paymentMethod.streetAddress,
-                    city: paymentMethod.city,
-                    postCode: paymentMethod.postCode,
-                    agreedToTerms: paymentMethod.agreedToTerms,
-                  },
-                  update: {
-                    methodType: paymentMethod.methodType,
-                    provider: paymentMethod.provider,
-                    cardHolderName: paymentMethod.cardHolderName,
-                    cardNumber: paymentMethod.cardNumber,
-                    expiryDate: paymentMethod.expiryDate,
-                    cvv: paymentMethod.cvv,
-                    saveCard: paymentMethod.saveCard,
-                    streetAddress: paymentMethod.streetAddress,
-                    city: paymentMethod.city,
-                    postCode: paymentMethod.postCode,
-                    agreedToTerms: paymentMethod.agreedToTerms,
-                  },
-                },
-              }
-            : undefined,
-        },
-        include: {
-          docs: true,
-          businessDetail: true,
-          serviceArea: true,
-          paymentMethod: true,
-        },
-      });
-
-      return {
-        success: true,
-        message: 'Tradesman updated successfully',
-        data: updatedTradesman,
-      };
-    } catch (error) {
-      console.error({ error });
-      throw new BadRequestException(
-        error?.response || 'Failed to update tradesman',
+    // let arr: string[] = [];
+    const data: {
+      images?: string[];
+      phoneNumber?: string;
+      email?: string;
+      firstName?: string;
+      profession?: string;
+      bio?: string;
+      city?: string;
+      state?: string;
+      zipCode?: number;
+      street?: string;
+    } = {};
+    console.log({ files });
+    let imagesLinks = [];
+    data.images = imagesLinks;
+    data.phoneNumber = updateTradesmanDto?.phone;
+    ((data.email = updateTradesmanDto?.email),
+      (data.firstName = updateTradesmanDto?.fullName));
+    data.profession = updateTradesmanDto?.profession;
+    data.bio = updateTradesmanDto?.bio;
+    data.city = updateTradesmanDto?.city;
+    data.state = updateTradesmanDto?.state;
+    data.zipCode = updateTradesmanDto?.zipCode;
+    data.street = updateTradesmanDto?.street;
+    if (files?.images) {
+      const arr = await Promise.all(
+        files.images.map(async (el) => {
+          return await saveFileAndGetUrl(el);
+        }),
       );
+      data.images = arr;
+      console.log({ arr });
     }
+    const result = await this.prisma.tradesMan.update({
+      where: {
+        userId: id,
+      },
+      data,
+    });
+    return result;
   }
 
   remove(id: number) {
