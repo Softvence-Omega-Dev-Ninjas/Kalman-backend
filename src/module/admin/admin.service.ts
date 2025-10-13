@@ -134,6 +134,15 @@ async get_dashboard() {
       },
     },
   });
+
+  const totalRevenueLastMonth=await this.prisma.payment.count({
+    where:{
+      createdAt:{
+        gte:startOfLastMonth,
+        lte:endOfLastMonth
+      }
+    }
+    })
   // Counts for this month
   const thisMonthUserCount = await this.prisma.user.count({
     where: {
@@ -163,13 +172,16 @@ async get_dashboard() {
   const totalRevenueThisMonth=await this.prisma.payment.aggregate({
     where:{
       createdAt:{
-        gte:startOfThisMonth
+        gte:startOfThisMonth,
+        lte:now
       }
     },
     _sum:{
       amount:true
     }
   })
+ const revenueGrowth=
+  totalRevenueLastMonth===0?100:((totalRevenueThisMonth._sum.amount!-totalRevenueLastMonth)/totalRevenueLastMonth)*100
   // Calculate growth percentage safely
   const userGrowth =
     lastMonthUserCount === 0
@@ -200,6 +212,7 @@ async get_dashboard() {
     userGrowth: userGrowth.toFixed(2) + '%',
     jobGrowth: jobGrowth.toFixed(2) + '%',
     montlyRevenue:totalRevenueThisMonth._sum.amount,
+    revenueGrowth:revenueGrowth.toFixed(2)+"%",
     totalRevenue:totalRevenue._sum.amount,
     totlaVerifiedTradesman,
     jobCompilationRatePercentage:jobCompilationRate.toFixed(2) +"%",
