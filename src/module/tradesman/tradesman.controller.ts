@@ -13,11 +13,12 @@ import {
   Req,
 } from '@nestjs/common';
 import { TradesmanService } from './tradesman.service';
-import { CreateTradesManDto } from './dto/create-tradesman.dto';
+// import { CreateTradesManDto } from './dto/create-tradesman.dto';
 import { UpdateTradesManDto } from './dto/update-tradesman.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import { CreateTradesManDto } from './dto/test.dto';
 @Controller('tradesman')
 export class TradesmanController {
   constructor(private readonly tradesmanService: TradesmanService) {}
@@ -40,6 +41,8 @@ export class TradesmanController {
         credential: { type: 'string', format: 'binary' },
         firstName: { type: 'string' },
         lastName: { type: 'string' },
+        categoryId: { type: 'string' },
+        subCategories: { type: 'array' },
         email: { type: 'string' },
         phoneNumber: { type: 'string' },
         dateOfBirth: { type: 'string', format: 'date-time' },
@@ -123,6 +126,15 @@ export class TradesmanController {
       createTradesmanDto.paymentMethod,
     );
 
+    createTradesmanDto.subCategories = Array.isArray(
+      createTradesmanDto.subCategories,
+    )
+      ? createTradesmanDto.subCategories
+      : createTradesmanDto.subCategories
+        ? createTradesmanDto.subCategories
+            .split(',')
+            .map((v: string) => v.trim())
+        : [];
     // Combine doc and background files into a single array
     const allFiles: Express.Multer.File[] = [
       ...(files.doc ?? []),

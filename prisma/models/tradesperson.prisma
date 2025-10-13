@@ -14,16 +14,19 @@ model TradesMan {
   profession            String?
   zipCode                Int?
   professionalQualifications String?
-  stripeCustomerId       String
+ 
   stripeConnectId        String
   isVerified             Boolean @default(false)
   docs                   Docs? 
   businessDetail         BusinessDetail?
   serviceArea            ServiceArea?
-  paymentMethod          PaymentMethod?
+  paymentMethod          PaymentMethod[]
   review                 Review[]
   payments               Payment[]
   invitations            Invitation[]
+  categoryId             String
+  category               Category @relation(fields: [categoryId], references: [id])
+  subCategories          String[]
   userId                 String @unique 
   user                   User @relation(fields: [userId], references: [id])
   proposal               Proposal[]
@@ -58,10 +61,9 @@ model ServiceArea {
   id                     String   @id @default(cuid())
   userId                 String   @unique
   address                String
-  latitude               Float
-  longitude              Float
+  latitude               Float?
+  longitude              Float?
   radius                 Float? 
-
   user                   TradesMan @relation(fields: [userId], references: [id])
 }
 
@@ -78,6 +80,7 @@ model PaymentMethod {
   streetAddress   String?
   city            String?
   postCode        String?
+  isDefault       Boolean  @default(false)
   agreedToTerms   Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
