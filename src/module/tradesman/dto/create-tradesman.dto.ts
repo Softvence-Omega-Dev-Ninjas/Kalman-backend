@@ -5,8 +5,9 @@ import {
   IsDateString,
   IsNotEmpty,
   ValidateNested,
+  IsArray,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 // import { CreateDocsDto } from './docs.dto';
 import { CreateBusinessDetailDto } from './business-detail.dto';
@@ -29,6 +30,21 @@ export class CreateTradesManDto {
   @ApiProperty({ example: 'john.doe@example.com' })
   @IsEmail()
   email: string;
+
+  @ApiProperty({ example: '2445354' })
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+
+  @ApiProperty({ example: 'fdfdf' })
+  @IsArray()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.split(',') : value,
+  )
+  subCategories: string[];
+
+  @ApiProperty({ example: 'dsd' })
+  name: string;
 
   @ApiPropertyOptional({ example: '+8801712345678' })
   @IsOptional()

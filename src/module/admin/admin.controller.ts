@@ -19,6 +19,8 @@ export class AdminController {
   get_dasboard(){
     return this.adminService.get_dashboard()
   }
+
+
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
@@ -80,4 +82,28 @@ export class AdminController {
   async set_system_activity(@Body() system_activity_dto:SystemActivityDto){
     return this.adminService.set_system_activity(system_activity_dto)
   }
+
+
+  @Get('all-paymets')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async get_all_payments() {
+    return this.adminService.get_all_payments()
+  }
+
+  
+  @Get('platfrom-performence')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async get_platfrom_performence() {
+    return this.adminService.get_platfrom_performence()
+  }
+
+  @Get('top-category-service')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async get_top_category_service() {
+    return this.adminService.get_top_category_service()
+  }
+
 }

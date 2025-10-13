@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateTradesManDto } from './dto/create-tradesman.dto';
+// import { CreateTradesManDto } from './dto/create-tradesman.dto';
 import { UpdateTradesManDto } from './dto/update-tradesman.dto';
 import { StripeService } from '../stripe/stripe.service';
 import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
+import { CreateTradesManDto } from './dto/test.dto';
 @Injectable()
 export class TradesmanService {
   constructor(
@@ -23,6 +24,7 @@ export class TradesmanService {
   ) {
     const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
       createTradesmanDto;
+    console.log({ restData });
     try {
       if (!files?.find((el) => el.fieldname === 'doc')!) {
         throw new HttpException(
@@ -40,6 +42,15 @@ export class TradesmanService {
           'No account found. Register first ',
           HttpStatus.BAD_REQUEST,
         );
+      }
+      const isCategoryExist = await this.prisma.category.findUnique({
+        where: {
+          id: restData?.categoryId,
+        },
+      });
+      console.log({ isCategoryExist });
+      if (!isCategoryExist) {
+        throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
       }
 
       const isTradesManExist = await this.prisma.tradesMan.findUnique({
@@ -63,10 +74,10 @@ export class TradesmanService {
         );
       }
 
-      const stripeCustomer = await this.stripeService.createCustomer(
-        restData?.email,
-        restData?.firstName + ' ' + restData?.lastName,
-      );
+      // const stripeCustomer = await this.stripeService.createCustomer(
+      //   restData?.email,
+      //   restData?.firstName + ' ' + restData?.lastName,
+      // );
 
       const stripeConnect = await this.stripeService.createConnectedAccount(
         restData?.email,
@@ -82,10 +93,9 @@ export class TradesmanService {
         data: {
           ...restData,
           userId: isUserExist?.id,
-
-          stripeCustomerId: stripeCustomer?.id,
           stripeConnectId: stripeConnect.id,
-          // images: undefined,
+
+          // subCategories: ['asdsdv', 'afcda'],
           docs: docs
             ? {
                 create: {
@@ -122,19 +132,22 @@ export class TradesmanService {
 
           paymentMethod: paymentMethod
             ? {
-                create: {
-                  methodType: paymentMethod.methodType,
-                  provider: paymentMethod.provider,
-                  cardHolderName: paymentMethod.cardHolderName,
-                  cardNumber: paymentMethod.cardNumber,
-                  expiryDate: paymentMethod.expiryDate,
-                  cvv: paymentMethod.cvv,
-                  saveCard: paymentMethod.saveCard,
-                  streetAddress: paymentMethod.streetAddress,
-                  city: paymentMethod.city,
-                  postCode: paymentMethod.postCode,
-                  agreedToTerms: paymentMethod.agreedToTerms,
-                },
+                create: [
+                  {
+                    methodType: paymentMethod.methodType,
+                    provider: paymentMethod.provider,
+                    cardHolderName: paymentMethod.cardHolderName,
+                    cardNumber: paymentMethod.cardNumber,
+                    expiryDate: paymentMethod.expiryDate,
+                    cvv: paymentMethod.cvv,
+                    saveCard: paymentMethod.saveCard,
+                    streetAddress: paymentMethod.streetAddress,
+                    city: paymentMethod.city,
+                    postCode: paymentMethod.postCode,
+                    agreedToTerms: paymentMethod.agreedToTerms,
+                    isDefault: true,
+                  },
+                ],
               }
             : undefined,
         },
@@ -171,7 +184,6 @@ export class TradesmanService {
 
     const tradesManId = tradesman.id;
 
-    
     const myShortlist = await this.prisma.proposal.findMany({
       where: {
         tradesManId,
