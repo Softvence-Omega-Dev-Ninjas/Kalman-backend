@@ -206,9 +206,10 @@ CREATE TABLE "TradesMan" (
     "profession" TEXT,
     "zipCode" INTEGER,
     "professionalQualifications" TEXT,
-    "stripeCustomerId" TEXT NOT NULL,
     "stripeConnectId" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "categoryId" TEXT NOT NULL,
+    "subCategories" TEXT[],
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -245,8 +246,8 @@ CREATE TABLE "ServiceArea" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "latitude" DOUBLE PRECISION NOT NULL,
-    "longitude" DOUBLE PRECISION NOT NULL,
+    "latitude" DOUBLE PRECISION,
+    "longitude" DOUBLE PRECISION,
     "radius" DOUBLE PRECISION,
 
     CONSTRAINT "ServiceArea_pkey" PRIMARY KEY ("id")
@@ -266,6 +267,7 @@ CREATE TABLE "PaymentMethod" (
     "streetAddress" TEXT,
     "city" TEXT,
     "postCode" TEXT,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
     "agreedToTerms" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -376,6 +378,9 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_customerId_fkey" FOREIGN KEY ("custo
 
 -- AddForeignKey
 ALTER TABLE "Review" ADD CONSTRAINT "Review_tradesManId_fkey" FOREIGN KEY ("tradesManId") REFERENCES "TradesMan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TradesMan" ADD CONSTRAINT "TradesMan_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TradesMan" ADD CONSTRAINT "TradesMan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

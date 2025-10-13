@@ -7,6 +7,8 @@ import { buildFileUrl } from 'src/helpers/urlBuilder';
 @Injectable()
 export class BlogService {
   constructor(private prisma:PrismaService){}
+
+  // create blog service
   async create(createBlogDto:any,files:any,user:any) {
     const {title,description}=createBlogDto
     const images=files.map((file:any)=>buildFileUrl(file.filename))
@@ -21,6 +23,8 @@ export class BlogService {
     return res
   }
 
+
+  // read all blog
  async findAll() {
     const res=await this.prisma.blog.findMany({
       orderBy:{
@@ -30,6 +34,8 @@ export class BlogService {
     return res
   }
 
+
+// read on blog by it's id
   async findOne(id:string) {
     const res=await this.prisma.blog.findFirst({
       where:{
@@ -39,7 +45,8 @@ export class BlogService {
     return res
   }
 
-
+  
+// delete blog by id
  async remove(id: string) {
     const res=await this.prisma.blog.delete({
       where:{
