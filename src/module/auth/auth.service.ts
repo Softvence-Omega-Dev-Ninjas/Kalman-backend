@@ -27,7 +27,7 @@ export class AuthService {
 
     const activity_table=await this.prisma.admin_activity.findFirst()
     if(activity_table?.new_registration){
-      throw new HttpException("The system under the observation,please try again letter",400)
+      throw new HttpException("The system under the observation,please try again letter..........",400)
     }
     // check the user validation  
     const [isEmailExist, isPhoneExist] = await Promise.all([
