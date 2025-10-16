@@ -5,12 +5,11 @@ services:
     image: milonhossain32/kalman_backend_app:latest
     build:
       context: .
-      
     container_name: kalman_backend_app
     ports:
       - "5000:5000"
-    environment:
-      .env
+    env_file:
+      - .env   # <-- loads your secrets from .env (ignored by git)
     volumes:
       - .:/app
     depends_on:
