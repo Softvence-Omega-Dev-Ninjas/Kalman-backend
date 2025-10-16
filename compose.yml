@@ -1,15 +1,63 @@
-version: '3.9'
+version: "3.9"
 
 services:
+  app:
+    image: milonhossain32/kalman_backend_app:latest
+    build:
+      context: .
+      
+    container_name: kalman_backend_app
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/mydb?schema=public"
+
+      SALT_ROUND: "10"
+      ACCESS_TOKEN_SECRET: "ajfoiasjfojasofjsoiasfaojfojuo"
+      REFRESH_TOKEN_SECRET: "ajfoiasjfojasofjsoiasAOGIT904TIJMVLAJFOiojojo"
+      ACCESS_TOKEN_EXPIREIN: "30d"
+      REFRESH_TOKEN_EXPIREIN: "30d"
+      PORT: "5000"
+
+      # Email OTP
+      EMAIL_USER: "shalauddinahmedshipon@gmail.com"
+      EMAIL_PASS: "bibh mvqb mces desr"
+      SMTP_HOST: "smtp.gmail.com"
+      SMPT_PORT: "465"
+      SMPT_FROM: "KALMAN"
+
+      # Admin credentials
+      ADMIN_EMAIL: "admin@gmail.com"
+      ADMIN_PHONE: "+8801781613674"
+      ADMIN_PASSWORD: "123456"
+
+      # Twilio
+      TWILIO_ACCOUNT_SID: "ACcb3f1b1dfe7313a19ab3d4e7543ec774"
+      TWILIO_AUTH_TOKEN: "f3a8a4338a8bcf44f4700e47b7747fcd"
+      TWILIO_PHONE_NUMBER: "01781613674"
+
+      # Stripe
+      STRIPE_SECRET_KEY: "sk_test_51SFetsRrkAG59FVVmSUtpUeAhSmQaV67WcFDuAaas8RoR3Ajq83drsPpshu9OfwYkeLGD8mfQ3qIBuonmRp2ACrq00BC0947I2"
+
+      # URLs
+      CLIENT_URL: "http://localhost:3000"
+      SERVER_URL: "http://localhost:5000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
   db:
     image: postgres:15
+    container_name: kalman_postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydb
     ports:
-      - '5433:5432'
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
