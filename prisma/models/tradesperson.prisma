@@ -1,0 +1,89 @@
+model TradesMan {
+  id                     String   @id @default(uuid())
+  firstName              String
+  lastName               String
+  email                  String   @unique
+  phoneNumber            String?
+  dateOfBirth            String
+  address                String?  
+  city                   String?
+  state                  String?
+  street                 String?
+  bio                    String?
+  images                 String[]
+  profession            String?
+  zipCode                Int?
+  professionalQualifications String?
+ 
+  stripeConnectId        String
+  isVerified             Boolean @default(false)
+  docs                   Docs? 
+  businessDetail         BusinessDetail?
+  serviceArea            ServiceArea?
+  paymentMethod          PaymentMethod[]
+  review                 Review[]
+  payments               Payment[]
+  invitations            Invitation[]
+  categoryId             String
+  category               Category @relation(fields: [categoryId], references: [id])
+  subCategories          String[]
+  userId                 String @unique 
+  user                   User @relation(fields: [userId], references: [id])
+  proposal               Proposal[]
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+
+model Docs {
+  id                     String @id @default(uuid())
+  type                   String
+  url                    String
+  userId                 String @unique
+  user                   TradesMan @relation(fields: [userId], references: [id])
+
+}
+
+
+model BusinessDetail {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  businessName           String?
+  yearsOfExperience      Float
+  businessType           String?
+  hourlyRate             String?
+  services               String[]
+  professionalDescription String?
+  user                   TradesMan @relation(fields: [userId], references: [id])
+}
+
+model ServiceArea {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  address                String
+  latitude               Float?
+  longitude              Float?
+  radius                 Float? 
+  user                   TradesMan @relation(fields: [userId], references: [id])
+}
+
+model PaymentMethod {
+  id              String   @id @default(cuid())
+  userId          String @unique
+  methodType      String   // e.g. "Credit/Debit Card", "Mobile Banking"
+  provider        String?  // e.g. "Visa", "Mastercard", "American Express"
+  cardHolderName  String?
+  cardNumber      String?
+  expiryDate      String?  // MM/YY format
+  cvv             String?
+  saveCard        Boolean  @default(false)
+  streetAddress   String?
+  city            String?
+  postCode        String?
+  isDefault       Boolean  @default(false)
+  agreedToTerms   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            TradesMan @relation(fields: [userId], references: [id])
+}

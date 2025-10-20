@@ -1,0 +1,11 @@
+model Category {
+  id           String        @id @default(uuid())
+  image        String
+  name         String        @unique
+  subCategories String[]
+  tradesMans   TradesMan[]
+  jobs         Jobs[]       
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
