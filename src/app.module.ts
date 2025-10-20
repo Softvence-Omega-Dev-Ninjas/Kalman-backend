@@ -20,6 +20,7 @@ import { ReviewModule } from './module/review/review.module';
 import { CategoryModule } from './module/category/category.module';
 import { ProposalModule } from './module/proposal/proposal.module';
 import { InvitationModule } from './module/invitation/invitation.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { InvitationModule } from './module/invitation/invitation.module';
     ProposalModule,
     InvitationModule,
   ],
+  controllers: [AppController],
   providers: [SeederService],
 })
 export class AppModule {}
