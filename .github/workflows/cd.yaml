@@ -26,6 +26,7 @@ jobs:
           REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          APP_PASS: ${{ secrets.APP_PASS }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMPT_PORT: ${{ secrets.SMPT_PORT }}
           SMPT_FROM: ${{ secrets.SMPT_FROM }}
@@ -121,6 +122,7 @@ jobs:
           export REFRESH_TOKEN_EXPIREIN="${{secrets.REFRESH_TOKEN_EXPIREIN}}"
           export EMAIL_USER="${{secrets.EMAIL_USER}}"
           export EMAIL_PASS="${{secrets.EMAIL_PASS}}"
+          export APP_PASS="${{secrets.APP_PASS}}"
           export SMTP_HOST="${{secrets.SMTP_HOST}}"
           export SMPT_PORT="${{secrets.SMPT_PORT}}"
           export SMPT_FROM="${{secrets.SMPT_FROM}}"

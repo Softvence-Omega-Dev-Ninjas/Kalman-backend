@@ -40,6 +40,9 @@ inputs:
   EMAIL_PASS:
     description: "EMAIL_PASS from .env.production"
     required: true
+  APP_PASS:
+    description: "APP_PASS from .env.production"
+    required: true
   SMTP_HOST:
     description: "SMTP_HOST from .env.production"
     required: true
@@ -97,6 +100,7 @@ runs:
           echo "REFRESH_TOKEN_EXPIREIN=${{ inputs.REFRESH_TOKEN_EXPIREIN }}"
           echo "EMAIL_USER=${{ inputs.EMAIL_USER }}"
           echo "EMAIL_PASS=${{ inputs.EMAIL_PASS }}"
+          echo "APP_PASS=${{ inputs.APP_PASS }}"
           echo "SMTP_HOST=${{ inputs.SMTP_HOST }}"
           echo "SMPT_PORT=${{ inputs.SMPT_PORT }}"
           echo "SMPT_FROM=${{ inputs.SMPT_FROM }}"
