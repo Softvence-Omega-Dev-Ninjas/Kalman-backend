@@ -67,7 +67,6 @@ export class GetJobsFilterDto {
   @Min(0) // Using @Min(0) to allow zero or positive numbers
   readonly maxPrice?: number;
 
-
   @ApiProperty({
     description: 'The current page number (1-based).',
     required: false,

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { NewsLetterService } from './news-letter.service';
 import { CreateNewsLetterDto } from './dto/create-news-letter.dto';
 
@@ -15,5 +15,4 @@ export class NewsLetterController {
   findAll() {
     return this.newsLetterService.findAll();
   }
-
 }

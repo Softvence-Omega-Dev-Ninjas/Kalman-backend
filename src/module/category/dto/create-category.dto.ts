@@ -18,8 +18,7 @@ export class CreateCategoryDto {
   @ApiProperty({
     description: 'Image file URL or base64 string',
     type: 'string',
-    format: 'binary'
-   
+    format: 'binary',
   })
   @IsString()
   @IsOptional()

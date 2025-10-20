@@ -86,7 +86,7 @@ export class AuthController {
 
   @Post('admin-login')
   @Public()
-  @ApiOperation({summary:"By this api just admin can login to system"})
+  @ApiOperation({ summary: 'By this api just admin can login to system' })
   async adminLogin(@Body() loginDto: LoginDto) {
     const res = await this.authService.adminLogin(loginDto);
     return {

@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Message } from '@prisma/client';
@@ -15,7 +23,7 @@ export class ChatController {
   // Get all messages for a user (their entire history)
   @Get('history/user')
   @ApiOperation({ summary: 'Get all messages for a user' })
-  async getUserChatHistory(@Req() req:any): Promise<Message[]> {
+  async getUserChatHistory(@Req() req: any): Promise<Message[]> {
     const userId = req.user.id;
     return this.chatService.getMessagesByUser(userId);
   }
@@ -37,13 +45,13 @@ export class ChatController {
   //  Get all chat partners for a user (unique users you have chatted with)
   @Get('partners')
   @ApiOperation({ summary: 'Get all chat partners for a user' })
-  async getChatPartners(@Req() req:any) {
+  async getChatPartners(@Req() req: any) {
     const userId = req.user.id;
     return this.chatService.getChatPartnersWithUser(userId);
   }
 
-   @Post('upload')
-   @Public()
+  @Post('upload')
+  @Public()
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -63,9 +71,8 @@ export class ChatController {
     }),
   )
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    
-    const buildUrl=buildFileUrl(file.filename)
+    const buildUrl = buildFileUrl(file.filename);
     console.log(buildUrl);
-    return { url:buildUrl};
+    return { url: buildUrl };
   }
 }

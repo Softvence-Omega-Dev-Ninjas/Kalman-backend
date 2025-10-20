@@ -5,8 +5,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 interface AuthenticatedRequest extends Request {
   user?: {
-    role?: string; 
-
+    role?: string;
   };
 }
 
@@ -31,7 +30,9 @@ export class RolesGuard implements CanActivate {
     }
     const userRole = request.user.role.toLowerCase();
 
-    const normalizedRequiredRoles = requiredRoles.map(role => role.toLowerCase());
+    const normalizedRequiredRoles = requiredRoles.map((role) =>
+      role.toLowerCase(),
+    );
     return normalizedRequiredRoles.includes(userRole);
   }
 }
