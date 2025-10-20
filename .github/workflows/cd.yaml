@@ -19,6 +19,11 @@ jobs:
           EMAIL: ${{ secrets.EMAIL }}
           IMAGE_TAG: ${{ secrets.IMAGE_TAG }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SALT_ROUND: ${{ secrets.SALT_ROUND }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+          ACCESS_TOKEN_EXPIREIN: ${{ secrets.ACCESS_TOKEN_EXPIREIN }}
+          REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           PORT: ${{ secrets.PORT }}
           SALT_ROUND: ${{ secrets.SALT_ROUND }}
           ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
@@ -27,7 +32,17 @@ jobs:
           REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMPT_PORT: ${{ secrets.SMPT_PORT }}
+          SMPT_FROM: ${{ secrets.SMPT_FROM }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PHONE: ${{ secrets.ADMIN_PHONE }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           APP_PASS: ${{ secrets.APP_PASS }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMPT_PORT: ${{ secrets.SMPT_PORT }}
           SMPT_FROM: ${{ secrets.SMPT_FROM }}
@@ -116,6 +131,11 @@ jobs:
           export EMAIL="${{secrets.EMAIL}}"
           export IMAGE_TAG="${{secrets.IMAGE_TAG}}"
           export DATABASE_URL="${{secrets.DATABASE_URL}}"
+          export SALT_ROUND="${{secrets.SALT_ROUND}}"
+          export ACCESS_TOKEN_SECRET="${{secrets.ACCESS_TOKEN_SECRET}}"
+          export REFRESH_TOKEN_SECRET="${{secrets.REFRESH_TOKEN_SECRET}}"
+          export ACCESS_TOKEN_EXPIREIN="${{secrets.ACCESS_TOKEN_EXPIREIN}}"
+          export REFRESH_TOKEN_EXPIREIN="${{secrets.REFRESH_TOKEN_EXPIREIN}}"
           export PORT="${{secrets.PORT}}"
           export SALT_ROUND="${{secrets.SALT_ROUND}}"
           export ACCESS_TOKEN_SECRET="${{secrets.ACCESS_TOKEN_SECRET}}"
@@ -124,7 +144,17 @@ jobs:
           export REFRESH_TOKEN_EXPIREIN="${{secrets.REFRESH_TOKEN_EXPIREIN}}"
           export EMAIL_USER="${{secrets.EMAIL_USER}}"
           export EMAIL_PASS="${{secrets.EMAIL_PASS}}"
+          export SMTP_HOST="${{secrets.SMTP_HOST}}"
+          export SMPT_PORT="${{secrets.SMPT_PORT}}"
+          export SMPT_FROM="${{secrets.SMPT_FROM}}"
+          export ADMIN_EMAIL="${{secrets.ADMIN_EMAIL}}"
+          export ADMIN_PHONE="${{secrets.ADMIN_PHONE}}"
+          export ADMIN_PASSWORD="${{secrets.ADMIN_PASSWORD}}"
           export APP_PASS="${{secrets.APP_PASS}}"
+          export STRIPE_SECRET_KEY="${{secrets.STRIPE_SECRET_KEY}}"
+          export TWILIO_ACCOUNT_SID="${{secrets.TWILIO_ACCOUNT_SID}}"
+          export TWILIO_AUTH_TOKEN="${{secrets.TWILIO_AUTH_TOKEN}}"
+          export TWILIO_PHONE_NUMBER="${{secrets.TWILIO_PHONE_NUMBER}}"
           export SMTP_HOST="${{secrets.SMTP_HOST}}"
           export SMPT_PORT="${{secrets.SMPT_PORT}}"
           export SMPT_FROM="${{secrets.SMPT_FROM}}"
