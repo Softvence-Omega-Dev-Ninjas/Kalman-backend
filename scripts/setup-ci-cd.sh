@@ -201,7 +201,7 @@ generate_action "verify-env" VERIFY_INPUTS[@] "$RUNS_VERIFY_ENV"
 # -------------------------
 # Helper for exporting variables
 # -------------------------
-generate_export_vars() {
+generate_ex_vars() {
   local KEYS=("$@")
   for key in "${KEYS[@]}"; do
     printf '          export %s="${{secrets.%s}}"\n' "$key" "$key"
@@ -308,7 +308,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'dev' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup env
