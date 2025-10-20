@@ -1,5 +1,5 @@
 pravaruka.sk {
-    reverse_proxy app:5000
+    reverse_proxy app:8000
     header {
         Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS
         Access-Control-Allow-Headers *
