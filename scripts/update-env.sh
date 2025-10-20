@@ -133,7 +133,7 @@ while IFS= read -r line || [ -n "$line" ]; do
         key="${BASH_REMATCH[1]}"
         value="${BASH_REMATCH[2]}"
         # Quote MAIL_PASS and other sensitive values
-        if [[ "$key" == "MAIL_PASS" || "$key" == "PG_PASSWORD" || "$key" == "SUPER_ADMIN_PASS" || "$key" == "AWS_SECRET_ACCESS_KEY" || "$key" == "DOCKER_PASSWORD" || "$key" == "GIT_TOKEN" || "$key" == "VPS_SSH_PRIVATE_KEY" ]]; then
+        if [[ "$key" == "MAIL_PASS" || "$key" == "PG_PASSWORD" || "$key" == "SUPER_ADMIN_PASS" || "$key" == "AWS_SECRET_ACCESS_KEY" || "$key" == "SE_DOCKER_PASSWORD" || "$key" == "SE_GIT_TOKEN" || "$key" == "VPS_SSH_PRIVATE_KEY" ]]; then
             echo "          echo \"$key=\\\"\${{ inputs.$key }}\\\\"\"" >> "$ACTION_YAML"
         else
             echo "          echo \"$key=\${{ inputs.$key }}\"" >> "$ACTION_YAML"
@@ -232,7 +232,7 @@ while IFS= read -r line || [ -n "$line" ]; do
         value="${BASH_REMATCH[2]}"
 
         # Strip surrounding quotes (unless MAIL_PASS or other sensitive keys)
-        if [[ "$key" != "MAIL_PASS" && "$key" != "PG_PASSWORD" && "$key" != "SUPER_ADMIN_PASS" && "$key" != "AWS_SECRET_ACCESS_KEY" && "$key" != "DOCKER_PASSWORD" && "$key" != "GIT_TOKEN" && "$key" != "VPS_SSH_PRIVATE_KEY" ]]; then
+        if [[ "$key" != "MAIL_PASS" && "$key" != "PG_PASSWORD" && "$key" != "SUPER_ADMIN_PASS" && "$key" != "AWS_SECRET_ACCESS_KEY" && "$key" != "SE_DOCKER_PASSWORD" && "$key" != "SE_GIT_TOKEN" && "$key" != "VPS_SSH_PRIVATE_KEY" ]]; then
             value="${value%\"}"
             value="${value#\"}"
         fi

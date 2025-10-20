@@ -34,8 +34,8 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           CLIENT_URL: ${{ secrets.CLIENT_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SE_DOCKER_PASSWORD: ${{ secrets.SE_DOCKER_PASSWORD }}
+          SE_GIT_TOKEN: ${{ secrets.SE_GIT_TOKEN }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_HOST_IP: ${{ secrets.VPS_HOST_IP }}
@@ -106,7 +106,7 @@ jobs:
           fi
 
           # Login to Docker Hub
-          echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
+          echo "${{secrets.SE_DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
 
           # Explicitly export required variables
           export DOCKER_USERNAME="${{secrets.DOCKER_USERNAME}}"
@@ -130,8 +130,8 @@ jobs:
           export ADMIN_PASSWORD="${{secrets.ADMIN_PASSWORD}}"
           export CLIENT_URL="${{secrets.CLIENT_URL}}"
           export SERVER_URL="${{secrets.SERVER_URL}}"
-          export DOCKER_PASSWORD="${{secrets.DOCKER_PASSWORD}}"
-          export GIT_TOKEN="${{secrets.GIT_TOKEN}}"
+          export SE_DOCKER_PASSWORD="${{secrets.SE_DOCKER_PASSWORD}}"
+          export SE_GIT_TOKEN="${{secrets.SE_GIT_TOKEN}}"
           export VPS_HOST="${{secrets.VPS_HOST}}"
           export VPS_USER="${{secrets.VPS_USER}}"
           export VPS_HOST_IP="${{secrets.VPS_HOST_IP}}"

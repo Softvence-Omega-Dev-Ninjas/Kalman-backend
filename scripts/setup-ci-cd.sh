@@ -154,11 +154,11 @@ RUNS_SETUP_LOAD_ENV+="
 generate_action "setup-and-load-env" ENV_KEYS[@] "$RUNS_SETUP_LOAD_ENV"
 
 # 2️⃣ docker-login
-DOCKER_INPUTS=(DOCKER_USERNAME DOCKER_PASSWORD)
+DOCKER_INPUTS=(DOCKER_USERNAME SE_DOCKER_PASSWORD)
 RUNS_DOCKER_LOGIN="    - name: Log in to Docker
       shell: bash
       run: |
-        echo \"\${{ inputs.DOCKER_PASSWORD }}\" | docker login -u \"\${{ inputs.DOCKER_USERNAME }}\" --password-stdin
+        echo \"\${{ inputs.SE_DOCKER_PASSWORD }}\" | docker login -u \"\${{ inputs.DOCKER_USERNAME }}\" --password-stdin
         echo '✅ Docker login successful'"
 
 generate_action "docker-login" DOCKER_INPUTS[@] "$RUNS_DOCKER_LOGIN"
@@ -285,7 +285,7 @@ cat >> "$CI_YAML" <<'EOF'
       - uses: ./.github/actions/docker-login
         with:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          SE_DOCKER_PASSWORD: ${{ secrets.SE_DOCKER_PASSWORD }}
       - run: docker compose --profile prod build
       - run: docker compose --profile prod push
       - if: always()
@@ -384,7 +384,7 @@ cat >> "$CD_YAML" <<'EOF'
           fi
 
           # Login to Docker Hub
-          echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
+          echo "${{secrets.SE_DOCKER_PASSWORD}}" | docker login -u "${{secrets.DOCKER_USERNAME}}" --password-stdin
 
           # Explicitly export required variables
 EOF

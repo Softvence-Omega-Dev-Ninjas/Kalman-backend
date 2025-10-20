@@ -12,7 +12,7 @@ if [ ! -f ~/.docker/cli-plugins/docker-compose ]; then
 fi  
 
 # Login to Docker Hub
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+echo "$SE_DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # Run deployment script
 echo "Starting zero-downtime deployment..."
