@@ -19,6 +19,9 @@ inputs:
   DATABASE_URL:
     description: "DATABASE_URL from .env.production"
     required: true
+  PORT:
+    description: "PORT from .env.production"
+    required: true
   SALT_ROUND:
     description: "SALT_ROUND from .env.production"
     required: true
@@ -93,6 +96,7 @@ runs:
           echo "EMAIL=${{ inputs.EMAIL }}"
           echo "IMAGE_TAG=${{ inputs.IMAGE_TAG }}"
           echo "DATABASE_URL=${{ inputs.DATABASE_URL }}"
+          echo "PORT=${{ inputs.PORT }}"
           echo "SALT_ROUND=${{ inputs.SALT_ROUND }}"
           echo "ACCESS_TOKEN_SECRET=${{ inputs.ACCESS_TOKEN_SECRET }}"
           echo "REFRESH_TOKEN_SECRET=${{ inputs.REFRESH_TOKEN_SECRET }}"
