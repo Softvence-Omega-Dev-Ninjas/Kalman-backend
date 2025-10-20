@@ -24,11 +24,6 @@ jobs:
           ACCESS_TOKEN_EXPIREIN: ${{ secrets.ACCESS_TOKEN_EXPIREIN }}
           REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           PORT: ${{ secrets.PORT }}
-          SALT_ROUND: ${{ secrets.SALT_ROUND }}
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-          ACCESS_TOKEN_EXPIREIN: ${{ secrets.ACCESS_TOKEN_EXPIREIN }}
-          REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -42,11 +37,6 @@ jobs:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMPT_PORT: ${{ secrets.SMPT_PORT }}
-          SMPT_FROM: ${{ secrets.SMPT_FROM }}
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           CLIENT_URL: ${{ secrets.CLIENT_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SE_DOCKER_PASSWORD: ${{ secrets.SE_DOCKER_PASSWORD }}
@@ -98,11 +88,6 @@ jobs:
           ACCESS_TOKEN_EXPIREIN: ${{ secrets.ACCESS_TOKEN_EXPIREIN }}
           REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           PORT: ${{ secrets.PORT }}
-          SALT_ROUND: ${{ secrets.SALT_ROUND }}
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-          ACCESS_TOKEN_EXPIREIN: ${{ secrets.ACCESS_TOKEN_EXPIREIN }}
-          REFRESH_TOKEN_EXPIREIN: ${{ secrets.REFRESH_TOKEN_EXPIREIN }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -116,11 +101,6 @@ jobs:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMPT_PORT: ${{ secrets.SMPT_PORT }}
-          SMPT_FROM: ${{ secrets.SMPT_FROM }}
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           CLIENT_URL: ${{ secrets.CLIENT_URL }}
           SERVER_URL: ${{ secrets.SERVER_URL }}
           SE_DOCKER_PASSWORD: ${{ secrets.SE_DOCKER_PASSWORD }}

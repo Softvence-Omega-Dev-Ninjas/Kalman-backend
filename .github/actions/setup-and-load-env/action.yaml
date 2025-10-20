@@ -37,21 +37,6 @@ inputs:
   PORT:
     description: "PORT from .env.production"
     required: true
-  SALT_ROUND:
-    description: "SALT_ROUND from .env.production"
-    required: true
-  ACCESS_TOKEN_SECRET:
-    description: "ACCESS_TOKEN_SECRET from .env.production"
-    required: true
-  REFRESH_TOKEN_SECRET:
-    description: "REFRESH_TOKEN_SECRET from .env.production"
-    required: true
-  ACCESS_TOKEN_EXPIREIN:
-    description: "ACCESS_TOKEN_EXPIREIN from .env.production"
-    required: true
-  REFRESH_TOKEN_EXPIREIN:
-    description: "REFRESH_TOKEN_EXPIREIN from .env.production"
-    required: true
   EMAIL_USER:
     description: "EMAIL_USER from .env.production"
     required: true
@@ -90,21 +75,6 @@ inputs:
     required: true
   TWILIO_PHONE_NUMBER:
     description: "TWILIO_PHONE_NUMBER from .env.production"
-    required: true
-  SMTP_HOST:
-    description: "SMTP_HOST from .env.production"
-    required: true
-  SMPT_PORT:
-    description: "SMPT_PORT from .env.production"
-    required: true
-  SMPT_FROM:
-    description: "SMPT_FROM from .env.production"
-    required: true
-  ADMIN_EMAIL:
-    description: "ADMIN_EMAIL from .env.production"
-    required: true
-  ADMIN_PASSWORD:
-    description: "ADMIN_PASSWORD from .env.production"
     required: true
   CLIENT_URL:
     description: "CLIENT_URL from .env.production"
@@ -147,11 +117,6 @@ runs:
           echo "ACCESS_TOKEN_EXPIREIN=${{ inputs.ACCESS_TOKEN_EXPIREIN }}"
           echo "REFRESH_TOKEN_EXPIREIN=${{ inputs.REFRESH_TOKEN_EXPIREIN }}"
           echo "PORT=${{ inputs.PORT }}"
-          echo "SALT_ROUND=${{ inputs.SALT_ROUND }}"
-          echo "ACCESS_TOKEN_SECRET=${{ inputs.ACCESS_TOKEN_SECRET }}"
-          echo "REFRESH_TOKEN_SECRET=${{ inputs.REFRESH_TOKEN_SECRET }}"
-          echo "ACCESS_TOKEN_EXPIREIN=${{ inputs.ACCESS_TOKEN_EXPIREIN }}"
-          echo "REFRESH_TOKEN_EXPIREIN=${{ inputs.REFRESH_TOKEN_EXPIREIN }}"
           echo "EMAIL_USER=${{ inputs.EMAIL_USER }}"
           echo "EMAIL_PASS=${{ inputs.EMAIL_PASS }}"
           echo "SMTP_HOST=${{ inputs.SMTP_HOST }}"
@@ -165,11 +130,6 @@ runs:
           echo "TWILIO_ACCOUNT_SID=${{ inputs.TWILIO_ACCOUNT_SID }}"
           echo "TWILIO_AUTH_TOKEN=${{ inputs.TWILIO_AUTH_TOKEN }}"
           echo "TWILIO_PHONE_NUMBER=${{ inputs.TWILIO_PHONE_NUMBER }}"
-          echo "SMTP_HOST=${{ inputs.SMTP_HOST }}"
-          echo "SMPT_PORT=${{ inputs.SMPT_PORT }}"
-          echo "SMPT_FROM=${{ inputs.SMPT_FROM }}"
-          echo "ADMIN_EMAIL=${{ inputs.ADMIN_EMAIL }}"
-          echo "ADMIN_PASSWORD=${{ inputs.ADMIN_PASSWORD }}"
           echo "CLIENT_URL=${{ inputs.CLIENT_URL }}"
           echo "SERVER_URL=${{ inputs.SERVER_URL }}"
           echo "SE_DOCKER_PASSWORD=${{ inputs.SE_DOCKER_PASSWORD }}"
