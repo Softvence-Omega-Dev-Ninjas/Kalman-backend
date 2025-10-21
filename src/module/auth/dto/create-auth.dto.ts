@@ -11,13 +11,6 @@ export class CreateAuthDto {
   @IsNotEmpty()
   email: string;
 
-  @IsOptional()
-  @ApiProperty({
-    description: 'Here will go user phone',
-    example: '01700000000',
-  })
-  phone: string;
-
   @ApiProperty({
     description: 'Here will go user password',
     example: '123456',

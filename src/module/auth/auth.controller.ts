@@ -43,12 +43,12 @@ export class AuthController {
   }
 
   // phone otp route
-  @Post('phone_otp')
-  @Public()
-  @ApiBody({ type: SendOtpDTO })
-  async sendOtp(@Body() otpDto: SendOtpDTO) {
-    return this.authService.send_otp(otpDto);
-  }
+  // @Post('phone_otp')
+  // @Public()
+  // @ApiBody({ type: SendOtpDTO })
+  // async sendOtp(@Body() otpDto: SendOtpDTO) {
+  //   return this.authService.send_otp(otpDto);
+  // }
 
   // email otp route
   @Post('send_otp_by_email')

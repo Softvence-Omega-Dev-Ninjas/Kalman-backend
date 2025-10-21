@@ -10,7 +10,6 @@ import { Status } from '@prisma/client';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPassworDto } from './dto/reset_pass.dto';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,7 +22,7 @@ export class AuthService {
 
   // sing up logic
   async signUp(createAuthDto: CreateAuthDto) {
-    const { email, phone, password } = createAuthDto;
+    const { email, password } = createAuthDto;
 
     const activity_table = await this.prisma.admin_activity.findFirst();
     if (activity_table?.new_registration) {
@@ -33,23 +32,15 @@ export class AuthService {
       );
     }
     // check the user validation
-    const [isEmailExist, isPhoneExist] = await Promise.all([
+    const [isEmailExist] = await Promise.all([
       this.prisma.user.findFirst({
         where: {
           email: email,
         },
       }),
-      this.prisma.user.findFirst({
-        where: {
-          phone: phone,
-        },
-      }),
     ]);
     if (isEmailExist) {
       throw new HttpException('Email already exist', 400);
-    }
-    if (isPhoneExist) {
-      throw new HttpException('Phone already exist', 400);
     }
     const hash_password = await bcrypt.hash(password, 10);
     if (createAuthDto.role === 'ADMIN') {
@@ -58,7 +49,6 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: {
         email: email,
-        phone: phone,
         password: hash_password,
         role: createAuthDto.role,
       },
@@ -67,10 +57,6 @@ export class AuthService {
   }
 
   // send otp by phone
-  async send_otp(otpDto: SendOtpDTO) {
-    const { phone } = otpDto;
-    await this.twilio.sendOtp(phone, '1234');
-  }
 
   // login user by email and password
   async login(loginDto: LoginDto) {
