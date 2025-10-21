@@ -1,0 +1,8 @@
+db_data
+node_modules
+dist
+docker-compose.yml
+Dockerfile
+.env.production
+vps_key.pem
+vps_key.pem.pub

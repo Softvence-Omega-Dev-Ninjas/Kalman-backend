@@ -6,14 +6,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { OtpTemplateService } from '../mail/templates/otp.templates';
+import { StringValue } from 'ms';
 
+const expiresIn = process.env.ACCESS_TOKEN_EXPIRY ?? '60m';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.ACCESS_TOKEN_SECRET,
       signOptions: {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '60m',
+        expiresIn: expiresIn as StringValue,
       },
     }),
   ],

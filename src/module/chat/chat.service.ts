@@ -12,8 +12,12 @@ export class ChatService {
     content?: string;
     file?: string;
   }): Promise<Message> {
-    const senderExists = await this.prisma.user.findUnique({ where: { id: data.senderId } });
-    const receiverExists = await this.prisma.user.findUnique({ where: { id: data.reciverId } });
+    const senderExists = await this.prisma.user.findUnique({
+      where: { id: data.senderId },
+    });
+    const receiverExists = await this.prisma.user.findUnique({
+      where: { id: data.reciverId },
+    });
 
     if (!senderExists || !receiverExists) {
       throw new Error('Sender or receiver does not exist');
@@ -42,7 +46,10 @@ export class ChatService {
   }
 
   //  Get all messages between two specific users
-  async getMessagesBetweenUsers(userA: string, userB: string): Promise<Message[]> {
+  async getMessagesBetweenUsers(
+    userA: string,
+    userB: string,
+  ): Promise<Message[]> {
     return this.prisma.message.findMany({
       where: {
         OR: [

@@ -1,14 +1,47 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { AppService } from './app.service';
-import { join } from 'path';
+import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
+import appMetadata from './app-metadata/app-metadata';
+import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
+  @Public()
+  @ApiOkResponse({
+    description: 'Returns service health status',
+    example: 'hello',
+  })
   @Get()
-  getHello(@Res() res: any): void {
-    const indexPath = join(process.cwd(), 'public', 'index.html');
-    res.sendFile(indexPath);
+  async getHealth() {
+    return {
+      status: 'ok',
+      version: appMetadata.version,
+      name: appMetadata.displayName,
+      description: appMetadata.description,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Public()
+  @ApiOkResponse({
+    description: 'Returns service health status for monitoring',
+    schema: {
+      example: {
+        status: 'healthy',
+        timestamp: '2025-05-27T12:00:00.000Z',
+        version: '0.3.1',
+        uptime: 3600,
+      },
+    },
+  })
+  @Get('api/health')
+  async getHealthCheck() {
+    return {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      version: appMetadata.version,
+      name: appMetadata.displayName,
+      description: appMetadata.description,
+      uptime: process.uptime(),
+    };
   }
 }

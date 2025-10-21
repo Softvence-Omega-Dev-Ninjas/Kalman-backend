@@ -9,6 +9,8 @@ import { PrismaService } from './module/prisma/prisma.service';
 import { JwtGuard } from './common/guard/jwt.guard';
 import * as fs from 'fs';
 import { MaintenanceGuard } from './common/guard/maintence.guard';
+import appMetadata from './app-metadata/app-metadata';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -25,9 +27,9 @@ async function bootstrap() {
   app.use('/uploads', express.static(upload_dir));
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('KalMan API')
-    .setDescription('API documentation for my KalMan Project')
-    .setVersion('1.0')
+    .setTitle(appMetadata.displayName)
+    .setDescription(appMetadata.description)
+    .setVersion(appMetadata.version)
     .addBearerAuth()
     .addSecurityRequirements('bearer')
     .build();
@@ -40,7 +42,7 @@ async function bootstrap() {
 
   app.useGlobalGuards(
     new JwtGuard(reflector, prisma),
-    new MaintenanceGuard(prisma)
+    new MaintenanceGuard(prisma),
   );
 
   app.useGlobalPipes(
@@ -53,7 +55,7 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: ["*","http://localhost:5173"],
+    origin: ['http://localhost:3000'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
