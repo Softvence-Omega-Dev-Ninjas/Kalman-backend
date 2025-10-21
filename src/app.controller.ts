@@ -1,11 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import appMetadata from './app-metadata/app-metadata';
-import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
-  @Public()
   @ApiOkResponse({
     description: 'Returns service health status',
     example: 'hello',
@@ -21,7 +19,6 @@ export class AppController {
     };
   }
 
-  @Public()
   @ApiOkResponse({
     description: 'Returns service health status for monitoring',
     schema: {
