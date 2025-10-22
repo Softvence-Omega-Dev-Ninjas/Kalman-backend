@@ -28,7 +28,7 @@ jobs:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMPT_PORT: ${{ secrets.SMPT_PORT }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMPT_FROM: ${{ secrets.SMPT_FROM }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PHONE: ${{ secrets.ADMIN_PHONE }}
@@ -130,7 +130,7 @@ jobs:
           export EMAIL_USER="${{secrets.EMAIL_USER}}"
           export EMAIL_PASS="${{secrets.EMAIL_PASS}}"
           export SMTP_HOST="${{secrets.SMTP_HOST}}"
-          export SMPT_PORT="${{secrets.SMPT_PORT}}"
+          export SMTP_PORT="${{secrets.SMTP_PORT}}"
           export SMPT_FROM="${{secrets.SMPT_FROM}}"
           export ADMIN_EMAIL="${{secrets.ADMIN_EMAIL}}"
           export ADMIN_PHONE="${{secrets.ADMIN_PHONE}}"

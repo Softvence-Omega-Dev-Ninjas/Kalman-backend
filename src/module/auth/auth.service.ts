@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -40,7 +40,7 @@ export class AuthService {
       }),
     ]);
     if (isEmailExist) {
-      throw new HttpException('Email already exist', 400);
+      throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
     }
     const hash_password = await bcrypt.hash(password, 10);
     if (createAuthDto.role === 'ADMIN') {

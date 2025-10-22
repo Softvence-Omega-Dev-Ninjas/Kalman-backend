@@ -46,8 +46,8 @@ inputs:
   SMTP_HOST:
     description: "SMTP_HOST from .env.production"
     required: true
-  SMPT_PORT:
-    description: "SMPT_PORT from .env.production"
+  SMTP_PORT:
+    description: "SMTP_PORT from .env.production"
     required: true
   SMPT_FROM:
     description: "SMPT_FROM from .env.production"
@@ -120,7 +120,7 @@ runs:
           echo "EMAIL_USER=${{ inputs.EMAIL_USER }}"
           echo "EMAIL_PASS=${{ inputs.EMAIL_PASS }}"
           echo "SMTP_HOST=${{ inputs.SMTP_HOST }}"
-          echo "SMPT_PORT=${{ inputs.SMPT_PORT }}"
+          echo "SMTP_PORT=${{ inputs.SMTP_PORT }}"
           echo "SMPT_FROM=${{ inputs.SMPT_FROM }}"
           echo "ADMIN_EMAIL=${{ inputs.ADMIN_EMAIL }}"
           echo "ADMIN_PHONE=${{ inputs.ADMIN_PHONE }}"
