@@ -29,6 +29,17 @@ export class BlogService {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile_image: true,
+            role: true,
+          },
+        },
+      },
     });
     return res;
   }
