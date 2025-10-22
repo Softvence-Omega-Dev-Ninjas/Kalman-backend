@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
@@ -21,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { GetJobsFilterDto } from './dto/getAllJobs';
 import { fileStorageOptions } from 'src/utils/index.multer';

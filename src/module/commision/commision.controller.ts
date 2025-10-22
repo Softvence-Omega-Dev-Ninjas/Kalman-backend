@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CommisionService } from './commision.service';
 import { CreateCommisionDto } from './dto/create-commision.dto';
 import { UpdateCommisionDto } from './dto/update-commision.dto';
@@ -14,14 +23,14 @@ export class CommisionController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
-  @ApiBody({type:CreateCommisionDto})
+  @ApiBody({ type: CreateCommisionDto })
   create_commision_rate(@Body() createCommisionDto: CreateCommisionDto) {
     return this.commisionService.create(createCommisionDto);
   }
   @Get()
-    @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
-  get_commision_rate(){
-    return this.commisionService.getCommisionRate()
+  get_commision_rate() {
+    return this.commisionService.getCommisionRate();
   }
 }

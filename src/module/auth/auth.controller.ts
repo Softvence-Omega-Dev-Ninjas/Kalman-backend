@@ -42,7 +42,13 @@ export class AuthController {
     };
   }
 
-
+  // phone otp route
+  // @Post('phone_otp')
+  // @Public()
+  // @ApiBody({ type: SendOtpDTO })
+  // async sendOtp(@Body() otpDto: SendOtpDTO) {
+  //   return this.authService.send_otp(otpDto);
+  // }
 
   // email otp route
   @Post('send_otp_by_email')
@@ -80,7 +86,7 @@ export class AuthController {
 
   @Post('admin-login')
   @Public()
-  @ApiOperation({summary:"By this api just admin can login to system"})
+  @ApiOperation({ summary: 'By this api just admin can login to system' })
   async adminLogin(@Body() loginDto: LoginDto) {
     const res = await this.authService.adminLogin(loginDto);
     return {

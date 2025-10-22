@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable, HttpException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  HttpException,
+} from '@nestjs/common';
 
 import { Role } from '@prisma/client';
 import { Request } from 'express';
@@ -11,11 +16,10 @@ export class MaintenanceGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
-    
     const path = request.path;
 
     const allowedRoutes = [
-      '/auth/admin-login', 
+      '/auth/admin-login',
       '/admin/login',
       '/admin/system-activity',
     ];

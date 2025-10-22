@@ -1,10 +1,17 @@
-import { IsOptional, IsString, IsPhoneNumber, IsEnum, IsBoolean, MinLength, MaxLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsPhoneNumber,
+  IsEnum,
+  IsBoolean,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 // Define the fields you want to allow for update, making them optional
 
 export class UpdateCustomerDto {
-  
   @ApiProperty({ required: false, example: 'Jane Doe' })
   @IsOptional()
   @IsString()
@@ -13,21 +20,26 @@ export class UpdateCustomerDto {
   @ApiProperty({ required: false, example: '+8801700000000' })
   @IsOptional()
   @IsString()
+  readonly phone?: string;
 
-  readonly phone?: string; 
-
-
-  @ApiProperty({ required: false, readOnly: true, description: 'The URL or path to the saved image.' })
+  @ApiProperty({
+    required: false,
+    readOnly: true,
+    description: 'The URL or path to the saved image.',
+  })
   @IsOptional()
   @IsString()
-  readonly profile_image?: string; 
-  
+  readonly profile_image?: string;
+
   @ApiProperty({ required: false, example: 'Electrician' })
   @IsOptional()
   @IsString()
   readonly profession?: string;
 
-  @ApiProperty({ required: false, example: 'Experienced wireman specializing in commercial buildings.' })
+  @ApiProperty({
+    required: false,
+    example: 'Experienced wireman specializing in commercial buildings.',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(500)
