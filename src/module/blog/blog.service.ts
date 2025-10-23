@@ -28,10 +28,6 @@ export class BlogService {
   // READ ALL BLOGS
  
   async findAll() {
-
-    return this.prisma.blog.findMany({
-      orderBy: { createdAt: 'desc' },
-
     const res = await this.prisma.blog.findMany({
       orderBy: {
         createdAt: 'desc',
@@ -48,6 +44,7 @@ export class BlogService {
         },
       },
     });
+    return res;
   }
 
 
