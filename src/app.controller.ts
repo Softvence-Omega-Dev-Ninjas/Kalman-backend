@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import appMetadata from './app-metadata/app-metadata';
+import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
@@ -9,6 +10,7 @@ export class AppController {
     example: 'hello',
   })
   @Get()
+  @Public()
   async getHealth() {
     return {
       status: 'ok',
@@ -30,6 +32,7 @@ export class AppController {
       },
     },
   })
+    @Public()
   @Get('api/health')
   async getHealthCheck() {
     return {
