@@ -113,4 +113,10 @@ export class JobsController {
     console.log(user);
     return this.jobsService.remove(id, user);
   }
+
+  @Get('user-jobs')
+  findUserJobs(@Req() req: any) {
+    const user = req.user;
+    return this.jobsService.findUserJobs(user);
+  }
 }
