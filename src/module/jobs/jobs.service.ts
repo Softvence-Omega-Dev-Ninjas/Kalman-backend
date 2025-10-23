@@ -182,4 +182,14 @@ export class JobsService {
       message: 'Job deleted successfully',
     };
   }
+
+
+  async findUserJobs(user: any) {
+    const res = await this.prisma.jobs.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    return res;
+  }
 }
