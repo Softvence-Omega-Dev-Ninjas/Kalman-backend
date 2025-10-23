@@ -28,8 +28,25 @@ export class BlogService {
   // READ ALL BLOGS
  
   async findAll() {
+
     return this.prisma.blog.findMany({
       orderBy: { createdAt: 'desc' },
+
+    const res = await this.prisma.blog.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile_image: true,
+            role: true,
+          },
+        },
+      },
     });
   }
 

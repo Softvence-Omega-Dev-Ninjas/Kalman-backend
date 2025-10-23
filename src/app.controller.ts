@@ -5,12 +5,12 @@ import { Public } from './common/decorators/public.decorator';
 
 @Controller()
 export class AppController {
-  @Public()
   @ApiOkResponse({
     description: 'Returns service health status',
     example: 'hello',
   })
   @Get()
+  @Public()
   async getHealth() {
     return {
       status: 'ok',
@@ -21,7 +21,6 @@ export class AppController {
     };
   }
 
-  @Public()
   @ApiOkResponse({
     description: 'Returns service health status for monitoring',
     schema: {
@@ -33,6 +32,7 @@ export class AppController {
       },
     },
   })
+    @Public()
   @Get('api/health')
   async getHealthCheck() {
     return {

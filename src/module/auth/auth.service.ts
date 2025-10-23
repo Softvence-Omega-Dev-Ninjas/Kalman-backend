@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -25,12 +25,12 @@ export class AuthService {
     const { email, password } = createAuthDto;
 
     const activity_table = await this.prisma.admin_activity.findFirst();
-    if (activity_table?.new_registration) {
-      throw new HttpException(
-        'The system under the observation,please try again letter..........',
-        400,
-      );
-    }
+    // if (activity_table?.new_registration) {
+    //   throw new HttpException(
+    //     'The system under the observation,please try again letter..........',
+    //     400,
+    //   );
+    // }
     // check the user validation
     const [isEmailExist] = await Promise.all([
       this.prisma.user.findFirst({
@@ -40,7 +40,7 @@ export class AuthService {
       }),
     ]);
     if (isEmailExist) {
-      throw new HttpException('Email already exist', 400);
+      throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
     }
     const hash_password = await bcrypt.hash(password, 10);
     if (createAuthDto.role === 'ADMIN') {

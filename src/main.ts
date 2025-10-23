@@ -10,7 +10,6 @@ import { JwtGuard } from './common/guard/jwt.guard';
 import * as fs from 'fs';
 import { MaintenanceGuard } from './common/guard/maintence.guard';
 import appMetadata from './app-metadata/app-metadata';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -42,7 +41,7 @@ async function bootstrap() {
 
   app.useGlobalGuards(
     new JwtGuard(reflector, prisma),
-    new MaintenanceGuard(prisma),
+    // new MaintenanceGuard(prisma),
   );
 
   app.useGlobalPipes(
@@ -55,7 +54,7 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: ['http://localhost:3000'],
+    origin: ['*', 'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

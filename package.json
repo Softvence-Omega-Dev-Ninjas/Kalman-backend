@@ -1,6 +1,6 @@
 {
   "name": "kalman-backend",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "displayName": "Kalman Backend",
   "description": "API documentation for my KalMan Project",
   "author": "",
@@ -50,7 +50,8 @@
     "socket.io": "^4.8.1",
     "stripe": "^19.1.0",
     "swagger-ui-express": "^5.0.1",
-    "twilio": "^5.10.2"
+    "twilio": "^5.10.2",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
