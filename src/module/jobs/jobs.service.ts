@@ -150,6 +150,7 @@ export class JobsService {
             email: true,
             profile_image: true,
             verification: true,
+            createdAt:true
           },
         },
       },
