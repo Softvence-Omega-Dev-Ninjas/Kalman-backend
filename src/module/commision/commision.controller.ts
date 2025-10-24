@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpException,
 } from '@nestjs/common';
 import { CommisionService } from './commision.service';
 import { CreateCommisionDto } from './dto/create-commision.dto';
@@ -25,12 +26,20 @@ export class CommisionController {
   @Roles(Role.ADMIN)
   @ApiBody({ type: CreateCommisionDto })
   create_commision_rate(@Body() createCommisionDto: CreateCommisionDto) {
-    return this.commisionService.create(createCommisionDto);
+    try{
+     return this.commisionService.create(createCommisionDto);;
+    }catch(e){
+      throw new HttpException(e.message, 400)
+    }
   }
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
   get_commision_rate() {
-    return this.commisionService.getCommisionRate();
+    try{
+      return this.commisionService.getCommisionRate();
+    }catch(e){
+      throw new HttpException(e.message,400)
+    }
   }
 }

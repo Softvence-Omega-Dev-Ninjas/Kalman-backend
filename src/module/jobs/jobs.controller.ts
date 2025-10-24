@@ -96,27 +96,43 @@ export class JobsController {
     description: 'List of jobs retrieved successfully.',
   })
   findAll(@Query() filterDto: GetJobsFilterDto) {
-    return this.jobsService.findAll(filterDto);
+    try{
+      return this.jobsService.findAll(filterDto);
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 
   // -----------------------------------------get single jobs----------------------
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
-    return this.jobsService.findOne(id);
+    try{
+      return this.jobsService.findOne(id);
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 
   // -------------------------------delete job by it's creator and admin--------------------
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req: any) {
-    const user = req.user;
+   try{
+     const user = req.user;
     console.log(user);
     return this.jobsService.remove(id, user);
+   }catch(e){
+    throw new BadRequestException(e.message)
+   }  
   }
 
   @Get('user-jobs')
   findUserJobs(@Req() req: any) {
-    const user = req.user;
+   try{
+     const user = req.user;
     return this.jobsService.findUserJobs(user);
+   }catch(e){
+    throw new BadRequestException(e.message)
+   }
   }
 }

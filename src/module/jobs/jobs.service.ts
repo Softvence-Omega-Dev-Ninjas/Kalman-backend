@@ -138,6 +138,9 @@ export class JobsService {
 
   // --------------------------------find single product-------------------------------------------
   findOne(id: string) {
+    if(!id){
+      throw new HttpException("Job id is required", 400)
+    }
     const res = this.prisma.jobs.findFirst({
       where: {
         id: id,
@@ -189,6 +192,9 @@ export class JobsService {
 
 
   async findUserJobs(user: any) {
+    if(!user.id){
+      throw new HttpException("User id is required", 400)
+    }
     const res = await this.prisma.jobs.findMany({
       where: {
         userId: user.id,

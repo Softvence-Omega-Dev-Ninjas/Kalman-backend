@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
@@ -20,9 +21,9 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
-  // ------------------------------
+  
   // CREATE NEW BLOG
-  // ------------------------------
+  
   @Post()
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
   @ApiConsumes('multipart/form-data')
@@ -58,9 +59,9 @@ export class BlogController {
     return this.blogService.create(createBlogDto, files, user);
   }
 
-  // ------------------------------
+  
   // UPDATE BLOG (PATCH)
-  // ------------------------------
+  
   @Patch(':id')
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
   @ApiConsumes('multipart/form-data')
@@ -92,33 +93,49 @@ export class BlogController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
+  try{
     const user = req.user;
     const updateBlogDto = JSON.parse(blogData);
     return this.blogService.update(id, updateBlogDto, files, user);
+  }catch(e){
+    throw new BadRequestException(e.message)
+  }
   }
 
-  // ------------------------------
+  
   // GET ALL BLOGS
-  // ------------------------------
+  
   @Get()
   @Public()
   findAll() {
-    return this.blogService.findAll();
+    try{
+      return this.blogService.findAll();
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 
-  // ------------------------------
+  
   // GET SINGLE BLOG
-  // ------------------------------
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.blogService.findOne(id);
+    try{
+      return this.blogService.findOne(id);
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 
-  // ------------------------------
+  
   // DELETE BLOG
-  // ------------------------------
+  
   @Delete(':id')
   remove(@Param('id') id: string) {
+   try{
     return this.blogService.remove(id);
+   }catch(e){
+    throw new BadRequestException(e.message)
+   }
   }
 }

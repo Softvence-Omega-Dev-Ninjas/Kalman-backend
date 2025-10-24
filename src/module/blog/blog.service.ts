@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildFileUrl } from 'src/helpers/urlBuilder';
 
@@ -51,6 +51,9 @@ export class BlogService {
   // READ SINGLE BLOG BY ID
 
   async findOne(id: string) {
+    if(!id){
+      throw new BadRequestException("Id is required")
+    }
     const blog = await this.prisma.blog.findUnique({ where: { id } });
     if (!blog) throw new NotFoundException('Blog not found');
     return blog;
@@ -94,6 +97,9 @@ export class BlogService {
   // DELETE BLOG
  
   async remove(id: string) {
+    if(!id){
+      throw new BadRequestException("Id is required")
+    }
     const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
     if (!existingBlog) {
       throw new NotFoundException('Blog not found');
