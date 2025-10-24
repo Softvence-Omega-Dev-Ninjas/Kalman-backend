@@ -115,6 +115,7 @@ export class JobsService {
             name: true,
             email: true,
             profile_image: true,
+            createdAt:true
           },
         },
         jobActivity: true,
