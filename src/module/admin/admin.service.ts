@@ -63,6 +63,9 @@ export class AdminService {
       orderBy: {
         createdAt: 'desc',
       },
+      include:{
+        customer:true
+      }
     });
     return jobs;
   }
