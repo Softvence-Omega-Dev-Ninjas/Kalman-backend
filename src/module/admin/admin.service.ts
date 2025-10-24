@@ -64,7 +64,15 @@ export class AdminService {
         createdAt: 'desc',
       },
       include:{
-        customer:true
+        customer:{
+          select:{
+            name:true,
+            email:true,
+            profile_image:true,
+            verification:true,
+            createdAt:true
+          }
+        }
       }
     });
     return jobs;
