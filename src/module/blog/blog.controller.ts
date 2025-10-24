@@ -102,6 +102,15 @@ export class BlogController {
   }
   }
 
+  @Delete('blog/:id/images/:index')
+  @ApiOperation({ summary: 'Delete an image from a blog by index.' })
+  async deleteImage(@Param('id') id:string, @Param('index') index:number){
+    try{
+      return this.blogService.removeImage(id, index);
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
+    }
   
   // GET ALL BLOGS
   
@@ -138,4 +147,6 @@ export class BlogController {
     throw new BadRequestException(e.message)
    }
   }
+
+  
 }

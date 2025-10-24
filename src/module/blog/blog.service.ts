@@ -48,6 +48,8 @@ export class BlogService {
   }
 
 
+  
+
   // READ SINGLE BLOG BY ID
 
   async findOne(id: string) {
@@ -58,6 +60,8 @@ export class BlogService {
     if (!blog) throw new NotFoundException('Blog not found');
     return blog;
   }
+
+
 
  
   // UPDATE BLOG
@@ -94,6 +98,7 @@ export class BlogService {
   }
 
  
+
   // DELETE BLOG
  
   async remove(id: string) {
@@ -107,5 +112,38 @@ export class BlogService {
 
     await this.prisma.blog.delete({ where: { id } });
     return { message: 'Blog deleted successfully' };
+  }
+
+
+
+
+
+  //remove specific image
+
+  async removeImage(id: string, imageIndex: number) {
+    if(!id){
+      throw new BadRequestException("Id is required")
+    }
+    if(isNaN(imageIndex)){
+      throw new BadRequestException("Image index is required")
+    }
+    const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
+    if (!existingBlog) {
+      throw new NotFoundException('Blog not found');
+    }
+
+    const images = existingBlog.imeges || [];
+    if (imageIndex < 0 || imageIndex >= images.length) {
+      throw new BadRequestException('Invalid image index');
+    }
+
+    images.splice(imageIndex,1) // remove the image at the specified index
+
+    await this.prisma.blog.update({
+      where: { id },
+      data: { imeges: images },
+    });
+
+    return { message: 'Image deleted successfully' };
   }
 }
