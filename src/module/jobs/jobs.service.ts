@@ -37,7 +37,7 @@ export class JobsService {
         shortlist_fee: commisionAmount,
         skills_needed: createJobDto.skills_needed,
         userId: user.id,
-        price: createJobDto.price,
+        price: Number(createJobDto.price),
         subCategories: createJobDto.subCategories,
       },
       include: {
