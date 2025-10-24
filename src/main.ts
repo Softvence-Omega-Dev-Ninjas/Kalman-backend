@@ -54,7 +54,7 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: [ "*",'http://localhost:5173'],
+    origin: ['*'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -62,4 +62,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
