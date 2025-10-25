@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
   UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -23,14 +24,22 @@ export class CustomerController {
 
   @Get()
   find_all_jobs(@Req() req: any) {
+  try{
     const user = req.user;
     return this.customerService.find_All_jobs_with_stat(user);
+  }catch(e){
+    throw new BadRequestException(e.message)
+  }
   }
 
   @Get('get-me')
   get_me(@Req() req: any) {
-    const user = req.user;
+    try{
+      const user = req.user;
     return this.customerService.get_me(user);
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 
   @Patch()
@@ -66,12 +75,16 @@ export class CustomerController {
     @Body() updateCustomerDto: UpdateCustomerDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    const userId = req.user.id;
+    try{
+      const userId = req.user.id;
 
     return this.customerService.update_profile(
       userId,
       updateCustomerDto,
       files,
     );
+    }catch(e){
+      throw new BadRequestException(e.message)
+    }
   }
 }

@@ -21,6 +21,8 @@ import { CategoryModule } from './module/category/category.module';
 import { ProposalModule } from './module/proposal/proposal.module';
 import { InvitationModule } from './module/invitation/invitation.module';
 import { AppController } from './app.controller';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -41,6 +43,10 @@ import { AppController } from './app.controller';
     CategoryModule,
     ProposalModule,
     InvitationModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'), // path to the folder
+      serveRoot: '/uploads', // URL prefix to access files
+    }),
   ],
   controllers: [AppController],
   providers: [SeederService],

@@ -17,6 +17,7 @@ export class AppController {
       },
     },
   })
+    @Public()
   @Get('api/health')
   @Public()
   async getHealthCheck(@Res() res: Response) {

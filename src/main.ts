@@ -41,7 +41,7 @@ async function bootstrap() {
 
   app.useGlobalGuards(
     new JwtGuard(reflector, prisma),
-    new MaintenanceGuard(prisma),
+    // new MaintenanceGuard(prisma),
   );
 
   app.useGlobalPipes(

@@ -11,6 +11,7 @@ import { UpdateTradesManDto } from './dto/update-tradesman.dto';
 import { StripeService } from '../stripe/stripe.service';
 import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
 import { CreateTradesManDto } from './dto/test.dto';
+import { saveFile } from 'src/utils/saveFiles';
 @Injectable()
 export class TradesmanService {
   constructor(
@@ -303,7 +304,6 @@ export class TradesmanService {
     updateTradesmanDto: UpdateTradesManDto,
     files?: { images: Express.Multer.File[] },
   ) {
-    // let arr: string[] = [];
     const data: {
       images?: string[];
       phoneNumber?: string;
@@ -316,8 +316,8 @@ export class TradesmanService {
       zipCode?: number;
       street?: string;
     } = {};
-    console.log({ files });
     let imagesLinks = [];
+    console.log({ id });
     data.images = imagesLinks;
     data.phoneNumber = updateTradesmanDto?.phone;
     ((data.email = updateTradesmanDto?.email),
@@ -331,11 +331,10 @@ export class TradesmanService {
     if (files?.images) {
       const arr = await Promise.all(
         files.images.map(async (el) => {
-          return await saveFileAndGetUrl(el);
+          return await saveFile(el);
         }),
       );
-      data.images = arr;
-      console.log({ arr });
+      data.images = arr.map((el) => el.url);
     }
     const result = await this.prisma.tradesMan.update({
       where: {
