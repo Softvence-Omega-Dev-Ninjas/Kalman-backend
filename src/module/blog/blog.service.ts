@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildFileUrl } from 'src/helpers/urlBuilder';
+import { join } from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class BlogService {
@@ -48,7 +50,7 @@ export class BlogService {
   }
 
 
-  
+
 
   // READ SINGLE BLOG BY ID
 
@@ -120,30 +122,46 @@ export class BlogService {
 
   //remove specific image
 
-  async removeImage(id: string, imageIndex: number) {
-    if(!id){
-      throw new BadRequestException("Id is required")
-    }
-    if(isNaN(imageIndex)){
-      throw new BadRequestException("Image index is required")
-    }
-    const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
-    if (!existingBlog) {
-      throw new NotFoundException('Blog not found');
-    }
-
-    const images = existingBlog.imeges || [];
-    if (imageIndex < 0 || imageIndex >= images.length) {
-      throw new BadRequestException('Invalid image index');
-    }
-
-    images.splice(imageIndex,1) // remove the image at the specified index
-
-    await this.prisma.blog.update({
-      where: { id },
-      data: { imeges: images },
-    });
-
-    return { message: 'Image deleted successfully' };
+ async removeImage(id: string, imageIndex: number) {
+  if (!id) {
+    throw new BadRequestException('Id is required');
   }
+
+  if (isNaN(imageIndex)) {
+    throw new BadRequestException('Image index is required');
+  }
+
+  const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
+
+  if (!existingBlog) {
+    throw new NotFoundException('Blog not found');
+  }
+
+  const images = existingBlog.imeges || [];
+
+  if (imageIndex < 0 || imageIndex >= images.length) {
+    throw new BadRequestException('Invalid image index');
+  }
+
+  const imageUrl = images[imageIndex];
+  const uploadDir = join(process.cwd(), 'uploads');
+  const fileName = imageUrl.split('/').pop() || '';
+  const filePath = join(uploadDir, fileName);
+
+  // Remove the image from array
+  images.splice(imageIndex, 1);
+
+  // Delete image file from storage if exists
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+
+  // Update database
+  await this.prisma.blog.update({
+    where: { id },
+    data: { imeges: images },
+  });
+
+  return { message: 'Image deleted successfully' };
+}
 }
