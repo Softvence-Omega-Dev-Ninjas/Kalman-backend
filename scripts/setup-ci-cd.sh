@@ -269,7 +269,6 @@ cat >> "$CI_YAML" <<'EOF'
             ${{ runner.os }}-pnpm-
       - run: pnpm install
       - run: pnpm ci:fix
-      - run: pnpm format
       - run: pnpm prisma:generate
       - run: pnpm build
       - if: always()

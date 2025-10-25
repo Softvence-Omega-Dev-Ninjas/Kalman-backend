@@ -2,7 +2,7 @@ services:
   app:
     profiles:
       - prod
-    platform: linux/arm64
+    platform: linux/amd64
     build:
       context: .
     image: ${IMAGE_TAG}
