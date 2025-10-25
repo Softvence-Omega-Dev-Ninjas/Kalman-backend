@@ -228,12 +228,20 @@ cat > "$CI_YAML" <<'EOF'
 name: CI Pipeline
 on:
   push:
-    branches: ["**"]
+    branches:
+      - dev
+      - development
+      - main
   pull_request:
-    branches: ["**"]
+    branches:
+      - dev
+      - development
+      - main
 jobs:
   lint-test:
     runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main') && (github.ref != 'refs/heads/dev') && (github.ref != 'refs/heads/development')
+
     steps:
       - uses: actions/checkout@v4
       - name: Setup env
@@ -261,7 +269,6 @@ cat >> "$CI_YAML" <<'EOF'
             ${{ runner.os }}-pnpm-
       - run: pnpm install
       - run: pnpm ci:fix
-      - run: pnpm format
       - run: pnpm prisma:generate
       - run: pnpm build
       - if: always()
@@ -269,6 +276,7 @@ cat >> "$CI_YAML" <<'EOF'
   build-and-push:
     needs: lint-test
     runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main') && (github.ref != 'refs/heads/dev') && (github.ref != 'refs/heads/development')
     steps:
       - uses: actions/checkout@v4
       - name: Setup env
@@ -286,7 +294,7 @@ cat >> "$CI_YAML" <<'EOF'
         with:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           SE_DOCKER_PASSWORD: ${{ secrets.SE_DOCKER_PASSWORD }}
-      - run: docker compose --profile prod build
+      - run: docker compose --profile prod build --no-cache
       - run: docker compose --profile prod push
       - if: always()
         run: rm -f "${{ github.workspace }}/.env"

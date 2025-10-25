@@ -1,8 +1,14 @@
 pravaruka.sk {
-    reverse_proxy app:8000
+    reverse_proxy /api/* app:8000 {
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+        header_up Host {host}
+    }
+
     header {
-        Access-Control-Allow-Methods GET,POST,PUT,DELETE,OPTIONS
+        Access-Control-Allow-Methods GET, POST, PUT, DELETE, OPTIONS
         Access-Control-Allow-Headers *
+        Access-Control-Allow-Origin *
     }
 }
-
