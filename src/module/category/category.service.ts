@@ -12,8 +12,7 @@ export class CategoryService {
     createCategoryDto: CreateCategoryDto,
     file: Express.Multer.File,
   ) {
-    console.log({ createCategoryDto });
-    const isCategoryExist = await this.prisma.category.findUnique({
+    const isCategoryExist = await this.prisma.category.findFirst({
       where: {
         name: createCategoryDto?.name,
       },
@@ -65,7 +64,7 @@ export class CategoryService {
   }
 
   async findOne(id: string) {
-    const result = await this.prisma.category.findUnique({
+    const result = await this.prisma.category.findFirst({
       where: {
         id,
       },

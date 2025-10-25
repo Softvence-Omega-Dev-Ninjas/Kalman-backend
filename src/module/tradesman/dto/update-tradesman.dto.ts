@@ -8,6 +8,7 @@ import {
   Length,
   IsArray,
   ArrayMaxSize,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateTradesManDto {
@@ -64,7 +65,8 @@ export class UpdateTradesManDto {
     required: false,
   })
   @IsOptional()
-  @IsArray()
-  @ArrayMaxSize(5)
+  // @ValidateIf((_, value) => value !== undefined && value !== null)
+  @IsArray({ message: 'images must be an array' })
+  @ArrayMaxSize(5, { message: 'You can upload up to 5 images only' })
   images?: Express.Multer.File[];
 }

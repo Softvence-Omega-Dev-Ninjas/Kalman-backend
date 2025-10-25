@@ -106,42 +106,50 @@ export class TradesmanController {
     },
     @Body() createTradesmanDto: any,
   ) {
-    const parseJSONField = (field: string) => {
-      try {
-        return field ? JSON.parse(field) : undefined;
-      } catch (err) {
-        console.warn(`Failed to parse ${field}:`, err);
-        return undefined;
-      }
-    };
+    try {
+      const parseJSONField = (field: string) => {
+        try {
+          return field ? JSON.parse(field) : undefined;
+        } catch (err) {
+          console.warn(`Failed to parse ${field}:`, err);
+          return undefined;
+        }
+      };
 
-    createTradesmanDto.businessDetail = parseJSONField(
-      createTradesmanDto.businessDetail,
-    );
-    createTradesmanDto.docs = parseJSONField(createTradesmanDto.docs);
-    createTradesmanDto.serviceArea = parseJSONField(
-      createTradesmanDto.serviceArea,
-    );
-    createTradesmanDto.paymentMethod = parseJSONField(
-      createTradesmanDto.paymentMethod,
-    );
+      createTradesmanDto.businessDetail = parseJSONField(
+        createTradesmanDto.businessDetail,
+      );
+      createTradesmanDto.docs = parseJSONField(createTradesmanDto.docs);
+      createTradesmanDto.serviceArea = parseJSONField(
+        createTradesmanDto.serviceArea,
+      );
+      createTradesmanDto.paymentMethod = parseJSONField(
+        createTradesmanDto.paymentMethod,
+      );
 
-    createTradesmanDto.subCategories = Array.isArray(
-      createTradesmanDto.subCategories,
-    )
-      ? createTradesmanDto.subCategories
-      : createTradesmanDto.subCategories
+      createTradesmanDto.subCategories = Array.isArray(
+        createTradesmanDto.subCategories,
+      )
         ? createTradesmanDto.subCategories
-            .split(',')
-            .map((v: string) => v.trim())
-        : [];
-    // Combine doc and background files into a single array
-    const allFiles: Express.Multer.File[] = [
-      ...(files.doc ?? []),
-      ...(files.credential ?? []),
-    ];
+        : createTradesmanDto.subCategories
+          ? createTradesmanDto.subCategories
+              .split(',')
+              .map((v: string) => v.trim())
+          : [];
+      // Combine doc and background files into a single array
+      const allFiles: Express.Multer.File[] = [
+        ...(files.doc ?? []),
+        ...(files.credential ?? []),
+      ];
 
-    return this.tradesmanService.create(createTradesmanDto, allFiles);
+      return this.tradesmanService.create(createTradesmanDto, allFiles);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
   @Get()
   @Public()
@@ -182,7 +190,15 @@ export class TradesmanController {
       category: string;
     },
   ) {
-    return this.tradesmanService.findAll(query);
+    try {
+      return this.tradesmanService.findAll(query);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Get('overview')
@@ -196,24 +212,49 @@ export class TradesmanController {
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
-    return this.tradesmanService.findOne(id);
+    try {
+      return this.tradesmanService.findOne(id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
-  @Patch(':id')
-  @Public()
+  @Patch('update-tradesman')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   update(
-    @Param('id') id: string,
+    @Req() req: any,
     @Body() updateTradesmanDto: UpdateTradesManDto,
     @UploadedFiles()
     files?: { images: Express.Multer.File[] },
   ) {
-    return this.tradesmanService.update(id, updateTradesmanDto, files);
+    try {
+      const user = req.user;
+      console.log(user);
+      return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.tradesmanService.remove(+id);
+    try {
+      return this.tradesmanService.remove(+id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 }
