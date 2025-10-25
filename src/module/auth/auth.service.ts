@@ -131,7 +131,15 @@ export class AuthService {
       secret: process.env.ACCESS_TOKEN_SECRET,
     });
 
-    return token;
+    return {
+      token,
+      user:{
+        name:user.name,
+        email:user.email,
+        role:user.role,
+        image:user.profile_image
+      },
+    }
   }
 
   // send 6 digit otp by email

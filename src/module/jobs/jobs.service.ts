@@ -115,6 +115,7 @@ export class JobsService {
             name: true,
             email: true,
             profile_image: true,
+            createdAt:true
           },
         },
         jobActivity: true,
@@ -142,12 +143,15 @@ export class JobsService {
         id: id,
       },
       include: {
+        jobActivity:true,
         customer: {
           select: {
             id: true,
             name: true,
             email: true,
             profile_image: true,
+            verification: true,
+            createdAt:true
           },
         },
       },
@@ -181,5 +185,15 @@ export class JobsService {
     return {
       message: 'Job deleted successfully',
     };
+  }
+
+
+  async findUserJobs(user: any) {
+    const res = await this.prisma.jobs.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    return res;
   }
 }
