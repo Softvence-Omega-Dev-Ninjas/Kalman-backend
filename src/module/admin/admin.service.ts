@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetAllUserDto } from './dto/getAllUser.dto';
 import { SystemActivityDto } from './dto/system_activity.dto';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class AdminService {
@@ -9,10 +10,20 @@ export class AdminService {
 
   // find all user by admin
   async find_all_users(filterDto: GetAllUserDto) {
-    const { page = 1, limit = 10 } = filterDto;
+    const { page = 1, limit = 10,search } = filterDto;
     const skip = (page - 1) * limit;
     const take = limit;
+    const where:any={}
+    if(search){
+      where.OR=[
+        {name:{contains:search,mode:"insensitive"}}
+        ,{email:{contains:search,mode:"insensitive"}}
+        ,{phone:{contains:search,mode:"insensitive"}}
+      ]
+    }
+    const totalUser=await this.prisma.user.count()
     const users = await this.prisma.user.findMany({
+      where,
       take,
       skip,
       orderBy: {
@@ -26,7 +37,10 @@ export class AdminService {
         },
       },
     });
-    return users;
+    return{
+      totalUser:totalUser,
+      users:users
+    };
   }
 
   // admin can see the single user details
@@ -54,10 +68,27 @@ export class AdminService {
 
   // find all jobs by admin
   async find_all_jobs(filterDto: GetAllUserDto) {
-    const { page = 1, limit = 10 } = filterDto;
+    const { page = 1, limit = 10,search } = filterDto;
     const skip = (page - 1) * limit;
     const take = limit;
+    const where:any={}
+     if(search){
+      where.OR=[
+        {title:{contains:search,mode:"insensitive"}},
+        {description:{contains:search,mode:"insensitive"}},
+        {category:{contains:search,mode:"insensitive"}},
+        {budget:{contains:search,mode:"insensitive"}},
+        {isComplete:{contains:search,mode:"insensitive"}},
+        {createdAt:{contains:search,mode:"insensitive"}},
+        {updatedAt:{contains:search,mode:"insensitive"}},
+        {customer:{
+          name:{contains:search,mode:"insensitive"}
+        }}
+      ]
+    }
+    const totalJobs=await this.prisma.jobs.count()
     const jobs = await this.prisma.jobs.findMany({
+      where,
       take,
       skip,
       orderBy: {
@@ -75,7 +106,10 @@ export class AdminService {
         }
       }
     });
-    return jobs;
+    return{
+      totalJobs:totalJobs,
+      jobs:jobs
+    };
   }
 
   // admin can see single job details

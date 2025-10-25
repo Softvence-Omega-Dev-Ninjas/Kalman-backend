@@ -87,7 +87,7 @@ export class CustomerService {
     updateCustomerDto: UpdateCustomerDto,
     files,
   ) {
-    if(id){
+    if(!id){
       throw new HttpException('you have login first then you can update you profile', 404)
     }
     const filePath = files.map((file) => buildFileUrl(file.filename));
