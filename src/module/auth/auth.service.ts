@@ -25,12 +25,12 @@ export class AuthService {
     const { email, password } = createAuthDto;
 
     const activity_table = await this.prisma.admin_activity.findFirst();
-    if (activity_table?.new_registration) {
-      throw new HttpException(
-        'The system under the observation,please try again letter..........',
-        400,
-      );
-    }
+    // if (activity_table?.new_registration) {
+    //   throw new HttpException(
+    //     'The system under the observation,please try again letter..........',
+    //     400,
+    //   );
+    // }
     // check the user validation
     const [isEmailExist] = await Promise.all([
       this.prisma.user.findFirst({
@@ -131,7 +131,15 @@ export class AuthService {
       secret: process.env.ACCESS_TOKEN_SECRET,
     });
 
-    return token;
+    return {
+      token,
+      user:{
+        name:user.name,
+        email:user.email,
+        role:user.role,
+        image:user.profile_image
+      },
+    }
   }
 
   // send 6 digit otp by email

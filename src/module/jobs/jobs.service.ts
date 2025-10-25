@@ -37,7 +37,7 @@ export class JobsService {
         shortlist_fee: commisionAmount,
         skills_needed: createJobDto.skills_needed,
         userId: user.id,
-        price: createJobDto.price,
+        price: Number(createJobDto.price),
         subCategories: createJobDto.subCategories,
       },
       include: {
@@ -115,6 +115,7 @@ export class JobsService {
             name: true,
             email: true,
             profile_image: true,
+            createdAt:true
           },
         },
         jobActivity: true,
@@ -137,17 +138,23 @@ export class JobsService {
 
   // --------------------------------find single product-------------------------------------------
   findOne(id: string) {
+    if(!id){
+      throw new HttpException("Job id is required", 400)
+    }
     const res = this.prisma.jobs.findFirst({
       where: {
         id: id,
       },
       include: {
+        jobActivity:true,
         customer: {
           select: {
             id: true,
             name: true,
             email: true,
             profile_image: true,
+            verification: true,
+            createdAt:true
           },
         },
       },
@@ -181,5 +188,18 @@ export class JobsService {
     return {
       message: 'Job deleted successfully',
     };
+  }
+
+
+  async findUserJobs(user: any) {
+    if(!user.id){
+      throw new HttpException("User id is required", 400)
+    }
+    const res = await this.prisma.jobs.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    return res;
   }
 }

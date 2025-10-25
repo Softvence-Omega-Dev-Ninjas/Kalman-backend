@@ -4,6 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { saveFile } from 'src/utils/saveFiles';
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
@@ -11,8 +12,7 @@ export class CategoryService {
     createCategoryDto: CreateCategoryDto,
     file: Express.Multer.File,
   ) {
-    console.log({ createCategoryDto });
-    const isCategoryExist = await this.prisma.category.findUnique({
+    const isCategoryExist = await this.prisma.category.findFirst({
       where: {
         name: createCategoryDto?.name,
       },
@@ -20,10 +20,11 @@ export class CategoryService {
     if (isCategoryExist) {
       throw new HttpException('Category already exist', HttpStatus.CONFLICT);
     }
-    const url = await saveFileAndGetUrl(file);
+    const url = await saveFile(file);
+    console.log({ url });
     const result = await this.prisma.category.create({
       data: {
-        image: url,
+        image: url.url,
         name: createCategoryDto?.name,
         subCategories: createCategoryDto?.subCategories,
       },
@@ -63,7 +64,7 @@ export class CategoryService {
   }
 
   async findOne(id: string) {
-    const result = await this.prisma.category.findUnique({
+    const result = await this.prisma.category.findFirst({
       where: {
         id,
       },

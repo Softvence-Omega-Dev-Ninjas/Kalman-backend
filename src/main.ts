@@ -41,7 +41,7 @@ async function bootstrap() {
 
   app.useGlobalGuards(
     new JwtGuard(reflector, prisma),
-    new MaintenanceGuard(prisma),
+    // new MaintenanceGuard(prisma),
   );
 
   app.useGlobalPipes(
@@ -54,7 +54,7 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
   app.enableCors({
-    origin: ['*'],
+    origin: ['*', 'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
