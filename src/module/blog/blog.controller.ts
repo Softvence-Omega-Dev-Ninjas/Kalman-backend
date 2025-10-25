@@ -54,9 +54,13 @@ export class BlogController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-    const user = req.user;
+   try{
+     const user = req.user;
     const createBlogDto = JSON.parse(blogData);
     return this.blogService.create(createBlogDto, files, user);
+   }catch(e){
+    throw new BadRequestException(e.message)
+   }
   }
 
   
