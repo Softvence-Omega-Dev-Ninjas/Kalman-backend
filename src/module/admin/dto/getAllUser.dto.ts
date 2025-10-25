@@ -1,8 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class GetAllUserDto {
+
+  @ApiProperty({
+    description: 'The search query for filtering users.',
+    required: false,
+    type: String,
+    default: '',
+  })
+  @IsString()
+  @IsOptional()
+  search?: string;
+  
   @ApiProperty({
     description: 'The current page number (1-based).',
     required: false,
