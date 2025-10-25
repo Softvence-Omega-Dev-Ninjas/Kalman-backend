@@ -30,7 +30,15 @@ export class CategoryController {
     @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.categoryService.create(createCategoryDto, file);
+    try {
+      return this.categoryService.create(createCategoryDto, file);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
   @Get()
   @Public()
@@ -79,13 +87,29 @@ export class CategoryController {
     example: 'Category 1',
   })
   findAll(@Query() query: { search: string; limit: string; page: string }) {
-    return this.categoryService.findAll(query);
+    try {
+      return this.categoryService.findAll(query);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(id);
+    try {
+      return this.categoryService.findOne(id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Patch(':id')
@@ -94,12 +118,28 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoryService.update(id, updateCategoryDto);
+    try {
+      return this.categoryService.update(id, updateCategoryDto);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Delete(':id')
   @Public()
   remove(@Param('id') id: string) {
-    return this.categoryService.remove(id);
+    try {
+      return this.categoryService.remove(id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 }

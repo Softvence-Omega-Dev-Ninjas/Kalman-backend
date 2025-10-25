@@ -20,17 +20,41 @@ export class ProposalController {
   @Post()
   // @Public()
   create(@Body() createProposalDto: CreateProposalDto, @Req() req: any) {
-    return this.proposalService.create(createProposalDto, req.user);
+    try {
+      return this.proposalService.create(createProposalDto, req.user);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Get()
   findAll() {
-    return this.proposalService.findAll();
+    try {
+      return this.proposalService.findAll();
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.proposalService.findOne(id);
+    try {
+      return this.proposalService.findOne(id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Patch(':id')
@@ -39,12 +63,28 @@ export class ProposalController {
     @Body() updateProposalDto: UpdateProposalDto,
     @Req() req: any,
   ) {
-    console.log({ updateProposalDto });
-    return this.proposalService.update(id, updateProposalDto, req.user);
+    try {
+      console.log({ updateProposalDto });
+      return this.proposalService.update(id, updateProposalDto, req.user);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.proposalService.remove(+id);
+    try {
+      return this.proposalService.remove(+id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 }
