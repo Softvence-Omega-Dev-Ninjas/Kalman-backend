@@ -223,18 +223,19 @@ export class TradesmanController {
     }
   }
 
-  @Patch(':id')
-  @Public()
+  @Patch('update-tradesman')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   update(
-    @Param('id') id: string,
+    @Req() req: any,
     @Body() updateTradesmanDto: UpdateTradesManDto,
     @UploadedFiles()
     files?: { images: Express.Multer.File[] },
   ) {
     try {
-      return this.tradesmanService.update(id, updateTradesmanDto, files);
+      const user = req.user;
+      console.log(user);
+      return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
     } catch (error) {
       return {
         success: false,
