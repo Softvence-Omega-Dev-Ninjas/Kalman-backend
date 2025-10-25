@@ -77,7 +77,7 @@ export class CustomerController {
   ) {
     try{
       const userId = req.user.id;
-
+      
     return this.customerService.update_profile(
       userId,
       updateCustomerDto,
