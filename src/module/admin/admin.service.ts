@@ -76,14 +76,6 @@ export class AdminService {
       where.OR=[
         {title:{contains:search,mode:"insensitive"}},
         {description:{contains:search,mode:"insensitive"}},
-        {category:{contains:search,mode:"insensitive"}},
-        {budget:{contains:search,mode:"insensitive"}},
-        {isComplete:{contains:search,mode:"insensitive"}},
-        {createdAt:{contains:search,mode:"insensitive"}},
-        {updatedAt:{contains:search,mode:"insensitive"}},
-        {customer:{
-          name:{contains:search,mode:"insensitive"}
-        }}
       ]
     }
     const totalJobs=await this.prisma.jobs.count()
