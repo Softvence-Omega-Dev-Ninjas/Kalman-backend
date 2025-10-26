@@ -1,7 +1,7 @@
 // src/jobs/dto/get-jobs-filter.dto.ts
 
-import { IsOptional, IsString, IsNumber, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsNumber, Min, IsArray } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GetJobsFilterDto {
@@ -15,18 +15,27 @@ export class GetJobsFilterDto {
   readonly search?: string;
 
   @ApiProperty({
-    description: 'Filter by a single Category name or ID.',
+    description: 'Filter by one or multiple Category IDs.',
     required: false,
-    example: 'Clean bath',
+    example: ['cat_123', 'cat_456'],
+    type: [String],
   })
   @IsOptional()
-  @IsString()
-  readonly category?: string;
+  @Transform(({ value }) => {
+    // ✅ Allow both comma-separated string ("id1,id2") and array input
+    if (typeof value === 'string') {
+      return value.split(',').map((v) => v.trim());
+    }
+    return value;
+  })
+  @IsArray()
+  @IsString({ each: true })
+  readonly category?: string[];
 
   @ApiProperty({
     description: 'Filter by a single SubCategory name or ID.',
     required: false,
-    example: 'clean',
+    example: 'cleaning',
   })
   @IsOptional()
   @IsString()
@@ -64,7 +73,7 @@ export class GetJobsFilterDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  @Min(0) // Using @Min(0) to allow zero or positive numbers
+  @Min(0)
   readonly maxPrice?: number;
 
   @ApiProperty({
@@ -77,7 +86,7 @@ export class GetJobsFilterDto {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  readonly page?: number = 1; // Default to page 1
+  readonly page?: number = 1;
 
   @ApiProperty({
     description: 'The number of items per page.',

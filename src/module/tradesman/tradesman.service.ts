@@ -266,6 +266,17 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
+        review:{
+          include:{
+            customer:{
+              select:{
+                id:true,
+                name:true,
+                profile_image:true
+              }
+            }
+          }
+        }
       },
       take: limit,
       skip,
@@ -291,8 +302,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
+        review:{
+          include:{
+            customer:{
+              select:{
+                id:true,
+                name:true,
+                profile_image:true
+              }
+            }
+          }
+        }
       },
     });
+    console.log({ result });
     if (!result) {
       throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
     }

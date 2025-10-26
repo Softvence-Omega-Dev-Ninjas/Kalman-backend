@@ -4,6 +4,8 @@ import { User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildFileUrl } from 'src/helpers/urlBuilder';
 import { GetJobsFilterDto } from './dto/getAllJobs';
+import { equal } from 'assert';
+import { equals } from 'class-validator';
 
 @Injectable()
 export class JobsService {
@@ -56,85 +58,92 @@ export class JobsService {
     };
   }
 
-  async findAll(filterDto: GetJobsFilterDto) {
-    const {
-      search,
-      category,
-      subCategory,
-      location,
-      minPrice,
-      maxPrice,
-      page = 1,
-      limit = 10,
-    } = filterDto;
-    const take = limit;
-    const skip = (page - 1) * limit;
+async findAll(filterDto: GetJobsFilterDto) {
+  const {
+    search,
+    category,
+    subCategory,
+    location,
+    minPrice,
+    maxPrice,
+    page = 1,
+    limit = 10,
+  } = filterDto;
 
-    const where: any = {};
+  const take = limit;
+  const skip = (page - 1) * limit;
+  const where: any = {};
 
-    // --- (Existing Filter Logic - Uses the 'where' object for all filters) ---
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { category: { has: search } },
-        { skills_needed: { has: search } },
-      ];
-    }
-    if (category) {
-      where.category = { has: category };
-    }
-    if (subCategory) {
-      where.skills_needed = { has: subCategory };
-    }
-    if (location) {
-      where.location = { contains: location, mode: 'insensitive' };
-    }
-    if (minPrice || maxPrice) {
-      where.price = {};
-      if (minPrice) {
-        where.price.gte = minPrice;
-      }
-      if (maxPrice) {
-        where.price.lte = maxPrice;
-      }
-    }
-    const totalCount = await this.prisma.jobs.count({
-      where,
-    });
 
-    // 3. Fetch the paginated jobs
-    const jobs = await this.prisma.jobs.findMany({
-      where,
-      skip,
-      take,
-      include: {
-        customer: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            profile_image: true,
-            createdAt:true
-          },
-        },
-        jobActivity: true,
-      },
-    });
-    const totalPages = Math.ceil(totalCount / limit);
-
-    return {
-      data: jobs,
-      meta: {
-        total: totalCount,
-        limit: limit,
-        currentPage: page,
-        totalPages: totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
-    };
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+    ];
   }
+
+
+  if (category) {
+    if (Array.isArray(category)) {
+      where.categoryId = { in: category };
+    } else {
+      where.categoryId = category; 
+    }
+  }
+
+  if (subCategory) {
+    if(Array.isArray(subCategory)){
+      where.subCategories = { hasEvery: subCategory };
+    }else{
+      where.subCategories = { has: subCategory };
+    }
+  }
+
+  if (location) {
+    where.location = { contains: location, mode: 'insensitive' };
+  }
+
+
+  if (minPrice || maxPrice) {
+    where.price = {};
+    if (minPrice) where.price.gte = minPrice;
+    if (maxPrice) where.price.lte = maxPrice;
+  }
+
+  const totalCount = await this.prisma.jobs.count({ where });
+
+  const jobs = await this.prisma.jobs.findMany({
+    where,
+    skip,
+    take,
+    include: {
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profile_image: true,
+          createdAt: true,
+        },
+      },
+      jobActivity: true,
+    },
+  });
+
+  const totalPages = Math.ceil(totalCount / limit);
+
+  return {
+    data: jobs,
+    meta: {
+      total: totalCount,
+      limit,
+      currentPage: page,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
 
   // --------------------------------find single product-------------------------------------------
   findOne(id: string) {
