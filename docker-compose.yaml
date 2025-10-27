@@ -27,13 +27,6 @@ services:
     healthcheck:
       disable: true
 
-    # Add logging configuration
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
-
   db:
     image: postgres:17
     restart: always
@@ -48,11 +41,6 @@ services:
       - 5432:5432
     volumes:
       - pg:/var/lib/postgresql/data
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', postgres, '-d', mydb]
       interval: 30s

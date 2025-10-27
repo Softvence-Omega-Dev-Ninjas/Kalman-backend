@@ -203,10 +203,32 @@ export class TradesmanController {
 
   @Get('overview')
   async getOverview(@Req() req: any) {
-    const user = req.user;
-    console.log({ user });
-    const result = await this.tradesmanService.getOverView(user?.id);
-    return result;
+    try {
+      const user = req.user;
+      console.log({ user });
+      const result = await this.tradesmanService.getOverView(user?.id);
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
+  }
+  @Get('profile')
+  profile(@Req() req: any) {
+    try {
+      const user = req.user;
+
+      return this.tradesmanService.getTradesManProfile(user?.id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
   }
 
   @Get(':id')
