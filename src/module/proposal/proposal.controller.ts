@@ -44,6 +44,20 @@ export class ProposalController {
     }
   }
 
+  @Get('jobs/:jobId')
+  findProposal(@Param('jobId') jobId: string, @Req() req: any) {
+    try {
+      // const user = req.user;
+      return this.proposalService.companyProposal(jobId);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
