@@ -28,7 +28,6 @@ model Jobs {
   subCategories   String[]
 
   payments Payment[]
-  invitations Invitation[]
 }
 
 model Job_Activity {

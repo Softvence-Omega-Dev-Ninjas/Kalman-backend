@@ -10,6 +10,7 @@ import { Status } from '@prisma/client';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPassworDto } from './dto/reset_pass.dto';
+import { ForgetPassDto, UpdatePassDto } from './dto/forget_pass.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -301,5 +302,67 @@ export class AuthService {
     });
 
     return token;
+  }
+
+
+  // forgot pass word
+  async forgetPassowrd(forgetPassDto:ForgetPassDto){
+    const {email}=forgetPassDto
+     const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+    const html = this.otpTemplate.generateOtpHtml({
+      otp: randomNumber,
+    });
+    const isExistUser = await this.prisma.user.findFirst({
+      where: {
+        email:email
+      },
+    });
+    if (!isExistUser) {
+      throw new HttpException('Your email not found', 400);
+    }
+    const [] = await Promise.all([
+      await this.mail.sendMail({
+        to: email,
+        subject: 'Your Forget passowrd OTP',
+        html: html,
+      }),
+      await this.prisma.user.updateMany({
+        where: {
+          email:email,
+        },
+        data: {
+          otp: randomNumber,
+        },
+      }),
+    ]);
+    return {
+      message: 'OTP sent successfully',
+      randomNumber,
+    };
+  }
+
+// udate forgot password
+  async updatePassoword(updatePassdto:UpdatePassDto){
+      const {email,password}=updatePassdto
+      const hash_password = await bcrypt.hash(password, 10);
+      const isExistUser = await this.prisma.user.findFirst({
+        where: {
+          email:email
+        },
+      });
+      if (!isExistUser) {
+        throw new HttpException('Your email not found', 400);
+      }
+      await this.prisma.user.updateMany({
+        where: {
+          email:email,
+        },
+        data: {
+          password: hash_password,
+        },
+      });
+      return {
+        message: 'Password updated successfully',
+      };
   }
 }
