@@ -12,11 +12,17 @@ import {
 } from 'class-validator';
 
 export class UpdateTradesManDto {
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: 'John' })
   @IsString()
   @IsOptional()
   @Length(2, 50)
-  fullName?: string;
+  firstName?: string;
+
+  @ApiProperty({ example: 'Doe' })
+  @IsString()
+  @IsOptional()
+  @Length(2, 50)
+  lastName?: string;
 
   @ApiProperty({ example: 'john@example.com' })
   @IsEmail()
