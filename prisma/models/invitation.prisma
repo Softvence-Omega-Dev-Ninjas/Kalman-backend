@@ -1,13 +1,13 @@
 model Invitation {
     id String @id @default(uuid())
-    jobId String
-    job Jobs @relation(fields: [jobId], references: [id])
 
     tradesManId String
     tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
 
     messgae String
-    
+    userId String
+    user User @relation(fields: [userId],references: [id])
+    location String
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
 }

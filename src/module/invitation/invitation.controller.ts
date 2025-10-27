@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { InvitationService } from './invitation.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
@@ -17,9 +18,10 @@ export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 
   @Post()
-  @Public()
-  create(@Body() createInvitationDto: CreateInvitationDto) {
-    return this.invitationService.create(createInvitationDto);
+  create(@Body() createInvitationDto: CreateInvitationDto,@Req() req:any) {
+    const user=req.user
+    console.log(user)
+    return this.invitationService.create(createInvitationDto,user.id);
   }
 
   @Get()

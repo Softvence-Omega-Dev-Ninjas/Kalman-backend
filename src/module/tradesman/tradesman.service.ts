@@ -215,9 +215,6 @@ export class TradesmanService {
       where: {
         tradesManId,
       },
-      include: {
-        job: true,
-      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -275,6 +272,9 @@ export class TradesmanService {
                 profile_image:true
               }
             }
+          },
+          orderBy:{
+            createdAt: 'desc'
           }
         }
       },
@@ -311,6 +311,11 @@ export class TradesmanService {
                 profile_image:true
               }
             }
+            
+          
+          },
+          orderBy:{
+            createdAt: 'desc'
           }
         }
       },
