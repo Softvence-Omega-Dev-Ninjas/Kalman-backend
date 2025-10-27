@@ -6,6 +6,7 @@ import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { SendOtpDTO } from './dto/otp.dto';
 import { LoginDto } from './dto/login.dto';
 import { ResetPassworDto } from './dto/reset_pass.dto';
+import { ForgetPassDto, UpdatePassDto } from './dto/forget_pass.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -94,5 +95,22 @@ export class AuthController {
       status: 200,
       data: res,
     };
+  }
+  @Post('forget-passoword')
+  @Public()
+  @ApiOperation({ summary: 'By this api user can reset password' })
+  async forgetPassword(@Body() forgetPassDto: ForgetPassDto) {
+    const res = await this.authService.forgetPassowrd(forgetPassDto);
+    return {
+      message: 'User logged in successfully',
+      status: 200,
+      data: res,
+    };
+  }
+
+  @Post("update-passowrd")
+  @ApiOperation({ summary: 'By this api user can reset password' })
+  async updatePassword(@Body() updatePassDto:UpdatePassDto) {
+    return this.authService.updatePassoword(updatePassDto);
   }
 }

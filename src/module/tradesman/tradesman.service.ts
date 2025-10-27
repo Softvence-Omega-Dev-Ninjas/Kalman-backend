@@ -214,9 +214,6 @@ export class TradesmanService {
       where: {
         tradesManId,
       },
-      include: {
-        job: true,
-      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -264,18 +261,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review: {
-          include: {
-            customer: {
-              select: {
-                id: true,
-                name: true,
-                profile_image: true,
-              },
-            },
+        review:{
+          include:{
+            customer:{
+              select:{
+                id:true,
+                name:true,
+                profile_image:true
+              }
+            }
           },
-        },
-        category: true,
+          orderBy:{
+            createdAt: 'desc'
+          }
+        }
       },
       take: limit,
       skip,
@@ -301,17 +300,22 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review: {
-          include: {
-            customer: {
-              select: {
-                id: true,
-                name: true,
-                profile_image: true,
-              },
-            },
+        review:{
+          include:{
+            customer:{
+              select:{
+                id:true,
+                name:true,
+                profile_image:true
+              }
+            }
+            
+          
           },
-        },
+          orderBy:{
+            createdAt: 'desc'
+          }
+        }
       },
     });
     console.log({ result });

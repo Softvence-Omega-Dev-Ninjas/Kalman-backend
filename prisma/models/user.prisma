@@ -28,6 +28,7 @@ model User {
     reciveMessage Message[] @relation("ReceivedMessages")
     max_login_attampt Int @default(0)
     suspenstion_time DateTime?
+    invitation Invitation[]
 } 
 
 enum Role {
