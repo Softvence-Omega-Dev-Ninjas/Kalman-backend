@@ -25,7 +25,6 @@ export class TradesmanService {
   ) {
     const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
       createTradesmanDto;
-    console.log({ restData });
     try {
       if (!files?.find((el) => el.fieldname === 'doc')!) {
         throw new HttpException(
@@ -242,7 +241,6 @@ export class TradesmanService {
           { firstName: { contains: query.search, mode: 'insensitive' } },
           { lastName: { contains: query.search, mode: 'insensitive' } },
           { email: { contains: query.search, mode: 'insensitive' } },
-          // { profession: { contains: query.search, mode: 'insensitive' } },
         ],
       });
     }
@@ -375,5 +373,38 @@ export class TradesmanService {
 
   remove(id: number) {
     return `This action removes a #${id} tradesman`;
+  }
+
+  async getTradesManProfile(id: string) {
+    console.log({ id });
+
+    const result = await this.prisma.tradesMan.findFirst({
+      where: {
+        userId: id,
+      },
+      include: {
+        docs: true,
+        businessDetail: true,
+        serviceArea: true,
+        paymentMethod: true,
+        review: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Profile data retrived successfully',
+      data: result,
+    };
   }
 }

@@ -75,10 +75,10 @@ export class ProposalService {
     if (
       isTradesManHaveBalance?.available[0]?.amount < isJobExist?.shortlist_fee
     ) {
-      // throw new HttpException(
-      //   'You dont have enough balance to apply this job',
-      //   HttpStatus.CONFLICT,
-      // );
+      throw new HttpException(
+        'You dont have enough balance to apply this job',
+        HttpStatus.CONFLICT,
+      );
     }
 
     const result = await this.prisma.proposal.create({
@@ -130,22 +130,22 @@ export class ProposalService {
         tradesMan: true,
       },
     });
-    // if (isProposalExist?.jobs?.userId !== user?.id) {
-    //   throw new HttpException(
-    //     'You are not authorized to update the post',
-    //     HttpStatus.UNAUTHORIZED,
-    //   );
-    // }
-    // if (isProposalExist?.status === updateProposalDto?.status) {
-    //   throw new HttpException(
-    //     `Proposal already in ${updateProposalDto?.status} state`,
-    //     HttpStatus.CONFLICT,
-    //   );
-    // }
+    if (isProposalExist?.jobs?.userId !== user?.id) {
+      throw new HttpException(
+        'You are not authorized to update the post',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    if (isProposalExist?.status === updateProposalDto?.status) {
+      throw new HttpException(
+        `Proposal already in ${updateProposalDto?.status} state`,
+        HttpStatus.CONFLICT,
+      );
+    }
 
-    // const addBalance = await this.stripe.addBalance(
-    //   isProposalExist?.tradesMan?.stripeConnectId as string,
-    // );
+    const addBalance = await this.stripe.addBalance(
+      isProposalExist?.tradesMan?.stripeConnectId as string,
+    );
     // console.log({ addBalance });
     // return { addBalance };
 
@@ -169,12 +169,12 @@ export class ProposalService {
       );
       const availableAmount = balance.available?.[0]?.amount ?? 0;
 
-      // if (availableAmount < isProposalExist?.jobs?.shortlist_fee!) {
-      //   throw new HttpException(
-      //     'Trades person run out of money',
-      //     HttpStatus.NOT_ACCEPTABLE,
-      //   );
-      // }
+      if (availableAmount < isProposalExist?.jobs?.shortlist_fee!) {
+        throw new HttpException(
+          'Trades person run out of money',
+          HttpStatus.NOT_ACCEPTABLE,
+        );
+      }
       const transferAmount = await this.stripe.transferShortlistedAmount(
         isProposalExist?.jobs?.shortlist_fee as number,
         isProposalExist?.tradesMan.stripeConnectId as string,
