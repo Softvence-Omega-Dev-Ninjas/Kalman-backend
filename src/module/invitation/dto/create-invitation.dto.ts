@@ -26,4 +26,29 @@ export class CreateInvitationDto {
   @IsString()
   @IsNotEmpty()
   location:string
+
+
+  @ApiProperty({
+    example: '123 Main St, Anytown, USA',
+    description: 'The location of the job opportunity',
+  })
+  @IsString()
+  @IsNotEmpty()
+  date:string
+
+  @ApiProperty({
+    example: '123 Main St, Anytown, USA',
+    description: 'The location of the job opportunity',
+  })
+  @IsString()
+  @IsNotEmpty()
+  time_slot:string
+
+  @ApiProperty({
+    example: '123 Main St, Anytown, USA',
+    description: 'The location of the job opportunity',
+  })
+  @IsString()
+  @IsNotEmpty()
+  title:string
 }

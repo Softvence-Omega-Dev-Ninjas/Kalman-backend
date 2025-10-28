@@ -24,14 +24,21 @@ export class InvitationService {
         messgae: createInvitationDto?.message as string,
         tradesManId: createInvitationDto?.tradesManId as string,
         userId:userId,
-        location:createInvitationDto?.location as string
+        location:createInvitationDto?.location as string,
+        title:createInvitationDto?.title as string,
+        date:createInvitationDto?.date as string,
+        time_slot:createInvitationDto?.time_slot as string
       },
     });
     return result;
   }
 
   async findAll() {
-    const result = await this.prisma.invitation.findMany({});
+    const result = await this.prisma.invitation.findMany({
+      include:{
+        user:true
+      }
+    });
     return result;
   }
 
@@ -40,6 +47,9 @@ export class InvitationService {
       where: {
         id,
       },
+      include:{
+        user:true
+      }
     });
     return result;
   }
@@ -53,6 +63,18 @@ export class InvitationService {
       where: {
         id,
       },
+    });
+    return result;
+  }
+
+  async getInvitationByUserId(userId: string) {
+    const result = await this.prisma.invitation.findMany({
+      where: {
+        userId,
+      },
+      include:{
+        user:true
+      }
     });
     return result;
   }
