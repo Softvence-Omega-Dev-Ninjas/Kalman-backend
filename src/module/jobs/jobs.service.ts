@@ -75,7 +75,7 @@ async findAll(filterDto: GetJobsFilterDto) {
   const skip = (page - 1) * limit;
   const where: any = {};
 
-
+  // Search filter
   if (search) {
     where.OR = [
       { title: { contains: search, mode: 'insensitive' } },
@@ -83,36 +83,33 @@ async findAll(filterDto: GetJobsFilterDto) {
     ];
   }
 
-
-  if (category) {
-    if (Array.isArray(category)) {
-      where.categoryId = { in: category };
-    } else {
-      where.categoryId = category; 
-    }
+  // Category filter
+  if (category?.length) {
+    where.categoryId = { in: category };
   }
 
-  if (subCategory) {
-    if(Array.isArray(subCategory)){
-      where.subCategories = { hasEvery: subCategory };
-    }else{
-      where.subCategories = { has: subCategory };
-    }
+  // SubCategory filter
+  if (subCategory?.length) {
+    // Match at least one of the given subcategories
+    where.subCategories = { hasSome: subCategory };
   }
 
+  // Location filter
   if (location) {
     where.location = { contains: location, mode: 'insensitive' };
   }
 
-
+  // Price filter
   if (minPrice || maxPrice) {
     where.price = {};
     if (minPrice) where.price.gte = minPrice;
     if (maxPrice) where.price.lte = maxPrice;
   }
 
+  // Count total matching jobs
   const totalCount = await this.prisma.jobs.count({ where });
 
+  // Fetch jobs with pagination and relations
   const jobs = await this.prisma.jobs.findMany({
     where,
     skip,

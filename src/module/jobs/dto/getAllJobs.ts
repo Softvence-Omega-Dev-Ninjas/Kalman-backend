@@ -1,5 +1,4 @@
 // src/jobs/dto/get-jobs-filter.dto.ts
-
 import { IsOptional, IsString, IsNumber, Min, IsArray } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -22,7 +21,6 @@ export class GetJobsFilterDto {
   })
   @IsOptional()
   @Transform(({ value }) => {
-    // ✅ Allow both comma-separated string ("id1,id2") and array input
     if (typeof value === 'string') {
       return value.split(',').map((v) => v.trim());
     }
@@ -33,13 +31,21 @@ export class GetJobsFilterDto {
   readonly category?: string[];
 
   @ApiProperty({
-    description: 'Filter by a single SubCategory name or ID.',
+    description: 'Filter by one or multiple SubCategory names or IDs.',
     required: false,
-    example: 'cleaning',
+    example: ['roofing', 'waterproofing'],
+    type: [String],
   })
   @IsOptional()
-  @IsString()
-  readonly subCategory?: string;
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((v) => v.trim());
+    }
+    return value;
+  })
+  @IsArray()
+  @IsString({ each: true })
+  readonly subCategory?: string[];
 
   @ApiProperty({
     description: 'Filter by job location (e.g., city or state).',
