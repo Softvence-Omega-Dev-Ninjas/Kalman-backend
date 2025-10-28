@@ -1,9 +1,10 @@
 model Invitation {
     id String @id @default(uuid())
-
+    title String?
     tradesManId String
     tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
-
+    date DateTime?
+    time_slot String?
     messgae String
     userId String
     user User @relation(fields: [userId],references: [id])

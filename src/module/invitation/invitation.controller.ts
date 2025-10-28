@@ -46,4 +46,10 @@ export class InvitationController {
   remove(@Param('id') id: string) {
     return this.invitationService.remove(id);
   }
+
+  @Get('get-tradman-invitation')
+  async getInvitationByUserId(@Req() req: any) {
+    const user = req.user;
+    return this.invitationService.getInvitationByUserId(user.id);
+  }
 }

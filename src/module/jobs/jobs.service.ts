@@ -19,6 +19,7 @@ export class JobsService {
     // if(userExist?.verification==="PENDING"){
     //   throw new HttpException("Your account is not verified",400)
     // }
+    console.log(createJobDto)
     const filePaths = files.map((file) => buildFileUrl(file.filename));
     const commisionRate = await this.prisma.commision.findFirst();
     const percentCalculetion = commisionRate?.commision_rate
