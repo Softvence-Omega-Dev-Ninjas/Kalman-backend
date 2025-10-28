@@ -231,6 +231,21 @@ export class TradesmanController {
     }
   }
 
+  @Get('history')
+  history(@Req() req: any) {
+    try {
+      const user = req.user;
+
+      return this.tradesmanService.getHistory(user?.id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
