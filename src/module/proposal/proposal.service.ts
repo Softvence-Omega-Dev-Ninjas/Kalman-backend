@@ -130,6 +130,7 @@ export class ProposalService {
         tradesMan: true,
       },
     });
+
     if (isProposalExist?.jobs?.userId !== user?.id) {
       throw new HttpException(
         'You are not authorized to update the post',
@@ -143,9 +144,9 @@ export class ProposalService {
       );
     }
 
-    const addBalance = await this.stripe.addBalance(
-      isProposalExist?.tradesMan?.stripeConnectId as string,
-    );
+    // const addBalance = await this.stripe.addBalance(
+    //   isProposalExist?.tradesMan?.stripeConnectId as string,
+    // );
     // console.log({ addBalance });
     // return { addBalance };
 
@@ -163,7 +164,7 @@ export class ProposalService {
     let amount = 0;
     let transactionId = '';
     console.log({ fee: isProposalExist?.jobs?.shortlist_fee });
-    if (isProposalExist?.jobs?.shortlist_fee! == 0) {
+    if (isProposalExist?.jobs?.shortlist_fee !== 0) {
       const balance = await this.stripe.getBalance(
         isProposalExist?.tradesMan?.stripeConnectId as string,
       );
@@ -175,11 +176,12 @@ export class ProposalService {
           HttpStatus.NOT_ACCEPTABLE,
         );
       }
+
       const transferAmount = await this.stripe.transferShortlistedAmount(
         isProposalExist?.jobs?.shortlist_fee as number,
         isProposalExist?.tradesMan.stripeConnectId as string,
       );
-
+      console.log({ balance: balance.available?.[0] }, availableAmount);
       amount = transferAmount.amount ?? 0;
       transactionId = transferAmount.id ?? '';
     }
@@ -201,6 +203,22 @@ export class ProposalService {
         },
       });
       return result;
+    });
+    return result;
+  }
+
+  async companyProposal(id: string) {
+    const result = await this.prisma.proposal.findMany({
+      where: {
+        jobs: {
+          userId: id,
+        },
+      },
+      include: {
+        jobs: true,
+        tradesMan: true,
+        user: true,
+      },
     });
     return result;
   }

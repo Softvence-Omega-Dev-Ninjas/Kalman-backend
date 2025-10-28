@@ -331,6 +331,7 @@ export class TradesmanService {
       phoneNumber?: string;
       email?: string;
       firstName?: string;
+      lastName?: string;
       profession?: string;
       bio?: string;
       city?: string;
@@ -343,7 +344,8 @@ export class TradesmanService {
     data.images = imagesLinks;
     data.phoneNumber = updateTradesmanDto?.phone;
     ((data.email = updateTradesmanDto?.email),
-      (data.firstName = updateTradesmanDto?.fullName));
+      (data.firstName = updateTradesmanDto?.firstName));
+    data.lastName = updateTradesmanDto?.lastName;
     data.profession = updateTradesmanDto?.profession;
     data.bio = updateTradesmanDto?.bio;
     data.city = updateTradesmanDto?.city;
