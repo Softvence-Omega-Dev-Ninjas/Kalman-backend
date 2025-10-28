@@ -261,20 +261,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review:{
-          include:{
-            customer:{
-              select:{
-                id:true,
-                name:true,
-                profile_image:true
-              }
-            }
+        review: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
           },
-          orderBy:{
-            createdAt: 'desc'
-          }
-        }
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
       take: limit,
       skip,
@@ -300,22 +300,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review:{
-          include:{
-            customer:{
-              select:{
-                id:true,
-                name:true,
-                profile_image:true
-              }
-            }
-            
-          
+        review: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
           },
-          orderBy:{
-            createdAt: 'desc'
-          }
-        }
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
     console.log({ result });
@@ -389,6 +387,7 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
+        payments: true,
         review: {
           include: {
             customer: {
@@ -406,6 +405,22 @@ export class TradesmanService {
     return {
       success: true,
       message: 'Profile data retrived successfully',
+      data: result,
+    };
+  }
+
+  async getHistory(id: string) {
+    const result = await this.prisma.payment.findFirst({
+      where: {
+        tradesManId: id,
+      },
+      orderBy: {
+        createdAt: 'desc', // or whatever timestamp field you have
+      },
+    });
+    return {
+      success: true,
+      message: 'History retrived successfully',
       data: result,
     };
   }
