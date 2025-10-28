@@ -210,9 +210,7 @@ export class ProposalService {
   async companyProposal(id: string) {
     const result = await this.prisma.proposal.findMany({
       where: {
-        jobs: {
-          userId: id,
-        },
+        jobId: id,
       },
       include: {
         jobs: true,

@@ -44,11 +44,11 @@ export class ProposalController {
     }
   }
 
-  @Get('my-proposal')
-  findProposal(@Req() req: any) {
+  @Get('jobs/:jobId')
+  findProposal(@Param('jobId') jobId: string, @Req() req: any) {
     try {
-      const user = req.user;
-      return this.proposalService.companyProposal(user?.id);
+      // const user = req.user;
+      return this.proposalService.companyProposal(jobId);
     } catch (error) {
       return {
         success: false,
