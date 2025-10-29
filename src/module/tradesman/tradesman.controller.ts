@@ -19,6 +19,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { CreateTradesManDto } from './dto/test.dto';
+import { CreatePaymentMethodDto } from './dto/payment-method.dto';
 @Controller('tradesman')
 export class TradesmanController {
   constructor(private readonly tradesmanService: TradesmanService) {}
@@ -315,6 +316,12 @@ export class TradesmanController {
         error: error,
       };
     }
+  }
+
+  @Patch('add-payment')
+  addPayment(@Body() dto: CreatePaymentMethodDto, @Req() req: any) {
+    const user = req.user;
+    return this.tradesmanService.addPaymentMethod(user?.id, dto);
   }
 
   @Patch('add-money')
