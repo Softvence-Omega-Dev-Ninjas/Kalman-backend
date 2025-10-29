@@ -488,11 +488,16 @@ export class TradesmanService {
       });
       return { res1, res2 };
     });
+    const onboardingUrl = await this.stripeService.createOnboardingLink(
+      isTradesManExist?.stripeConnectId,
+    );
 
     return {
       success: true,
       message: 'Payment method added successfully',
-      data: res.res2,
+      data: {
+        onboardingUrl,
+      },
     };
   }
 
