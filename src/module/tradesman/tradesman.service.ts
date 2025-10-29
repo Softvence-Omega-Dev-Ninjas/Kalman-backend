@@ -462,6 +462,17 @@ export class TradesmanService {
     if (!isTradesManExist) {
       throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
     }
+    const isCardNumberExist = await this.prisma.paymentMethod.findFirst({
+      where: {
+        cardNumber: dto?.cardNumber,
+      },
+    });
+    if (isCardNumberExist) {
+      throw new HttpException(
+        'Card number already exist',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const res = await this.prisma.$transaction(async (tx) => {
       const res1 = await tx.paymentMethod.updateMany({
@@ -475,13 +486,69 @@ export class TradesmanService {
           userId: isTradesManExist.id,
         },
       });
-      console.log({ res1, res2 });
+      return { res1, res2 };
     });
 
     return {
       success: true,
       message: 'Payment method added successfully',
-      data: res,
+      data: res.res2,
+    };
+  }
+
+  async removePaymentMethod(id: string) {
+    const isPaymentMethodExist = await this.prisma.paymentMethod.findFirst({
+      where: { id },
+    });
+    if (!isPaymentMethodExist) {
+      throw new HttpException('Payment method not found', HttpStatus.NOT_FOUND);
+    }
+    if (isPaymentMethodExist.isDefault) {
+      throw new HttpException(
+        'Payment method is default',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const result = await this.prisma.paymentMethod.delete({
+      where: { id },
+    });
+    return {
+      success: true,
+      message: 'payment method deleted sucessfully',
+      data: result,
+    };
+  }
+
+  async setPaymentMethodDefault(id: string) {
+    const isPaymentMethodExist = await this.prisma.paymentMethod.findFirst({
+      where: { id },
+    });
+    if (!isPaymentMethodExist) {
+      throw new HttpException('Payment method not found', HttpStatus.NOT_FOUND);
+    }
+    if (isPaymentMethodExist?.isDefault) {
+      throw new HttpException(
+        'Payment already is default state',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const res = await this.prisma.$transaction(async (tx) => {
+      const res1 = await tx.paymentMethod.updateMany({
+        where: { userId: isPaymentMethodExist?.userId, isDefault: true },
+        data: { isDefault: false },
+      });
+      const res2 = await tx.paymentMethod.update({
+        where: { id },
+        data: {
+          isDefault: true,
+        },
+      });
+      return { res1, res2 };
+    });
+    return {
+      success: true,
+      messgae: 'Payment method is set to default',
+      data: res.res2,
     };
   }
 }

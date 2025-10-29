@@ -324,6 +324,17 @@ export class TradesmanController {
     return this.tradesmanService.addPaymentMethod(user?.id, dto);
   }
 
+  @Patch('remove-payment/:paymentId')
+  removePayment(@Req() req: any, @Param('paymentId') paymentId: string) {
+    const user = req.user;
+    return this.tradesmanService.removePaymentMethod(paymentId);
+  }
+
+  @Patch('set-default-payment/:paymentId')
+  setDefaultPayment(@Req() req: any, @Param('paymentId') paymentId: string) {
+    return this.tradesmanService.setPaymentMethodDefault(paymentId);
+  }
+
   @Patch('add-money')
   addMoney(@Req() req: any) {
     try {
