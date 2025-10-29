@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProposalDto } from './dto/create-proposal.dto';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { Role } from '@prisma/client';
 import { StripeService } from '../stripe/stripe.service';
 @Injectable()
 export class ProposalService {
@@ -143,12 +142,6 @@ export class ProposalService {
         HttpStatus.CONFLICT,
       );
     }
-
-    // const addBalance = await this.stripe.addBalance(
-    //   isProposalExist?.tradesMan?.stripeConnectId as string,
-    // );
-    // console.log({ addBalance });
-    // return { addBalance };
 
     if (updateProposalDto?.status === 'REJECTED') {
       const result = await this.prisma.proposal.update({

@@ -282,10 +282,47 @@ export class TradesmanController {
     }
   }
 
+  @Patch('update-tradesman')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+  addPaymentMothod(
+    @Req() req: any,
+    @Body() updateTradesmanDto: UpdateTradesManDto,
+    @UploadedFiles()
+    files?: { images: Express.Multer.File[] },
+  ) {
+    try {
+      const user = req.user;
+      console.log(user);
+      return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
       return this.tradesmanService.remove(+id);
+    } catch (error) {
+      return {
+        success: false,
+        message: error?.message || 'Internal server error',
+        error: error,
+      };
+    }
+  }
+
+  @Patch('add-money')
+  addMoney(@Req() req: any) {
+    try {
+      const user = req.user;
+
+      return this.tradesmanService.addBalance(user?.id);
     } catch (error) {
       return {
         success: false,
