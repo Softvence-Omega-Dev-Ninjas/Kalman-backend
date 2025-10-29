@@ -26,12 +26,12 @@ export class AuthService {
     const { email, password } = createAuthDto;
 
     const activity_table = await this.prisma.admin_activity.findFirst();
-    // if (activity_table?.new_registration) {
-    //   throw new HttpException(
-    //     'The system under the observation,please try again letter..........',
-    //     400,
-    //   );
-    // }
+    if (activity_table?.new_registration) {
+      throw new HttpException(
+        'The system under the observation,please try again letter..........',
+        400,
+      );
+    }
     // check the user validation
     const [isEmailExist] = await Promise.all([
       this.prisma.user.findFirst({
@@ -140,6 +140,7 @@ export class AuthService {
         email:user.email,
         role:user.role,
         image:user.profile_image
+        
       },
     }
   }
@@ -266,7 +267,7 @@ export class AuthService {
         await this.prisma.user.updateMany({
           where: { email },
           data: {
-            suspenstion_time: new Date(Date.now() + 2 * 60 * 1000), // suspend the user with fixed amount time
+            suspenstion_time: new Date(Date.now() + 2 * 60 * 1000),
             max_login_attampt: newAttempt,
           },
         });
@@ -337,7 +338,6 @@ export class AuthService {
     ]);
     return {
       message: 'OTP sent successfully',
-      randomNumber,
     };
   }
 
