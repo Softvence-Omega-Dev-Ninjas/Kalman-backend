@@ -163,12 +163,12 @@ export class ProposalService {
       );
       const availableAmount = balance.available?.[0]?.amount ?? 0;
 
-      if (availableAmount < isProposalExist?.jobs?.shortlist_fee!) {
-        throw new HttpException(
-          'Trades person run out of money',
-          HttpStatus.NOT_ACCEPTABLE,
-        );
-      }
+      // if (availableAmount < isProposalExist?.jobs?.shortlist_fee!) {
+      //   throw new HttpException(
+      //     'Trades person run out of money',
+      //     HttpStatus.NOT_ACCEPTABLE,
+      //   );
+      // }
 
       const transferAmount = await this.stripe.transferShortlistedAmount(
         isProposalExist?.jobs?.shortlist_fee as number,
