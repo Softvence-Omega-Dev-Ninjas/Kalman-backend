@@ -69,7 +69,7 @@ model ServiceArea {
 
 model PaymentMethod {
   id              String   @id @default(cuid())
-  userId          String @unique
+  userId          String 
   methodType      String   // e.g. "Credit/Debit Card", "Mobile Banking"
   provider        String?  // e.g. "Visa", "Mastercard", "American Express"
   cardHolderName  String?
