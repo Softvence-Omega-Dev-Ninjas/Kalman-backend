@@ -12,6 +12,7 @@ import { StripeService } from '../stripe/stripe.service';
 import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
 import { CreateTradesManDto } from './dto/test.dto';
 import { saveFile } from 'src/utils/saveFiles';
+import { CreatePaymentMethodDto } from './dto/payment-method.dto';
 @Injectable()
 export class TradesmanService {
   constructor(
@@ -386,7 +387,11 @@ export class TradesmanService {
         docs: true,
         businessDetail: true,
         serviceArea: true,
-        paymentMethod: true,
+        paymentMethod: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
         payments: true,
         review: {
           include: {
@@ -437,6 +442,35 @@ export class TradesmanService {
       success: true,
       message: 'Balance added successfully',
       data: addBalance,
+    };
+  }
+  async addPaymentMethod(id: string, dto: CreatePaymentMethodDto) {
+    const isTradesManExist = await this.prisma.tradesMan.findFirst({
+      where: { userId: id },
+    });
+    if (!isTradesManExist) {
+      throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
+    }
+
+    const res = await this.prisma.$transaction(async (tx) => {
+      const res1 = await tx.paymentMethod.updateMany({
+        where: { userId: isTradesManExist.id, isDefault: true },
+        data: { isDefault: false },
+      });
+      const res2 = await tx.paymentMethod.create({
+        data: {
+          ...dto,
+          isDefault: true,
+          userId: isTradesManExist.id,
+        },
+      });
+      console.log({ res1, res2 });
+    });
+
+    return {
+      success: true,
+      message: 'Payment method added successfully',
+      data: res,
     };
   }
 }
