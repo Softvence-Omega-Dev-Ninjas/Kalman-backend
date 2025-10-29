@@ -7,24 +7,24 @@ import { PrismaService } from '../prisma/prisma.service';
 export class InvitationService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createInvitationDto: CreateInvitationDto,userId:string) {
-    // const isAlreadyInvite = await this.prisma.invitation.findFirst({
-    //   where: {
-    //     tradesManId: createInvitationDto?.tradesManId,
-    //   },
-    // });
-    // if (isAlreadyInvite) {
-    //   throw new HttpException(
-    //     'You have already invite this person for this job',
-    //     HttpStatus.CONFLICT,
-    //   );
-    // }
+  async create(createInvitationDto: CreateInvitationDto, userId: string) {
+    const isAlreadyInvite = await this.prisma.invitation.findFirst({
+      where: {
+        tradesManId: createInvitationDto?.tradesManId,
+      },
+    });
+    if (isAlreadyInvite) {
+      throw new HttpException(
+        'You have already invite this person for this job',
+        HttpStatus.CONFLICT,
+      );
+    }
     const result = await this.prisma.invitation.create({
       data: {
         messgae: createInvitationDto?.message as string,
         tradesManId: createInvitationDto?.tradesManId as string,
-        userId:userId,
-        location:createInvitationDto?.location as string
+        userId: userId,
+        location: createInvitationDto?.location as string,
       },
     });
     return result;

@@ -261,20 +261,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review:{
-          include:{
-            customer:{
-              select:{
-                id:true,
-                name:true,
-                profile_image:true
-              }
-            }
+        review: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
           },
-          orderBy:{
-            createdAt: 'desc'
-          }
-        }
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
       take: limit,
       skip,
@@ -300,22 +300,20 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
-        review:{
-          include:{
-            customer:{
-              select:{
-                id:true,
-                name:true,
-                profile_image:true
-              }
-            }
-            
-          
+        review: {
+          include: {
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                profile_image: true,
+              },
+            },
           },
-          orderBy:{
-            createdAt: 'desc'
-          }
-        }
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
     console.log({ result });
@@ -389,6 +387,7 @@ export class TradesmanService {
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
+        payments: true,
         review: {
           include: {
             customer: {
@@ -409,4 +408,6 @@ export class TradesmanService {
       data: result,
     };
   }
+
+  async getHistory(id) {}
 }
