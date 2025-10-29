@@ -50,6 +50,7 @@ export class JobsController {
             contact_method: 'Email',
             skills_needed: ['Roofing', 'Waterproofing'],
             price: 150.0,
+            subCategories:['roofing','waterproofing']
           }),
         },
         images: {
@@ -87,6 +88,17 @@ export class JobsController {
     return this.jobsService.create(createJobDto, user, files);
   }
 
+
+// ------------------------------get all user jobs--------------------------------
+   @Get('user-jobs')
+  findUserJobs(@Req() req: any) {
+   try{
+     const user = req.user;
+    return this.jobsService.findUserJobs(user);
+   }catch(e){
+    throw new BadRequestException(e.message)
+   }
+  }
   // ----------------------------------get all jobs using fillter-----------------------------
   @Get()
   @Public()
@@ -126,13 +138,5 @@ export class JobsController {
    }  
   }
 
-  @Get('user-jobs')
-  findUserJobs(@Req() req: any) {
-   try{
-     const user = req.user;
-    return this.jobsService.findUserJobs(user);
-   }catch(e){
-    throw new BadRequestException(e.message)
-   }
-  }
+ 
 }

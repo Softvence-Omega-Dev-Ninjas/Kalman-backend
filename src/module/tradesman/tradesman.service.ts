@@ -409,5 +409,19 @@ export class TradesmanService {
     };
   }
 
-  async getHistory(id) {}
+  async getHistory(id: string) {
+    const result = await this.prisma.payment.findFirst({
+      where: {
+        tradesManId: id,
+      },
+      orderBy: {
+        createdAt: 'desc', // or whatever timestamp field you have
+      },
+    });
+    return {
+      success: true,
+      message: 'History retrived successfully',
+      data: result,
+    };
+  }
 }
