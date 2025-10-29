@@ -217,4 +217,29 @@ export class ProposalService {
   remove(id: number) {
     return `This action removes a #${id} proposal`;
   }
+
+  async findTransManProposslaByJobId(userId: string, jobId: string) {
+    const isTradesManExist = await this.prisma.tradesMan.findFirst({
+      where: {
+        userId,
+      },
+    });
+    if (!isTradesManExist) {
+      throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
+    }
+    const result = await this.prisma.proposal.findFirst({
+      where: {
+        tradesManId: isTradesManExist.id,
+        jobId,
+      },
+      include: {
+        jobs: true,
+        tradesMan: true,
+        user: true,
+      },
+    });
+    return result;
+  }
+
+  async addPaymetMethod() {}
 }
