@@ -71,14 +71,14 @@ export class ProposalService {
       isTradesManExist?.stripeConnectId,
     );
     console.dir({ isTradesManHaveBalance }, { depth: null });
-    if (
-      isTradesManHaveBalance?.available[0]?.amount < isJobExist?.shortlist_fee
-    ) {
-      throw new HttpException(
-        'You dont have enough balance to apply this job',
-        HttpStatus.CONFLICT,
-      );
-    }
+    // if (
+    //   isTradesManHaveBalance?.available[0]?.amount < isJobExist?.shortlist_fee
+    // ) {
+    //   throw new HttpException(
+    //     'You dont have enough balance to apply this job',
+    //     HttpStatus.CONFLICT,
+    //   );
+    // }
 
     const result = await this.prisma.proposal.create({
       data: {
