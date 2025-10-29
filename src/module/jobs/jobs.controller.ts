@@ -23,6 +23,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { GetJobsFilterDto } from './dto/getAllJobs';
 import { fileStorageOptions } from 'src/utils/index.multer';
+import { BudgeType } from '@prisma/client';
 
 // -----------------------------------------------------------------------
 
@@ -50,6 +51,7 @@ export class JobsController {
             contact_method: 'Email',
             skills_needed: ['Roofing', 'Waterproofing'],
             price: 150.0,
+            budge_type:BudgeType.FIXED,
             subCategories:['roofing','waterproofing']
           }),
         },

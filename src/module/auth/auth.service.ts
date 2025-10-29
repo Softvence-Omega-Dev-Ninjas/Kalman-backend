@@ -131,18 +131,36 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
     });
-
-    return {
+    const isExistTradeMand=await this.prisma.tradesMan.findFirst({
+      where:{
+        userId:user.id
+      }
+    })
+    const trademanFirstName=isExistTradeMand?.firstName
+    if(isExistTradeMand){
+       return {
       token,
       user:{
         id:user.id,
-        name:user.name,
         email:user.email,
         role:user.role,
-        image:user.profile_image
-        
+        image:user.profile_image,
+        firstName:isExistTradeMand?.firstName,
+        lastname:isExistTradeMand?.firstName
       },
     }
+    }
+     return {
+      token,
+      user:{
+        id:user.id,
+        name:user?.name,
+        email:user.email,
+        role:user.role,
+        image:user.profile_image,
+      },
+    }
+   
   }
 
   // send 6 digit otp by email

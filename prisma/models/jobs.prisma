@@ -21,7 +21,7 @@ model Jobs {
   userJobShortList JobShortlist[]
   customerStatus CustomerStatus @default(ACTIVE)
   isComplete Boolean @default(false)
-
+  budge_type BudgeType @default(FIXED)
   categoryId     String?
   category       Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
@@ -59,4 +59,9 @@ enum CustomerStatus {
   SUSPENDED
   DEACTIVE
 
+}
+
+enum BudgeType {
+  FIXED
+  NEGOTIATABLE
 }
