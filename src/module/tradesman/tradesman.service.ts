@@ -13,6 +13,7 @@ import { saveFileAndGetUrl } from 'src/utils/saveFileAndGetUrl';
 import { CreateTradesManDto } from './dto/test.dto';
 import { saveFile } from 'src/utils/saveFiles';
 import { CreatePaymentMethodDto } from './dto/payment-method.dto';
+import { GetTradesmanFilterDto } from './dto/tradesman-query-dto-';
 @Injectable()
 export class TradesmanService {
   constructor(
@@ -27,6 +28,7 @@ export class TradesmanService {
   ) {
     const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
       createTradesmanDto;
+    console.log({ restData });
     try {
       if (!files?.find((el) => el.fieldname === 'doc')!) {
         throw new HttpException(
@@ -228,40 +230,74 @@ export class TradesmanService {
     };
   }
 
-  async findAll(query: Record<string, unknown>) {
+  async findAll(query: GetTradesmanFilterDto) {
     const limit = query.limit ? Number(query.limit) : 10;
     const page = query?.page ? Number(query?.page) : 1;
+    const category = query?.category;
+    const subCategory = query?.subCategory;
+    const location = query?.location;
+    // const rating = query?.rating;
     const skip = (page - 1) * limit;
-    const search = query.search ? String(query.search) : '';
-    const category = query.category ? String(query.category) : '';
+    const search = query.search;
 
-    const filters: any[] = [];
+    const where: any = {};
+    console.log({ query });
+    // Search filter
     if (search) {
-      filters.push({
-        OR: [
-          { firstName: { contains: query.search, mode: 'insensitive' } },
-          { lastName: { contains: query.search, mode: 'insensitive' } },
-          { email: { contains: query.search, mode: 'insensitive' } },
-        ],
-      });
+      where.OR = [
+        // { cardHolderName: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+
+        { lastName: { contains: search, mode: 'insensitive' } },
+
+        // { cardNumber: { contains: search, mode: 'insensitive' } },
+      ];
     }
-    if (category) {
-      filters.push({
-        // profession: query.category, // adjust as needed
-      });
+
+    // Category filter
+    if (category?.length) {
+      where.categoryId = { in: category };
     }
-    const totalItem = await this.prisma.tradesMan.count({
-      where: { AND: filters },
-    });
+
+    // SubCategory filter
+    if (subCategory?.length) {
+      // Match at least one of the given subcategories
+      where.subCategories = { hasSome: subCategory };
+    }
+
+    // Location filter
+    if (location) {
+      where.OR = [
+        { address: { contains: location, mode: 'insensitive' } },
+        { city: { contains: location, mode: 'insensitive' } },
+        { state: { contains: location, mode: 'insensitive' } },
+      ];
+    }
+
+    // if (rating && Array.isArray(rating) && rating.length > 0) {
+    //   where.review = {
+    //     some: {
+    //       rating: {
+    //         in: rating.map(Number),
+    //       },
+    //     },
+    //   };
+    // }
+
+    console.log({ where });
     const result = await this.prisma.tradesMan.findMany({
-      where: {
-        AND: filters,
-      },
+      where,
       include: {
         docs: true,
         businessDetail: true,
         serviceArea: true,
         paymentMethod: true,
+        category: {
+          select: {
+            name: true,
+            subCategories: true,
+          },
+        },
         review: {
           include: {
             customer: {
@@ -280,13 +316,15 @@ export class TradesmanService {
       take: limit,
       skip,
     });
+    const total = await this.prisma.tradesMan.findMany({
+      where,
+    });
     return {
       data: result,
       metadata: {
         limit,
         page,
-        totalPages: Math.ceil(totalItem / limit),
-        totalItem,
+        totalPages: Math.ceil(total?.length / limit),
       },
     };
   }
@@ -323,20 +361,19 @@ export class TradesmanService {
     }
     return result;
   }
- 
+
   async update(
     id: string,
     updateTradesmanDto: UpdateTradesManDto,
     files?: { images: Express.Multer.File[] },
   ) {
-
-    const isTradesManExist=await this.prisma.tradesMan.findFirst({
-      where:{
-        userId:id
-      }
-    })
-    if(!isTradesManExist){
-      throw new HttpException("Tradesman not found", HttpStatus.NOT_FOUND)
+    const isTradesManExist = await this.prisma.tradesMan.findFirst({
+      where: {
+        userId: id,
+      },
+    });
+    if (!isTradesManExist) {
+      throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
     }
     const data: {
       images?: string[];
@@ -353,7 +390,7 @@ export class TradesmanService {
     } = {};
     let imagesLinks = [];
     console.log({ id });
-    console.log(files)
+    console.log(files);
     data.images = imagesLinks;
     data.phoneNumber = updateTradesmanDto?.phone;
     ((data.email = updateTradesmanDto?.email),
@@ -373,12 +410,12 @@ export class TradesmanService {
       );
       data.images = arr.map((el) => el.url);
     }
-    
+
     const result = await this.prisma.tradesMan.update({
       where: {
         userId: id,
       },
-      data:{...data},
+      data: { ...data },
     });
     return result;
   }
@@ -403,13 +440,13 @@ export class TradesmanService {
             createdAt: 'desc',
           },
         },
-        payments:{
-          include:{
-            job:{
-              select:{
-                title:true
-              }
-            }
+        payments: {
+          include: {
+            job: {
+              select: {
+                title: true,
+              },
+            },
           },
         },
         review: {

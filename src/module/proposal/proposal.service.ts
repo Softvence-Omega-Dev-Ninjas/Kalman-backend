@@ -178,7 +178,7 @@ export class ProposalService {
         isProposalExist?.jobs?.shortlist_fee as number,
         isProposalExist?.tradesMan.stripeConnectId as string,
       );
-      console.log({ balance: balance.available?.[0] }, availableAmount);
+      console.log({ transferAmount });
       amount = transferAmount.amount ?? 0;
       transactionId = transferAmount.id ?? '';
     }
@@ -264,6 +264,4 @@ export class ProposalService {
     });
     return result;
   }
-
-  async addPaymetMethod() {}
 }
