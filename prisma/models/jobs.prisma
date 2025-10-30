@@ -24,7 +24,7 @@ model Jobs {
   budge_type BudgeType?
   categoryId     String?
   category       Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
+  invitations    Invitation[]
   subCategories   String[]
 
   payments Payment[]

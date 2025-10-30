@@ -9,6 +9,8 @@ model Invitation {
     userId String
     user User @relation(fields: [userId],references: [id])
     location String
+    jobId String
+    job Jobs @relation(fields: [jobId], references: [id])
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
 }
