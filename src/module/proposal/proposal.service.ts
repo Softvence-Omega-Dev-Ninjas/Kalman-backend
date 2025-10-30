@@ -3,11 +3,14 @@ import { CreateProposalDto } from './dto/create-proposal.dto';
 import { UpdateProposalDto } from './dto/update-proposal.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { StripeService } from '../stripe/stripe.service';
+import { MailService } from '../mail/mail.service';
+import { proposalAcceptedTemplate } from '../mail/templates/acceptProposalTemplate';
 @Injectable()
 export class ProposalService {
   constructor(
     private prisma: PrismaService,
     private stripe: StripeService,
+    private mail:MailService
   ) {}
   async create(createProposalDto: CreateProposalDto, tradesMan: any) {
     const isJobExist = await this.prisma.jobs.findUnique({
@@ -154,6 +157,7 @@ export class ProposalService {
       });
       return result;
     }
+
     let amount = 0;
     let transactionId = '';
     console.log({ fee: isProposalExist?.jobs?.shortlist_fee });
@@ -195,6 +199,26 @@ export class ProposalService {
           tradesManId: isProposalExist?.tradesManId as string,
         },
       });
+
+    
+      const job=await this.prisma.jobs.findFirst({
+        where:{
+          id:isProposalExist?.jobId
+        },include:{
+          customer:true
+        }
+      })
+      const tradeMan=await this.prisma.tradesMan.findFirst({
+        where:{
+          id:isProposalExist?.tradesManId
+        }
+      })
+      // send mail to trade man when his requested proposal is accept by customer
+        await this.mail.sendMail({
+        to: tradeMan?.email as string,
+        subject: 'Congratuletion! your job proposal is Accepted',
+        html:proposalAcceptedTemplate({acceptedBy:job?.customer.name as string,proposalTitle:job?.title as string,traderName:tradeMan?.firstName as string}),
+      })
       return result;
     });
     return result;

@@ -16,6 +16,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guard/roles.guard';
 import { GetAllUserDto } from './dto/getAllUser.dto';
 import { SystemActivityDto } from './dto/system_activity.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('admin')
 export class AdminController {
@@ -114,5 +115,11 @@ export class AdminController {
   @Roles(Role.ADMIN)
   async get_top_category_service() {
     return this.adminService.get_top_category_service();
+  }
+
+  @Get('home-page-stat')
+  @Public()
+  async get_home_page_stat() {
+    return this.adminService.get_home_page_stat();
   }
 }
