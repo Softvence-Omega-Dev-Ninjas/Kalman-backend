@@ -109,6 +109,7 @@ export class AuthController {
   }
 
   @Post("update-passowrd")
+  @Public()
   @ApiOperation({ summary: 'By this api user can reset password' })
   async updatePassword(@Body() updatePassDto:UpdatePassDto) {
     return this.authService.updatePassoword(updatePassDto);

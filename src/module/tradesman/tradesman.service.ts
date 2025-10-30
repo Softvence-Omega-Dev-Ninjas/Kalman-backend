@@ -323,12 +323,21 @@ export class TradesmanService {
     }
     return result;
   }
-
+ 
   async update(
     id: string,
     updateTradesmanDto: UpdateTradesManDto,
     files?: { images: Express.Multer.File[] },
   ) {
+
+    const isTradesManExist=await this.prisma.tradesMan.findFirst({
+      where:{
+        userId:id
+      }
+    })
+    if(!isTradesManExist){
+      throw new HttpException("Tradesman not found", HttpStatus.NOT_FOUND)
+    }
     const data: {
       images?: string[];
       phoneNumber?: string;
@@ -344,6 +353,7 @@ export class TradesmanService {
     } = {};
     let imagesLinks = [];
     console.log({ id });
+    console.log(files)
     data.images = imagesLinks;
     data.phoneNumber = updateTradesmanDto?.phone;
     ((data.email = updateTradesmanDto?.email),
@@ -363,11 +373,12 @@ export class TradesmanService {
       );
       data.images = arr.map((el) => el.url);
     }
+    
     const result = await this.prisma.tradesMan.update({
       where: {
         userId: id,
       },
-      data,
+      data:{...data},
     });
     return result;
   }
@@ -392,7 +403,15 @@ export class TradesmanService {
             createdAt: 'desc',
           },
         },
-        payments: true,
+        payments:{
+          include:{
+            job:{
+              select:{
+                title:true
+              }
+            }
+          },
+        },
         review: {
           include: {
             customer: {

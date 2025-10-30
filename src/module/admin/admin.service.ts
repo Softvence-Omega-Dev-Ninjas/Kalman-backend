@@ -378,4 +378,12 @@ export class AdminService {
 
     return categoriesWithPercentage;
   }
+
+
+
+
+  async get_systemActivity() {
+    const activity_table = await this.prisma.admin_activity.findFirst();
+    return activity_table;
+  }
 }

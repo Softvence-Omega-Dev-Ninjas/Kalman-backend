@@ -37,7 +37,10 @@ export class InvitationService {
     const result = await this.prisma.invitation.findMany({
       include:{
         user:true
-      }
+      },
+      orderBy:{
+        createdAt:'desc'
+      } 
     });
     return result;
   }
