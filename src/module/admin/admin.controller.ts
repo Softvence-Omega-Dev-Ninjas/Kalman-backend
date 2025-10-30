@@ -88,6 +88,13 @@ export class AdminController {
     return this.adminService.set_system_activity(system_activity_dto);
   }
 
+  @Get('system-activity')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async get_system_activity() {
+    return this.adminService.get_systemActivity();
+  }
+
   @Get('all-paymets')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)

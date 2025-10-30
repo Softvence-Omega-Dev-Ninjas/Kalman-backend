@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { BudgeType } from '@prisma/client';
 import {
   IsString,
   IsArray,
@@ -126,4 +127,13 @@ export class CreateJobDto {
   @IsNumber()
   @Min(0)
   price: number;
+
+  @ApiProperty({
+    description: 'The type of budget for the job.',
+    enum: BudgeType,
+    example: BudgeType.FIXED,
+  })
+  @IsNotEmpty()
+  @IsString()
+  budget_type: BudgeType;
 }
