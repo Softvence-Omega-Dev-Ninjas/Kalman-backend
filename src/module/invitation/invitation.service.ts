@@ -19,28 +19,44 @@ export class InvitationService {
         HttpStatus.CONFLICT,
       );
     }
-    const result = await this.prisma.invitation.create({
-      data: {
-        messgae: createInvitationDto?.message as string,
-        tradesManId: createInvitationDto?.tradesManId as string,
-        userId:userId,
-        location:createInvitationDto?.location as string,
-        title:createInvitationDto?.title as string,
-        date:createInvitationDto?.date as string,
-        time_slot:createInvitationDto?.time_slot as string
-      },
+    const res = await this.prisma.$transaction(async (tx) => {
+      await tx.proposal.create({
+        data: {
+          description: createInvitationDto?.message,
+          jobId: createInvitationDto?.jobId,
+          tradesManId: createInvitationDto?.tradesManId,
+          userId: userId,
+        },
+      });
+      const invitation = await tx.invitation.create({
+        data: {
+          messgae: createInvitationDto?.message as string,
+          tradesManId: createInvitationDto?.tradesManId as string,
+          userId: userId,
+          location: createInvitationDto?.location as string,
+          title: createInvitationDto?.title as string,
+          date: createInvitationDto?.date as string,
+          jobId: createInvitationDto?.jobId,
+          time_slot: createInvitationDto?.time_slot as string,
+        },
+      });
+      return invitation;
     });
-    return result;
+    return {
+      success: true,
+      message: 'Invitation send successfully',
+      data: res,
+    };
   }
 
   async findAll() {
     const result = await this.prisma.invitation.findMany({
-      include:{
-        user:true
+      include: {
+        user: true,
       },
-      orderBy:{
-        createdAt:'desc'
-      } 
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return result;
   }
@@ -50,9 +66,9 @@ export class InvitationService {
       where: {
         id,
       },
-      include:{
-        user:true
-      }
+      include: {
+        user: true,
+      },
     });
     return result;
   }
@@ -75,9 +91,9 @@ export class InvitationService {
       where: {
         userId,
       },
-      include:{
-        user:true
-      }
+      include: {
+        user: true,
+      },
     });
     return result;
   }

@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateInvitationDto {
-
   @ApiProperty({
     example: 'tradesman_98765',
     description: 'The unique ID of the tradesman being invited',
@@ -10,6 +9,14 @@ export class CreateInvitationDto {
   @IsString()
   @IsNotEmpty()
   tradesManId: string;
+
+  @ApiProperty({
+    example: 'tradesman_98765',
+    description: 'The unique ID of the tradesman being invited',
+  })
+  @IsString()
+  @IsNotEmpty()
+  jobId: string;
 
   @ApiProperty({
     example: 'Hello, we’d like to invite you for this job opportunity!',
@@ -25,16 +32,7 @@ export class CreateInvitationDto {
   })
   @IsString()
   @IsNotEmpty()
-  location:string
-
-
-  @ApiProperty({
-    example: '123 Main St, Anytown, USA',
-    description: 'The location of the job opportunity',
-  })
-  @IsString()
-  @IsNotEmpty()
-  date:string
+  location: string;
 
   @ApiProperty({
     example: '123 Main St, Anytown, USA',
@@ -42,7 +40,7 @@ export class CreateInvitationDto {
   })
   @IsString()
   @IsNotEmpty()
-  time_slot:string
+  date: string;
 
   @ApiProperty({
     example: '123 Main St, Anytown, USA',
@@ -50,5 +48,13 @@ export class CreateInvitationDto {
   })
   @IsString()
   @IsNotEmpty()
-  title:string
+  time_slot: string;
+
+  @ApiProperty({
+    example: '123 Main St, Anytown, USA',
+    description: 'The location of the job opportunity',
+  })
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 }
