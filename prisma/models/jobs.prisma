@@ -63,5 +63,5 @@ enum CustomerStatus {
 
 enum BudgeType {
   FIXED
-  NEGOTIABLE
+  HOURLY
 }

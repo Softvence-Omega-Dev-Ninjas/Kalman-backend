@@ -386,4 +386,21 @@ export class AdminService {
     const activity_table = await this.prisma.admin_activity.findFirst();
     return activity_table;
   }
+
+
+
+  async get_home_page_stat(){
+    const [totalJobs,totalUser,totalTradesMan,totalReview]=await Promise.all([
+      this.prisma.jobs.count(),
+      this.prisma.user.count(),
+      this.prisma.tradesMan.count(),
+      this.prisma.review.count()
+    ])
+    return{
+      totalJobs,
+      totalUser,
+      totalTradesMan,
+      totalReview
+    }
+  }
 }
