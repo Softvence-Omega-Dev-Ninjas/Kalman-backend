@@ -1,5 +1,6 @@
-// AppModule
-import { Module } from '@nestjs/common';
+// src/app.module.ts
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { join } from 'path';
 
 import { PrismaModule } from './module/prisma/prisma.module';
 import { SeederService } from './seed/seed.service';
@@ -9,7 +10,6 @@ import { TradesmanModule } from './module/tradesman/tradesman.module';
 import { AuthModule } from './module/auth/auth.module';
 import { JobsModule } from './module/jobs/jobs.module';
 import { CustomerModule } from './module/customer/customer.module';
-// import { StripeModule } from './stripe/stripe.module';
 import { StripeModule } from './module/stripe/stripe.module';
 import { AdminModule } from './module/admin/admin.module';
 import { CommisionModule } from './module/commision/commision.module';
@@ -22,7 +22,8 @@ import { ProposalModule } from './module/proposal/proposal.module';
 import { InvitationModule } from './module/invitation/invitation.module';
 import { AppController } from './app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { ResponseTimeMiddleware } from './common/interceptor/serverResponse.middlewere';
+
 
 @Module({
   imports: [
@@ -44,11 +45,17 @@ import { join } from 'path';
     ProposalModule,
     InvitationModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'), // path to the folder
-      serveRoot: '/uploads', // URL prefix to access files
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
   ],
   controllers: [AppController],
   providers: [SeederService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ResponseTimeMiddleware)
+      .forRoutes('*'); 
+  }
+}
