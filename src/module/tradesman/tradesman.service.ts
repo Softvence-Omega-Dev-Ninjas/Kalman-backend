@@ -403,7 +403,15 @@ export class TradesmanService {
             createdAt: 'desc',
           },
         },
-        payments: true,
+        payments:{
+          include:{
+            job:{
+              select:{
+                title:true
+              }
+            }
+          },
+        },
         review: {
           include: {
             customer: {

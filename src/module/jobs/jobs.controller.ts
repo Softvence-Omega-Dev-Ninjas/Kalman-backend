@@ -51,7 +51,7 @@ export class JobsController {
             contact_method: 'Email',
             skills_needed: ['Roofing', 'Waterproofing'],
             price: 150.0,
-            budge_type:BudgeType.FIXED,
+            budget_type:BudgeType.FIXED,
             subCategories:['roofing','waterproofing']
           }),
         },

@@ -42,7 +42,7 @@ export class JobsService {
         userId: user.id,
         price: Number(createJobDto.price),
         subCategories: createJobDto.subCategories,
-        budge_type: createJobDto.budget_type,
+        budge_type:createJobDto.budget_type,
       },
       include: {
         category: true,
