@@ -17,6 +17,7 @@ export class TradesmanService {
   constructor(
     private prisma: PrismaService,
     private stripeService: StripeService,
+    private stripe: StripeService,
   ) {}
 
   async create(
@@ -95,7 +96,6 @@ export class TradesmanService {
           userId: isUserExist?.id,
           stripeConnectId: stripeConnect.id,
 
-          // subCategories: ['asdsdv', 'afcda'],
           docs: docs
             ? {
                 create: {
@@ -201,7 +201,7 @@ export class TradesmanService {
     const participate = await this.prisma.proposal.count({
       where: { tradesManId },
     });
-    // 🕒 Fetch recent accepted proposals
+
     const recentShortlist = await this.prisma.proposal.findMany({
       where: { status: 'ACCEPTED' },
       orderBy: { createdAt: 'desc' },
@@ -422,6 +422,21 @@ export class TradesmanService {
       success: true,
       message: 'History retrived successfully',
       data: result,
+    };
+  }
+
+  async addBalance(id: string) {
+    const isTradesManExist = await this.prisma.tradesMan.findFirst({
+      where: { userId: id },
+    });
+    const addBalance = await this.stripe.addBalance(
+      isTradesManExist?.stripeConnectId as string,
+    );
+    console.log({ addBalance });
+    return {
+      success: true,
+      message: 'Balance added successfully',
+      data: addBalance,
     };
   }
 }
