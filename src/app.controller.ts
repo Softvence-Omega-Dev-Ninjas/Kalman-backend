@@ -1,6 +1,5 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
-import { Response } from 'express';
 import appMetadata from './app-metadata/app-metadata';
 import { Public } from './common/decorators/public.decorator';
 
@@ -44,7 +43,6 @@ export class AppController {
       lastServerUpdate: lastServerUpdate.toISOString(),
       team: {
         name: 'Dev Ninja',
-        leader: 'Niloy',
         members: [
           { name: 'Milon', role: 'Backend Developer' },
           { name: 'Sujon', role: 'Backend Developer' },
