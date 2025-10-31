@@ -12,7 +12,17 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 
 @WebSocketGateway({
-  cors: { origin: '*' },
+  cors: {
+    origin: [
+      'https://pravaruka.sk',
+      'https://api.pravaruka.sk',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:5173',
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
+  },
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
