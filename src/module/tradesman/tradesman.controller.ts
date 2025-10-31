@@ -20,6 +20,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { CreateTradesManDto } from './dto/test.dto';
 import { CreatePaymentMethodDto } from './dto/payment-method.dto';
+import { GetTradesmanFilterDto } from './dto/tradesman-query-dto-';
 @Controller('tradesman')
 export class TradesmanController {
   constructor(private readonly tradesmanService: TradesmanService) {}
@@ -184,16 +185,13 @@ export class TradesmanController {
   })
   async findAll(
     @Query()
-    query: {
-      limit: string;
-      page: string;
-      search: string;
-      category: string;
-    },
+    query: GetTradesmanFilterDto,
   ) {
     try {
+      // console.log({ query });
       return this.tradesmanService.findAll(query);
     } catch (error) {
+      console.log({ error });
       return {
         success: false,
         message: error?.message || 'Internal server error',
