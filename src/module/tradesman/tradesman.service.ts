@@ -500,6 +500,7 @@ export class TradesmanService {
       data: addBalance,
     };
   }
+
   async addPaymentMethod(id: string, dto: CreatePaymentMethodDto) {
     const isTradesManExist = await this.prisma.tradesMan.findFirst({
       where: { userId: id },

@@ -54,8 +54,8 @@ export class AdminService {
   }
 
   // admin can remore any user from his platform
-  remove(id: string) {
-    const res = this.prisma.user.delete({
+ async remove(id: string) {
+    const res =await this.prisma.user.delete({
       where: {
         id: id,
       },
@@ -385,5 +385,22 @@ export class AdminService {
   async get_systemActivity() {
     const activity_table = await this.prisma.admin_activity.findFirst();
     return activity_table;
+  }
+
+
+
+  async get_home_page_stat(){
+    const [totalJobs,totalUser,totalTradesMan,totalReview]=await Promise.all([
+      this.prisma.jobs.count(),
+      this.prisma.user.count(),
+      this.prisma.tradesMan.count(),
+      this.prisma.review.count()
+    ])
+    return{
+      totalJobs,
+      totalUser,
+      totalTradesMan,
+      totalReview
+    }
   }
 }
