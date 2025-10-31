@@ -155,40 +155,12 @@ export class TradesmanController {
   }
   @Get()
   @Public()
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: String,
-    description: 'Number of records to return per page',
-    example: '10',
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: String,
-    description: 'Number of records to skip (for pagination)',
-    example: '1',
-  })
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    type: String,
-    description: 'Search tradesmen by name, email, or any related field',
-    example: 'John',
-  })
-  @ApiQuery({
-    name: 'category',
-    required: false,
-    type: String,
-    description: 'Filter tradesmen by category',
-    example: 'Electrician',
-  })
   async findAll(
     @Query()
     query: GetTradesmanFilterDto,
   ) {
     try {
-      // console.log({ query });
+      console.log({ query });
       return this.tradesmanService.findAll(query);
     } catch (error) {
       console.log({ error });
