@@ -5,7 +5,7 @@ services:
     platform: linux/amd64
     build:
       context: .
-    image: ${IMAGE_TAG}
+    image: ${DOCKER_USERNAME}/${PACKAGE_NAME}:latest
     container_name: ${PACKAGE_NAME}
     ports:
       - ${PORT}:${PORT}
