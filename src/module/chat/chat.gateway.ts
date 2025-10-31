@@ -11,7 +11,9 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 
-@WebSocketGateway({ cors: { origin: ['*', 'http://localhost:3000','http://localhost:5173'] } })
+@WebSocketGateway({
+  cors: { origin: ['*', 'http://localhost:3000', 'http://localhost:5173'] },
+})
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {

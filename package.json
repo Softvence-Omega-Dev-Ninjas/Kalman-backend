@@ -24,7 +24,8 @@
     "start:docker": "prisma generate && prisma migrate deploy && node dist/src/main",
     "lint:fix": "eslint . --ext .ts,.js,.jsx,.tsx --fix",
     "format:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
-    "ci:fix": "npm run format:fix"
+    "ci:fix": "npm run format:fix",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

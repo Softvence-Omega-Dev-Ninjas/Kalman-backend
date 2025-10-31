@@ -24,7 +24,6 @@ import { AppController } from './app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ResponseTimeMiddleware } from './common/interceptor/serverResponse.middlewere';
 
-
 @Module({
   imports: [
     AuthModule,
@@ -54,8 +53,6 @@ import { ResponseTimeMiddleware } from './common/interceptor/serverResponse.midd
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ResponseTimeMiddleware)
-      .forRoutes('*'); 
+    consumer.apply(ResponseTimeMiddleware).forRoutes('*');
   }
 }

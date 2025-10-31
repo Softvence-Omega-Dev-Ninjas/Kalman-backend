@@ -131,36 +131,35 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET,
     });
-    const isExistTradeMand=await this.prisma.tradesMan.findFirst({
-      where:{
-        userId:user.id
-      }
-    })
-    const trademanFirstName=isExistTradeMand?.firstName
-    if(isExistTradeMand){
-       return {
-      token,
-      user:{
-        id:user.id,
-        email:user.email,
-        role:user.role,
-        image:user.profile_image,
-        firstName:isExistTradeMand?.firstName,
-        lastname:isExistTradeMand?.firstName
+    const isExistTradeMand = await this.prisma.tradesMan.findFirst({
+      where: {
+        userId: user.id,
       },
+    });
+    const trademanFirstName = isExistTradeMand?.firstName;
+    if (isExistTradeMand) {
+      return {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          image: user.profile_image,
+          firstName: isExistTradeMand?.firstName,
+          lastname: isExistTradeMand?.firstName,
+        },
+      };
     }
-    }
-     return {
+    return {
       token,
-      user:{
-        id:user.id,
-        name:user?.name,
-        email:user.email,
-        role:user.role,
-        image:user.profile_image,
+      user: {
+        id: user.id,
+        name: user?.name,
+        email: user.email,
+        role: user.role,
+        image: user.profile_image,
       },
-    }
-   
+    };
   }
 
   // send 6 digit otp by email
@@ -323,17 +322,16 @@ export class AuthService {
     return token;
   }
 
-
   // forgot pass word
-  async forgetPassowrd(forgetPassDto:ForgetPassDto){
-    const {email}=forgetPassDto
-     const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+  async forgetPassowrd(forgetPassDto: ForgetPassDto) {
+    const { email } = forgetPassDto;
+    const randomNumber = Math.floor(Math.random() * 900000) + 100000;
     const html = this.otpTemplate.generateOtpHtml({
       otp: randomNumber,
     });
     const isExistUser = await this.prisma.user.findFirst({
       where: {
-        email:email
+        email: email,
       },
     });
     if (!isExistUser) {
@@ -347,7 +345,7 @@ export class AuthService {
       }),
       await this.prisma.user.updateMany({
         where: {
-          email:email,
+          email: email,
         },
         data: {
           otp: randomNumber,
@@ -359,28 +357,28 @@ export class AuthService {
     };
   }
 
-// udate forgot password
-  async updatePassoword(updatePassdto:UpdatePassDto){
-      const {email,password}=updatePassdto
-      const hash_password = await bcrypt.hash(password, 10);
-      const isExistUser = await this.prisma.user.findFirst({
-        where: {
-          email:email
-        },
-      });
-      if (!isExistUser) {
-        throw new HttpException('Your email not found', 400);
-      }
-      await this.prisma.user.updateMany({
-        where: {
-          email:email,
-        },
-        data: {
-          password: hash_password,
-        },
-      });
-      return {
-        message: 'Password updated successfully',
-      };
+  // udate forgot password
+  async updatePassoword(updatePassdto: UpdatePassDto) {
+    const { email, password } = updatePassdto;
+    const hash_password = await bcrypt.hash(password, 10);
+    const isExistUser = await this.prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    if (!isExistUser) {
+      throw new HttpException('Your email not found', 400);
+    }
+    await this.prisma.user.updateMany({
+      where: {
+        email: email,
+      },
+      data: {
+        password: hash_password,
+      },
+    });
+    return {
+      message: 'Password updated successfully',
+    };
   }
 }

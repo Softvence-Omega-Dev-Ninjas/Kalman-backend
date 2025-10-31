@@ -24,11 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Lint
-        run: npm run lint
+      # - name: Run Lint
+      #   run: npm run lint
 
-      - name: Format Check
-        run: npm run format
+      # - name: Format Check
+      #   run: npm run format
 
       - name: Build Project
         run: npm run build

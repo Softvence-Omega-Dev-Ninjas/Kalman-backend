@@ -388,7 +388,7 @@ export class TradesmanService {
       zipCode?: number;
       street?: string;
     } = {};
-    let imagesLinks = [];
+    const imagesLinks = [];
     console.log({ id });
     console.log(files);
     data.images = imagesLinks;

@@ -21,9 +21,8 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
-  
   // CREATE NEW BLOG
-  
+
   @Post()
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
   @ApiConsumes('multipart/form-data')
@@ -54,22 +53,23 @@ export class BlogController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-   try{
-     const user = req.user;
-    const createBlogDto = JSON.parse(blogData);
-    return this.blogService.create(createBlogDto, files, user);
-   }catch(e){
-    throw new BadRequestException(e.message)
-   }
+    try {
+      const user = req.user;
+      const createBlogDto = JSON.parse(blogData);
+      return this.blogService.create(createBlogDto, files, user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
 
-  
   // UPDATE BLOG (PATCH)
-  
+
   @Patch(':id')
   @UseInterceptors(FilesInterceptor('images', 10, fileStorageOptions))
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Update an existing blog with optional new images.' })
+  @ApiOperation({
+    summary: 'Update an existing blog with optional new images.',
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -97,60 +97,56 @@ export class BlogController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req: any,
   ) {
-  try{
-    const user = req.user;
-    const updateBlogDto = JSON.parse(blogData);
-    return this.blogService.update(id, updateBlogDto, files, user);
-  }catch(e){
-    throw new BadRequestException(e.message)
-  }
+    try {
+      const user = req.user;
+      const updateBlogDto = JSON.parse(blogData);
+      return this.blogService.update(id, updateBlogDto, files, user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
 
   @Delete('blog/:id/images/:index')
   @ApiOperation({ summary: 'Delete an image from a blog by index.' })
-  async deleteImage(@Param('id') id:string, @Param('index') index:number){
-    try{
+  async deleteImage(@Param('id') id: string, @Param('index') index: number) {
+    try {
       return this.blogService.removeImage(id, index);
-    }catch(e){
-      throw new BadRequestException(e.message)
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
-    }
-  
+  }
+
   // GET ALL BLOGS
-  
+
   @Get()
   @Public()
   findAll() {
-    try{
+    try {
       return this.blogService.findAll();
-    }catch(e){
-      throw new BadRequestException(e.message)
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 
-  
   // GET SINGLE BLOG
-  
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    try{
+    try {
       return this.blogService.findOne(id);
-    }catch(e){
-      throw new BadRequestException(e.message)
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 
-  
   // DELETE BLOG
-  
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-   try{
-    return this.blogService.remove(id);
-   }catch(e){
-    throw new BadRequestException(e.message)
-   }
+    try {
+      return this.blogService.remove(id);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
-
-  
 }

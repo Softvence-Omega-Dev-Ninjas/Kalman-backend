@@ -4,7 +4,7 @@ import appMetadata from './app-metadata/app-metadata';
 import { Public } from './common/decorators/public.decorator';
 
 // Dynamic last update
-let lastServerUpdate = new Date();
+const lastServerUpdate = new Date();
 
 @Controller()
 export class AppController {
