@@ -1,16 +1,6 @@
 api.pravaruka.sk {
-    @socketio path /socket.io/*
-    reverse_proxy @socketio app:5000 {
-        header_up X-Real-IP {remote}
-        header_up X-Forwarded-For {remote}
-        header_up X-Forwarded-Proto {scheme}
-        header_up Host {host}
-        transport http {
-            versions h2c 1.1
-        }
-    }
+    reverse_proxy /socket.io* app:5000
 
-    # Fallback for all other API requests
     reverse_proxy app:5000 {
         header_up X-Real-IP {remote}
         header_up X-Forwarded-For {remote}
