@@ -1,433 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KALMAN API Server</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KALMAN API Server</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
 
-        @keyframes shimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-            100% {
-                background-position: 1000px 0;
-            }
-        }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+    background: #0a0a0a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-            background: #0a0a0a;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(0, 149, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    animation: fadeIn 1s ease-out;
+}
 
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(0, 149, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(0, 229, 255, 0.08) 0%, transparent 50%);
-            pointer-events: none;
-            animation: fadeIn 1s ease-out;
-        }
+.container {
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 64px 48px;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out;
+}
 
-        .container {
-            background: rgba(18, 18, 18, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 64px 48px;
-            max-width: 700px;
-            width: 100%;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 0.8s ease-out;
-        }
+.logo-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 32px;
+    background: linear-gradient(135deg, #0095ff 0%, #00e5ff 100%);
+    border-radius: 20px;
+    position: relative;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards, float 3s ease-in-out infinite;
+}
 
-        .logo-container {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 32px;
-            background: linear-gradient(135deg, #0095ff 0%, #00e5ff 100%);
-            border-radius: 20px;
-            position: relative;
-            animation: fadeInUp 0.8s ease-out 0.2s backwards, float 3s ease-in-out infinite;
-        }
+.logo-container::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #0095ff, #00e5ff);
+    border-radius: 20px;
+    opacity: 0.5;
+    filter: blur(10px);
+    z-index: -1;
+}
 
-        .logo-container::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(135deg, #0095ff, #00e5ff);
-            border-radius: 20px;
-            opacity: 0.5;
-            filter: blur(10px);
-            z-index: -1;
-        }
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: white;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        }
+h1 {
+    color: white;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    animation: fadeInUp 0.8s ease-out 0.3s backwards;
+}
 
-        h1 {
-            color: white;
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            animation: fadeInUp 0.8s ease-out 0.3s backwards;
-        }
+.subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.125rem;
+    margin-bottom: 48px;
+    font-weight: 400;
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+}
 
-        .subtitle {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 1.125rem;
-            margin-bottom: 48px;
-            font-weight: 400;
-            animation: fadeInUp 0.8s ease-out 0.4s backwards;
-        }
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.8s ease-out 0.5s backwards;
+}
 
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 40px;
-            animation: fadeInUp 0.8s ease-out 0.5s backwards;
-        }
+.status-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: left;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
 
-        .status-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: left;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+.status-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(0, 149, 255, 0.3);
+    transform: translateY(-2px);
+}
 
-        .status-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            transition: left 0.5s ease;
-        }
+.status-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
 
-        .status-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(0, 149, 255, 0.3);
-            transform: translateY(-2px);
-        }
+.status-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
 
-        .status-card:hover::before {
-            left: 100%;
-        }
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+}
 
-        .status-label {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+.status-indicator.online {
+    background: #00e5ff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    animation: pulse 2s ease-in-out infinite;
+}
 
-        .status-value {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
+.status-indicator.connected {
+    background: #00ff88;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    animation: pulse 2s ease-in-out infinite 0.5s;
+}
 
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            position: relative;
-        }
+.status-value.version { color: #0095ff; }
+.status-value.environment { color: #00e5ff; }
 
-        .status-indicator.online {
-            background: #00e5ff;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-            animation: pulse 2s ease-in-out infinite;
-        }
+.metrics-panel {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    animation: fadeInUp 0.8s ease-out 0.6s backwards;
+}
 
-        .status-indicator.online::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border: 2px solid #00e5ff;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
+.metrics-title {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+}
 
-        .status-indicator.connected {
-            background: #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-            animation: pulse 2s ease-in-out infinite 0.5s;
-        }
+.metrics-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-        .status-value.version {
-            color: #0095ff;
-        }
+.metrics-row:last-child { border-bottom: none; }
 
-        .status-value.environment {
-            color: #00e5ff;
-        }
+.metric-label { color: rgba(255, 255, 255, 0.7); font-size: 0.9375rem; }
+.metric-value { color: #00e5ff; font-weight: 600; font-size: 0.9375rem; }
 
-        .metrics-panel {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            animation: fadeInUp 0.8s ease-out 0.6s backwards;
-        }
+.cta-button {
+    background: linear-gradient(135deg, #0095ff 0%, #00e5ff 100%);
+    color: white;
+    border: none;
+    padding: 18px 40px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out 0.7s backwards;
+}
 
-        .metrics-title {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-align: left;
-        }
+.cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 149, 255, 0.4); }
+.cta-button:active { transform: translateY(-1px); }
 
-        .metrics-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
+.button-icon { width: 18px; height: 18px; }
 
-        .metrics-row:last-child {
-            border-bottom: none;
-        }
+.footer-text { margin-top: 32px; color: rgba(255, 255, 255, 0.4); font-size: 0.875rem; animation: fadeIn 1s ease-out 1s backwards; }
 
-        .metric-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9375rem;
-        }
-
-        .metric-value {
-            color: #00e5ff;
-            font-weight: 600;
-            font-size: 0.9375rem;
-        }
-
-        .cta-button {
-            background: linear-gradient(135deg, #0095ff 0%, #00e5ff 100%);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 0.8s ease-out 0.7s backwards;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 149, 255, 0.4);
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
-        }
-
-        .cta-button:active {
-            transform: translateY(-1px);
-        }
-
-        .button-icon {
-            width: 18px;
-            height: 18px;
-        }
-
-        .footer-text {
-            margin-top: 32px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.875rem;
-            animation: fadeIn 1s ease-out 1s backwards;
-        }
-
-        @media (max-width: 640px) {
-            .container {
-                padding: 48px 32px;
-            }
-
-            h1 {
-                font-size: 2.25rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
-
-            .status-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .logo-container {
-                width: 64px;
-                height: 64px;
-            }
-
-            .logo-icon {
-                width: 32px;
-                height: 32px;
-            }
-        }
-    </style>
+@media (max-width: 640px) {
+    .container { padding: 48px 32px; }
+    h1 { font-size: 2.25rem; }
+    .subtitle { font-size: 1rem; }
+    .status-grid { grid-template-columns: 1fr; }
+    .logo-container { width: 64px; height: 64px; }
+    .logo-icon { width: 32px; height: 32px; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <div class="logo-icon"></div>
-        </div>
-        
-        <h1>KALMAN API Server</h1>
-        <p class="subtitle">Enterprise Service Management Platform</p>
-        
-        <div class="status-grid">
-            <div class="status-card">
-                <div class="status-label">System Status</div>
-                <div class="status-value">
-                    <div class="status-indicator online"></div>
-                    Online
-                </div>
-            </div>
-            
-            <div class="status-card">
-                <div class="status-label">Version</div>
-                <div class="status-value version">v1.0.0</div>
-            </div>
-            
-            <div class="status-card">
-                <div class="status-label">Database</div>
-                <div class="status-value">
-                    <div class="status-indicator connected"></div>
-                    Connected
-                </div>
-            </div>
-            
-            <div class="status-card">
-                <div class="status-label">Environment</div>
-                <div class="status-value environment">Production</div>
-            </div>
-        </div>
+<div class="container">
+    <div class="logo-container"><div class="logo-icon"></div></div>
+    <h1>KALMAN API Server</h1>
+    <p class="subtitle">Enterprise Service Management Platform</p>
 
-        <div class="metrics-panel">
-            <div class="metrics-title">Performance Metrics</div>
-            <div class="metrics-row">
-                <span class="metric-label">Uptime</span>
-                <span class="metric-value">99.98%</span>
-            </div>
-            <div class="metrics-row">
-                <span class="metric-label">Response Time</span>
-                <span class="metric-value">42ms</span>
-            </div>
-            <div class="metrics-row">
-                <span class="metric-label">Active Connections</span>
-                <span class="metric-value">1,247</span>
+    <div class="status-grid">
+        <div class="status-card">
+            <div class="status-label">System Status</div>
+            <div class="status-value" id="system-status">
+                <div class="status-indicator online"></div> Online
             </div>
         </div>
-        
-        <a href="/docs" class="cta-button">
-            <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            View API Documentation
-        </a>
-
-        <p class="footer-text">Powered by KALMAN Infrastructure</p>
+        <div class="status-card">
+            <div class="status-label">Version</div>
+            <div class="status-value version" id="system-version">v1.0.0</div>
+        </div>
+        <div class="status-card">
+            <div class="status-label">Database</div>
+            <div class="status-value" id="database-status">
+                <div class="status-indicator connected"></div> Connected
+            </div>
+        </div>
+        <div class="status-card">
+            <div class="status-label">Environment</div>
+            <div class="status-value environment" id="system-env">Production</div>
+        </div>
     </div>
+
+    <div class="metrics-panel">
+        <div class="metrics-title">Performance Metrics</div>
+        <div class="metrics-row">
+            <span class="metric-label">Uptime</span>
+            <span class="metric-value" id="uptime">0s</span>
+        </div>
+        <div class="metrics-row">
+            <span class="metric-label">Response Time</span>
+            <span class="metric-value" id="response-time">0ms</span>
+        </div>
+        <div class="metrics-row">
+            <span class="metric-label">Active Connections</span>
+            <span class="metric-value" id="connections">0</span>
+        </div>
+    </div>
+
+    <a href="/docs" class="cta-button">
+        <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        View API Documentation
+    </a>
+
+    <p class="footer-text">Powered by KALMAN Infrastructure</p>
+</div>
+
+<script>
+let startUptime = 0;
+
+async function fetchServerMetrics() {
+    try {
+        const res = await fetch('/api/health'); 
+        if (!res.ok) throw new Error('API request failed');
+        const data = await res.json();
+
+        // Update system info
+        document.getElementById('system-status').innerHTML = `
+            <div class="status-indicator online"></div> ${data.status.toUpperCase()}
+        `;
+        document.getElementById('system-version').textContent = data.version;
+        document.getElementById('system-env').textContent = data.environment || 'N/A';
+        document.getElementById('connections').textContent = data.activeConnections || '0';
+
+        // Update metrics
+        startUptime = data.uptime || 0;
+        document.getElementById('response-time').textContent = data.responseTime || '0ms';
+    } catch (err) {
+        console.error('Error fetching server metrics:', err);
+    }
+}
+
+function updateUptimeCounter() {
+    startUptime++;
+    document.getElementById('uptime').textContent = `${startUptime}s`;
+}
+
+// Initial fetch and periodic updates
+fetchServerMetrics();
+setInterval(fetchServerMetrics, 5000); // fetch from server every 5s
+setInterval(updateUptimeCounter, 1000); // increment uptime every second
+</script>
 </body>
 </html>
