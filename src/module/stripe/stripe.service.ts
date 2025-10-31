@@ -13,9 +13,7 @@ export class StripeService {
   private stripe: Stripe;
 
   constructor(private readonly prisma: PrismaService) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2025-09-30.clover',
-    });
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
   }
 
   // 🔹 Create Stripe Customer
