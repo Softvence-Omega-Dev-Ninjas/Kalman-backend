@@ -236,7 +236,7 @@ export class TradesmanService {
     const category = query?.category;
     const subCategory = query?.subCategory;
     const location = query?.location;
-    // const rating = query?.rating;
+    const rating = query?.rating;
     const skip = (page - 1) * limit;
     const search = query.search;
 
@@ -274,15 +274,15 @@ export class TradesmanService {
       ];
     }
 
-    // if (rating && Array.isArray(rating) && rating.length > 0) {
-    //   where.review = {
-    //     some: {
-    //       rating: {
-    //         in: rating.map(Number),
-    //       },
-    //     },
-    //   };
-    // }
+    if (rating && Array.isArray(rating) && rating.length > 0) {
+      where.review = {
+        some: {
+          rating: {
+            in: rating.map(Number),
+          },
+        },
+      };
+    }
 
     console.log({ where });
     const result = await this.prisma.tradesMan.findMany({
