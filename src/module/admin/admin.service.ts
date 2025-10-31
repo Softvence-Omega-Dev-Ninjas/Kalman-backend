@@ -54,8 +54,8 @@ export class AdminService {
   }
 
   // admin can remore any user from his platform
-  remove(id: string) {
-    const res = this.prisma.user.delete({
+ async remove(id: string) {
+    const res =await this.prisma.user.delete({
       where: {
         id: id,
       },
