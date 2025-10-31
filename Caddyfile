@@ -6,6 +6,11 @@ api.pravaruka.sk {
         header_up X-Forwarded-Proto {scheme}
         header_up Host {host}
 
+        header_up Access-Control-Allow-Origin "https://pravaruka.sk"
+        header_up Access-Control-Allow-Credentials "true"
+        header_up Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        header_up Access-Control-Allow-Headers "*"
+
         transport http {
             versions h2c 1.1
         }
