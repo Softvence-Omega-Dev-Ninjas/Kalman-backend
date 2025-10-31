@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate deploy",
-    "start:docker": "prisma generate && prisma migrate deploy && node dist/src/main",
+    "start:docker": "npx prisma generate && npx prisma migrate deploy && node dist/src/main",
     "lint:fix": "eslint . --ext .ts,.js,.jsx,.tsx --fix",
     "format:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "ci:fix": "npm run format:fix",
