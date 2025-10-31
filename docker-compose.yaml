@@ -26,6 +26,8 @@ services:
     # Enhanced health check for better zero-downtime deployment
     healthcheck:
       disable: true
+    volumes:
+    - files-data:/app/uploads
 
   db:
     image: postgres:17
@@ -91,5 +93,6 @@ volumes:
   pg:
   caddy_data:
   caddy_config:
+  files-data:
 networks:
   default:
