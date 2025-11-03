@@ -427,6 +427,19 @@ export class TradesmanService {
     return result;
   }
 
+  async updateProfile(id: string, file: Express.Multer.File) {
+    const { url } = await saveFile(file);
+    const result = await this.prisma.tradesMan.update({
+      where: { userId: id },
+      data: {
+        profileImage: url,
+      },
+    });
+    return {
+      result,
+    };
+  }
+
   remove(id: number) {
     return `This action removes a #${id} tradesman`;
   }

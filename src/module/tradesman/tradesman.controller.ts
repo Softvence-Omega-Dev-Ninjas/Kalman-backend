@@ -11,12 +11,19 @@ import {
   UploadedFiles,
   Query,
   Req,
+  UploadedFile,
 } from '@nestjs/common';
 import { TradesmanService } from './tradesman.service';
 // import { CreateTradesManDto } from './dto/create-tradesman.dto';
-import { UpdateTradesManDto } from './dto/update-tradesman.dto';
+import {
+  UpdateTradesManDto,
+  UpdateTradesmanProfileDto,
+} from './dto/update-tradesman.dto';
 import { Public } from 'src/common/decorators/public.decorator';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { CreateTradesManDto } from './dto/test.dto';
 import { CreatePaymentMethodDto } from './dto/payment-method.dto';
@@ -253,20 +260,51 @@ export class TradesmanController {
     }
   }
 
-  @Patch('update-tradesman')
+  // @Patch('update-tradesman-profile')
+  // @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(FileInterceptor('image'))
+  // updateProfileImage(
+  //   @Body() dto: UpdateTradesmanProfileDto,
+  //   @UploadedFile() image: Express.Multer.File,
+  //   @Req() req: any,
+  // ) {
+  //   try {
+  //     const user = req.user;
+  //     console.log({ user, image });
+  //     return null;
+  //     // return this.tradesmanService.updateProfile(user?.id, file);
+  //   } catch (error) {
+  //     console.log({ error });
+  //     return {
+  //       success: false,
+  //       message: error?.message || 'Internal server error',
+  //       error: error,
+  //     };
+  //   }
+  // }
+
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
-  addPaymentMothod(
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        image: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('image'))
+  @Patch('update-tradesman-profile')
+  updateProfileImage(
+    @UploadedFile() image: Express.Multer.File,
     @Req() req: any,
-    @Body() updateTradesmanDto: UpdateTradesManDto,
-    @UploadedFiles()
-    files?: { images: Express.Multer.File[] },
   ) {
     try {
       const user = req.user;
-      console.log(user);
-      return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
+      console.log({ user, image });
+
+      return this.tradesmanService.updateProfile(user?.id, image);
     } catch (error) {
+      console.log({ error });
       return {
         success: false,
         message: error?.message || 'Internal server error',
@@ -275,6 +313,27 @@ export class TradesmanController {
     }
   }
 
+  // @Patch('update-tradesman')
+  // @ApiConsumes('multipart/form-data')
+  // @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+  // addPaymentMothod(
+  //   @Req() req: any,
+  //   @Body() updateTradesmanDto: UpdateTradesManDto,
+  //   @UploadedFiles()
+  //   files?: { images: Express.Multer.File[] },
+  // ) {
+  //   try {
+  //     const user = req.user;
+  //     console.log(user);
+  //     return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
+  //   } catch (error) {
+  //     return {
+  //       success: false,
+  //       message: error?.message || 'Internal server error',
+  //       error: error,
+  //     };
+  //   }
+  // }
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
