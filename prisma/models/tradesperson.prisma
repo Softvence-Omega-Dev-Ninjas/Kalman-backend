@@ -27,7 +27,7 @@
     categoryId             String
     category               Category @relation(fields: [categoryId], references: [id],onDelete: Cascade)
     subCategories          String[]
-    userId                 String @unique 
+    userId                 String @unique
     user                   User @relation(fields: [userId], references: [id],onDelete: Cascade)
     proposal               Proposal[]
     createdAt              DateTime @default(now())
@@ -40,7 +40,7 @@
     type                   String
     url                    String
     userId                 String @unique
-    user                   TradesMan @relation(fields: [userId], references: [id])
+    user                   TradesMan @relation(fields: [userId], references: [id],onDelete: Cascade)
 
   }
 
@@ -54,7 +54,7 @@
     hourlyRate             String?
     services               String[]
     professionalDescription String?
-    user                   TradesMan @relation(fields: [userId], references: [id])
+    user                   TradesMan @relation(fields: [userId], references: [id],onDelete:Cascade)
   }
 
   model ServiceArea {
@@ -64,7 +64,7 @@
     latitude               Float?
     longitude              Float?
     radius                 Float? 
-    user                   TradesMan @relation(fields: [userId], references: [id])
+    user                   TradesMan @relation(fields: [userId], references: [id],onDelete: Cascade)
   }
 
   model PaymentMethod {
@@ -85,5 +85,5 @@
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
 
-    user            TradesMan @relation(fields: [userId], references: [id])
+    user            TradesMan @relation(fields: [userId], references: [id],onDelete: Cascade)
   }

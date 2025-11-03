@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetAllUserDto } from './dto/getAllUser.dto';
 import { SystemActivityDto } from './dto/system_activity.dto';
@@ -54,17 +54,57 @@ export class AdminService {
   }
 
   // admin can remore any user from his platform
- async remove(id: string) {
-    const res =await this.prisma.user.delete({
-      where: {
-        id: id,
-      },
-    });
-    return {
-      status: 200,
-      message: 'User deleted successfully',
-    };
+async remove(id: string) {
+  const isUserExist=await this.prisma.user.findFirst({
+    where:{
+      id:id
+    }
+  })
+  if(!isUserExist){
+    throw new HttpException("User not found",HttpStatus.NOT_FOUND)
   }
+
+  // Check if TradesMan exists
+  const isTradeManExist = await this.prisma.tradesMan.findFirst({
+    where: { userId: id },
+  });
+  
+console.log(isTradeManExist)
+  if (isTradeManExist) {
+    // Delete dependent 1:1 and 1:N records first (optional, can rely on cascade)
+    await this.prisma.businessDetail.deleteMany({
+      where: { userId: isTradeManExist.id },
+    });
+
+    await this.prisma.serviceArea.deleteMany({
+      where: { userId: isTradeManExist.id },
+    });
+
+    await this.prisma.paymentMethod.deleteMany({
+      where: { userId: isTradeManExist.id },
+    });
+
+    await this.prisma.docs.deleteMany({
+      where: { userId: isTradeManExist.id },
+    });
+
+    // Now delete TradesMan
+    await this.prisma.tradesMan.delete({
+      where: { userId: id },
+    });
+  }
+
+  // Finally delete the user
+  await this.prisma.user.delete({
+    where: { id },
+  });
+
+  return {
+    status: 200,
+    message: 'User deleted successfully',
+  };
+}
+
 
   // find all jobs by admin
   async find_all_jobs(filterDto: GetAllUserDto) {
