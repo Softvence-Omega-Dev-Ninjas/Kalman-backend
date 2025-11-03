@@ -107,4 +107,9 @@ export class CreateTradesManDto {
   @IsOptional()
   @IsString()
   credential?: string;
+
+
+  z
+
+
 }
