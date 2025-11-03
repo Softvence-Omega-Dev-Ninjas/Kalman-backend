@@ -62,3 +62,4 @@ vps_key.pem
 vps_key.pem.pub
 package-lock.json
 pnpm-lock.yaml
+*.pem

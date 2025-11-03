@@ -23,7 +23,8 @@ import { InvitationModule } from './module/invitation/invitation.module';
 import { AppController } from './app.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ResponseTimeMiddleware } from './common/interceptor/serverResponse.middlewere';
-
+// import { UploadsModule } from './main/uploads/uploads.module';
+import { UploadsModule } from './module/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -48,14 +49,13 @@ import { ResponseTimeMiddleware } from './common/interceptor/serverResponse.midd
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [SeederService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ResponseTimeMiddleware)
-      .forRoutes('*'); 
+    consumer.apply(ResponseTimeMiddleware).forRoutes('*');
   }
 }

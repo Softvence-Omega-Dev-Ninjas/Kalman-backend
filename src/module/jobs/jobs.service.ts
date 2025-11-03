@@ -19,7 +19,7 @@ export class JobsService {
     // if(userExist?.verification==="PENDING"){
     //   throw new HttpException("Your account is not verified",400)
     // }
-    console.log(createJobDto)
+    console.log(createJobDto);
     const filePaths = files.map((file) => buildFileUrl(file.filename));
     const commisionRate = await this.prisma.commision.findFirst();
     const percentCalculetion = commisionRate?.commision_rate
@@ -42,7 +42,7 @@ export class JobsService {
         userId: user.id,
         price: Number(createJobDto.price),
         subCategories: createJobDto.subCategories,
-        budge_type:createJobDto.budget_type,
+        budge_type: createJobDto.budget_type,
       },
       include: {
         category: true,
@@ -60,101 +60,101 @@ export class JobsService {
     };
   }
 
-async findAll(filterDto: GetJobsFilterDto) {
-  const {
-    search,
-    category,
-    subCategory,
-    location,
-    minPrice,
-    maxPrice,
-    page = 1,
-    limit = 10,
-  } = filterDto;
+  async findAll(filterDto: GetJobsFilterDto) {
+    const {
+      search,
+      category,
+      subCategory,
+      location,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 10,
+    } = filterDto;
 
-  const take = limit;
-  const skip = (page - 1) * limit;
-  const where: any = {};
+    const take = limit;
+    const skip = (page - 1) * limit;
+    const where: any = {};
 
-  // Search filter
-  if (search) {
-    where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
-    ];
-  }
+    // Search filter
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
-  // Category filter
-  if (category?.length) {
-    where.categoryId = { in: category };
-  }
+    // Category filter
+    if (category?.length) {
+      where.categoryId = { in: category };
+    }
 
-  // SubCategory filter
-  if (subCategory?.length) {
-    // Match at least one of the given subcategories
-    where.subCategories = { hasSome: subCategory };
-  }
+    // SubCategory filter
+    if (subCategory?.length) {
+      // Match at least one of the given subcategories
+      where.subCategories = { hasSome: subCategory };
+    }
 
-  // Location filter
-  if (location) {
-    where.location = { contains: location, mode: 'insensitive' };
-  }
+    // Location filter
+    if (location) {
+      where.location = { contains: location, mode: 'insensitive' };
+    }
 
-  // Price filter
-  if (minPrice || maxPrice) {
-    where.price = {};
-    if (minPrice) where.price.gte = minPrice;
-    if (maxPrice) where.price.lte = maxPrice;
-  }
+    // Price filter
+    if (minPrice || maxPrice) {
+      where.price = {};
+      if (minPrice) where.price.gte = minPrice;
+      if (maxPrice) where.price.lte = maxPrice;
+    }
 
-  // Count total matching jobs
-  const totalCount = await this.prisma.jobs.count({ where });
+    // Count total matching jobs
+    const totalCount = await this.prisma.jobs.count({ where });
 
-  // Fetch jobs with pagination and relations
-  const jobs = await this.prisma.jobs.findMany({
-    where,
-    skip,
-    take,
-    include: {
-      customer: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          profile_image: true,
-          createdAt: true,
+    // Fetch jobs with pagination and relations
+    const jobs = await this.prisma.jobs.findMany({
+      where,
+      skip,
+      take,
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            profile_image: true,
+            createdAt: true,
+          },
         },
+        jobActivity: true,
       },
-      jobActivity: true,
-    },
-  });
+    });
 
-  const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(totalCount / limit);
 
-  return {
-    data: jobs,
-    meta: {
-      total: totalCount,
-      limit,
-      currentPage: page,
-      totalPages,
-      hasNextPage: page < totalPages,
-      hasPreviousPage: page > 1,
-    },
-  };
-}
+    return {
+      data: jobs,
+      meta: {
+        total: totalCount,
+        limit,
+        currentPage: page,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
 
   // --------------------------------find single product-------------------------------------------
   findOne(id: string) {
-    if(!id){
-      throw new HttpException("Job id is required", 400)
+    if (!id) {
+      throw new HttpException('Job id is required', 400);
     }
     const res = this.prisma.jobs.findFirst({
       where: {
         id: id,
       },
       include: {
-        jobActivity:true,
+        jobActivity: true,
         customer: {
           select: {
             id: true,
@@ -162,7 +162,7 @@ async findAll(filterDto: GetJobsFilterDto) {
             email: true,
             profile_image: true,
             verification: true,
-            createdAt:true
+            createdAt: true,
           },
         },
       },
@@ -198,10 +198,9 @@ async findAll(filterDto: GetJobsFilterDto) {
     };
   }
 
-
   async findUserJobs(user: any) {
-    if(!user.id){
-      throw new HttpException("User id is required", 400)
+    if (!user.id) {
+      throw new HttpException('User id is required', 400);
     }
     const res = await this.prisma.jobs.findMany({
       where: {

@@ -2,6 +2,7 @@
     id                     String   @id @default(uuid())
     firstName              String
     lastName               String
+    profileImage           String?
     email                  String   @unique
     phoneNumber            String?
     dateOfBirth            String

@@ -9,8 +9,8 @@ export class NewsLetterService {
     private prisma: PrismaService,
     private mailService: MailService,
   ) {}
- async create(createNewsLetterDto: CreateNewsLetterDto) {
-  const userHtml = `
+  async create(createNewsLetterDto: CreateNewsLetterDto) {
+    const userHtml = `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f8f9fa; border-radius: 8px; color: #333;">
     <h1 style="color: #ff6600; text-align: center;">Thank You for Subscribing!</h1>
     <p>Hi ${createNewsLetterDto.name},</p>
@@ -22,7 +22,7 @@ export class NewsLetterService {
   </div>
   `;
 
-  const adminHtml = `
+    const adminHtml = `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #ddd; color: #333;">
     <h2 style="color: #007bff;">New Newsletter Subscription</h2>
     <p><strong>Name:</strong> ${createNewsLetterDto.name}</p>
@@ -32,27 +32,26 @@ export class NewsLetterService {
   </div>
   `;
 
-  await Promise.all([
-    this.mailService.sendMail({
-      to: createNewsLetterDto.email,
-      subject: 'Thanks for subscribing to our newsletter',
-      html: userHtml,
-    }),
-    this.mailService.sendMail({
-      to: 'dev.milonhossain32@gmail.com',
-      subject: 'New Newsletter Subscription',
-      html: adminHtml,
-    }),
-    this.prisma.news_letter.create({
-      data: createNewsLetterDto,
-    }),
-  ]);
+    await Promise.all([
+      this.mailService.sendMail({
+        to: createNewsLetterDto.email,
+        subject: 'Thanks for subscribing to our newsletter',
+        html: userHtml,
+      }),
+      this.mailService.sendMail({
+        to: 'dev.milonhossain32@gmail.com',
+        subject: 'New Newsletter Subscription',
+        html: adminHtml,
+      }),
+      this.prisma.news_letter.create({
+        data: createNewsLetterDto,
+      }),
+    ]);
 
-  return {
-    message: 'Thanks for your message! We will reach out immediately.',
-  };
-}
-
+    return {
+      message: 'Thanks for your message! We will reach out immediately.',
+    };
+  }
 
   async findAll() {
     const res = await this.prisma.news_letter.findMany();

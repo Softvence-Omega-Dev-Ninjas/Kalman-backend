@@ -24,21 +24,21 @@ export class CustomerController {
 
   @Get()
   find_all_jobs(@Req() req: any) {
-  try{
-    const user = req.user;
-    return this.customerService.find_All_jobs_with_stat(user);
-  }catch(e){
-    throw new BadRequestException(e.message)
-  }
+    try {
+      const user = req.user;
+      return this.customerService.find_All_jobs_with_stat(user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
 
   @Get('get-me')
   get_me(@Req() req: any) {
-    try{
+    try {
       const user = req.user;
-    return this.customerService.get_me(user);
-    }catch(e){
-      throw new BadRequestException(e.message)
+      return this.customerService.get_me(user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -75,16 +75,16 @@ export class CustomerController {
     @Body() updateCustomerDto: UpdateCustomerDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    try{
+    try {
       const userId = req.user.id;
-      
-    return this.customerService.update_profile(
-      userId,
-      updateCustomerDto,
-      files,
-    );
-    }catch(e){
-      throw new BadRequestException(e.message)
+
+      return this.customerService.update_profile(
+        userId,
+        updateCustomerDto,
+        files,
+      );
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { buildFileUrl } from 'src/helpers/urlBuilder';
 import { join } from 'path';
@@ -8,9 +12,8 @@ import * as fs from 'fs';
 export class BlogService {
   constructor(private prisma: PrismaService) {}
 
- 
   // CREATE BLOG
- 
+
   async create(createBlogDto: any, files: any, user: any) {
     const { title, description } = createBlogDto;
     const images = files?.map((file: any) => buildFileUrl(file.filename)) || [];
@@ -26,9 +29,8 @@ export class BlogService {
     return res;
   }
 
- 
   // READ ALL BLOGS
- 
+
   async findAll() {
     const res = await this.prisma.blog.findMany({
       orderBy: {
@@ -49,23 +51,17 @@ export class BlogService {
     return res;
   }
 
-
-
-
   // READ SINGLE BLOG BY ID
 
   async findOne(id: string) {
-    if(!id){
-      throw new BadRequestException("Id is required")
+    if (!id) {
+      throw new BadRequestException('Id is required');
     }
     const blog = await this.prisma.blog.findUnique({ where: { id } });
     if (!blog) throw new NotFoundException('Blog not found');
     return blog;
   }
 
-
-
- 
   // UPDATE BLOG
 
   async update(id: string, updateBlogDto: any, files: any, user: any) {
@@ -99,13 +95,11 @@ export class BlogService {
     };
   }
 
- 
-
   // DELETE BLOG
- 
+
   async remove(id: string) {
-    if(!id){
-      throw new BadRequestException("Id is required")
+    if (!id) {
+      throw new BadRequestException('Id is required');
     }
     const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
     if (!existingBlog) {
@@ -116,52 +110,48 @@ export class BlogService {
     return { message: 'Blog deleted successfully' };
   }
 
-
-
-
-
   //remove specific image
 
- async removeImage(id: string, imageIndex: number) {
-  if (!id) {
-    throw new BadRequestException('Id is required');
+  async removeImage(id: string, imageIndex: number) {
+    if (!id) {
+      throw new BadRequestException('Id is required');
+    }
+
+    if (isNaN(imageIndex)) {
+      throw new BadRequestException('Image index is required');
+    }
+
+    const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
+
+    if (!existingBlog) {
+      throw new NotFoundException('Blog not found');
+    }
+
+    const images = existingBlog.imeges || [];
+
+    if (imageIndex < 0 || imageIndex >= images.length) {
+      throw new BadRequestException('Invalid image index');
+    }
+
+    const imageUrl = images[imageIndex];
+    const uploadDir = join(process.cwd(), 'uploads');
+    const fileName = imageUrl.split('/').pop() || '';
+    const filePath = join(uploadDir, fileName);
+
+    // Remove the image from array
+    images.splice(imageIndex, 1);
+
+    // Delete image file from storage if exists
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    // Update database
+    await this.prisma.blog.update({
+      where: { id },
+      data: { imeges: images },
+    });
+
+    return { message: 'Image deleted successfully' };
   }
-
-  if (isNaN(imageIndex)) {
-    throw new BadRequestException('Image index is required');
-  }
-
-  const existingBlog = await this.prisma.blog.findUnique({ where: { id } });
-
-  if (!existingBlog) {
-    throw new NotFoundException('Blog not found');
-  }
-
-  const images = existingBlog.imeges || [];
-
-  if (imageIndex < 0 || imageIndex >= images.length) {
-    throw new BadRequestException('Invalid image index');
-  }
-
-  const imageUrl = images[imageIndex];
-  const uploadDir = join(process.cwd(), 'uploads');
-  const fileName = imageUrl.split('/').pop() || '';
-  const filePath = join(uploadDir, fileName);
-
-  // Remove the image from array
-  images.splice(imageIndex, 1);
-
-  // Delete image file from storage if exists
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
-
-  // Update database
-  await this.prisma.blog.update({
-    where: { id },
-    data: { imeges: images },
-  });
-
-  return { message: 'Image deleted successfully' };
-}
 }

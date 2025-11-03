@@ -10,18 +10,18 @@ export class AdminService {
 
   // find all user by admin
   async find_all_users(filterDto: GetAllUserDto) {
-    const { page = 1, limit = 10,search } = filterDto;
+    const { page = 1, limit = 10, search } = filterDto;
     const skip = (page - 1) * limit;
     const take = limit;
-    const where:any={}
-    if(search){
-      where.OR=[
-        {name:{contains:search,mode:"insensitive"}}
-        ,{email:{contains:search,mode:"insensitive"}}
-        ,{phone:{contains:search,mode:"insensitive"}}
-      ]
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+      ];
     }
-    const totalUser=await this.prisma.user.count()
+    const totalUser = await this.prisma.user.count();
     const users = await this.prisma.user.findMany({
       where,
       take,
@@ -37,9 +37,9 @@ export class AdminService {
         },
       },
     });
-    return{
-      totalUser:totalUser,
-      users:users
+    return {
+      totalUser: totalUser,
+      users: users,
     };
   }
 
@@ -108,17 +108,17 @@ console.log(isTradeManExist)
 
   // find all jobs by admin
   async find_all_jobs(filterDto: GetAllUserDto) {
-    const { page = 1, limit = 10,search } = filterDto;
+    const { page = 1, limit = 10, search } = filterDto;
     const skip = (page - 1) * limit;
     const take = limit;
-    const where:any={}
-     if(search){
-      where.OR=[
-        {title:{contains:search,mode:"insensitive"}},
-        {description:{contains:search,mode:"insensitive"}},
-      ]
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
     }
-    const totalJobs=await this.prisma.jobs.count()
+    const totalJobs = await this.prisma.jobs.count();
     const jobs = await this.prisma.jobs.findMany({
       where,
       take,
@@ -126,21 +126,21 @@ console.log(isTradeManExist)
       orderBy: {
         createdAt: 'desc',
       },
-      include:{
-        customer:{
-          select:{
-            name:true,
-            email:true,
-            profile_image:true,
-            verification:true,
-            createdAt:true
-          }
-        }
-      }
+      include: {
+        customer: {
+          select: {
+            name: true,
+            email: true,
+            profile_image: true,
+            verification: true,
+            createdAt: true,
+          },
+        },
+      },
     });
-    return{
-      totalJobs:totalJobs,
-      jobs:jobs
+    return {
+      totalJobs: totalJobs,
+      jobs: jobs,
     };
   }
 
@@ -419,28 +419,24 @@ console.log(isTradeManExist)
     return categoriesWithPercentage;
   }
 
-
-
-
   async get_systemActivity() {
     const activity_table = await this.prisma.admin_activity.findFirst();
     return activity_table;
   }
 
-
-
-  async get_home_page_stat(){
-    const [totalJobs,totalUser,totalTradesMan,totalReview]=await Promise.all([
-      this.prisma.jobs.count(),
-      this.prisma.user.count(),
-      this.prisma.tradesMan.count(),
-      this.prisma.review.count()
-    ])
-    return{
+  async get_home_page_stat() {
+    const [totalJobs, totalUser, totalTradesMan, totalReview] =
+      await Promise.all([
+        this.prisma.jobs.count(),
+        this.prisma.user.count(),
+        this.prisma.tradesMan.count(),
+        this.prisma.review.count(),
+      ]);
+    return {
       totalJobs,
       totalUser,
       totalTradesMan,
-      totalReview
-    }
+      totalReview,
+    };
   }
 }

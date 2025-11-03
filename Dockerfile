@@ -6,21 +6,18 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install deps
-RUN npm i -g pnpm@latest && pnpm i 
-
 # Copy prisma folder
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 
+# Install deps
+RUN npm install
+
 # Copy source code
 COPY . .
 
-# Generate Prisma client
-RUN pnpm prisma:generate
-
 # Build the app
-RUN pnpm build
+RUN npm run build
 
 # Stage 2: Run
 FROM node:20-alpine
@@ -36,6 +33,6 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # Set production env
 ENV NODE_ENV=production
-EXPOSE 8000
+EXPOSE 5000
 
 CMD ["npm", "run", "start:docker"]
