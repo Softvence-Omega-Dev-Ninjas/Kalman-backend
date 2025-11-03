@@ -76,3 +76,11 @@ export class UpdateTradesManDto {
   @ArrayMaxSize(5, { message: 'You can upload up to 5 images only' })
   images?: Express.Multer.File[];
 }
+
+export class UpdateTradesmanProfileDto {
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+  })
+  image: Express.Multer.File;
+}

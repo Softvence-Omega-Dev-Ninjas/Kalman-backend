@@ -56,17 +56,18 @@ export class GetTradesmanFilterDto {
   @IsString()
   readonly location?: string;
 
-  //   @ApiProperty({
-  //     description: 'Filter by rating .',
-  //     required: false,
-  //     example: 4,
-  //   })
-  //   @IsArray()
-  //   @Transform(
-  //     ({ value }) => (Array.isArray(value) ? value.map(Number) : [Number(value)]), // handle single values like ?rating=4
-  //   )
-  //   @IsNumber({}, { each: true })
-  //   rating: number[];
+  @ApiProperty({
+    description: 'Filter by rating .',
+    required: false,
+    type: [Number],
+    example: 4,
+  })
+  @IsArray()
+  @Transform(
+    ({ value }) => (Array.isArray(value) ? value.map(Number) : [Number(value)]), // handle single values like ?rating=4
+  )
+  @IsNumber({}, { each: true })
+  rating: number[];
 
   @ApiProperty({
     description: 'The current page number (1-based).',
