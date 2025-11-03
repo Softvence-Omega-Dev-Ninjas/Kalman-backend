@@ -90,6 +90,16 @@ export class ProposalService {
         userId: isJobExist.userId,
       },
     });
+    await this.prisma.job_Activity.update({
+      where:{
+        jobId: createProposalDto?.jobId
+      },
+      data:{
+        total_interested:{
+          increment:1
+        }
+      }
+    })
     return result;
   }
 
@@ -200,19 +210,29 @@ export class ProposalService {
         },
       });
 
-      const job = await this.prisma.jobs.findFirst({
-        where: {
-          id: isProposalExist?.jobId,
+    
+      const job=await this.prisma.jobs.findFirst({
+        where:{
+          id:isProposalExist?.jobId
+        },include:{
+          customer:true
+        }
+      })
+      const tradeMan=await this.prisma.tradesMan.findFirst({
+        where:{
+          id:isProposalExist?.tradesManId
+        }
+      })
+
+      //update jobs activity
+      await this.prisma.job_Activity.update({
+        where:{
+          jobId:job?.id,
         },
-        include: {
-          customer: true,
-        },
-      });
-      const tradeMan = await this.prisma.tradesMan.findFirst({
-        where: {
-          id: isProposalExist?.tradesManId,
-        },
-      });
+        data:{
+          shortlisted:{increment:1}
+        }
+      })
       // send mail to trade man when his requested proposal is accept by customer
       await this.mail.sendMail({
         to: tradeMan?.email as string,
