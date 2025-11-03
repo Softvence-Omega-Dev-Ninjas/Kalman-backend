@@ -242,13 +242,13 @@ export class TradesmanController {
   update(
     @Req() req: any,
     @Body() updateTradesmanDto: UpdateTradesManDto,
-    @UploadedFiles()
-    files?: { images: Express.Multer.File[] },
+   
   ) {
     try {
       const user = req.user;
+      console.log({ user})
 
-      return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
+      return this.tradesmanService.update(user?.id, updateTradesmanDto);
     } catch (error) {
       return {
         success: false,
@@ -281,35 +281,7 @@ export class TradesmanController {
   //   }
   // }
 
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        image: { type: 'string', format: 'binary' },
-      },
-    },
-  })
-  @UseInterceptors(FileInterceptor('image'))
-  @Patch('update-tradesman-profile')
-  updateProfileImage(
-    @UploadedFile() image: Express.Multer.File,
-    @Req() req: any,
-  ) {
-    try {
-      const user = req.user;
-      console.log({ user, image });
-
-      return this.tradesmanService.updateProfile(user?.id, image);
-    } catch (error) {
-      console.log({ error });
-      return {
-        success: false,
-        message: error?.message || 'Internal server error',
-        error: error,
-      };
-    }
-  }
+  
 
   // @Patch('update-tradesman')
   // @ApiConsumes('multipart/form-data')

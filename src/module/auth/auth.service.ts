@@ -147,6 +147,7 @@ export class AuthService {
           image: user.profile_image,
           firstName: isExistTradeMand?.firstName,
           lastname: isExistTradeMand?.firstName,
+        
         },
       };
     }
