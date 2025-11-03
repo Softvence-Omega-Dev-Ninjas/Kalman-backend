@@ -34,10 +34,7 @@ export class UpdateTradesManDto {
   @Length(2, 50)
   lastName?: string;
 
-  @ApiProperty({ example: 'john@example.com' })
-  @IsEmail()
-  @IsOptional()
-  email?: string;
+
 
   @ApiProperty({ example: '+8801789456123' })
   @IsString()

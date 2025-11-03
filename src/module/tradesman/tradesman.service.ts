@@ -372,8 +372,9 @@ export class TradesmanService {
   async update(
     id: string,
     updateTradesmanDto: UpdateTradesManDto,
-    files?: { images: Express.Multer.File[] },
   ) {
+    const res = await this.prisma.user.findFirst({where: {id}})
+    console.log({res})
     const isTradesManExist = await this.prisma.tradesMan.findFirst({
       where: {
         userId: id,
@@ -382,7 +383,7 @@ export class TradesmanService {
     if (!isTradesManExist) {
       throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
     }
-    // console.log()
+    console.log({id})
     const data: {
       images?: string[];
       phoneNumber?: string;
@@ -398,8 +399,8 @@ export class TradesmanService {
       street?: string;
     } = {};
     data.phoneNumber = updateTradesmanDto?.phone;
-    ((data.email = updateTradesmanDto?.email),
-      (data.firstName = updateTradesmanDto?.firstName));
+
+    data.firstName = updateTradesmanDto?.firstName
     data.lastName = updateTradesmanDto?.lastName;
     data.profession = updateTradesmanDto?.profession;
     data.bio = updateTradesmanDto?.bio;
@@ -409,7 +410,14 @@ export class TradesmanService {
     data.street = updateTradesmanDto?.street;
     let updatedImages = isTradesManExist.images;
     if (updateTradesmanDto?.profileImage) {
-      data.profileImage = updateTradesmanDto?.profileImage;
+      const updatedUser = await this.prisma.user.update({
+        where: {id},
+        data: {
+          profile_image: updateTradesmanDto?.profileImage
+        }
+      })
+      console.log({updatedUser})
+      // data.profileImage = ;
     }
 
     if (updateTradesmanDto.images && updateTradesmanDto.images.length > 0) {
@@ -437,18 +445,18 @@ export class TradesmanService {
     return result;
   }
 
-  async updateProfile(id: string, file: Express.Multer.File) {
-    const { url } = await saveFile(file);
-    const result = await this.prisma.tradesMan.update({
-      where: { userId: id },
-      data: {
-        profileImage: url,
-      },
-    });
-    return {
-      result,
-    };
-  }
+  // async updateProfile(id: string, file: Express.Multer.File) {
+  //   const { url } = await saveFile(file);
+  //   const result = await this.prisma.tradesMan.update({
+  //     where: { userId: id },
+  //     data: {
+  //       profileImage: url,
+  //     },
+  //   });
+  //   return {
+  //     result,
+  //   };
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} tradesman`;
