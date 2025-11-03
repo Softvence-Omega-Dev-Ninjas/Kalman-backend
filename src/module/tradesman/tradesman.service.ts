@@ -388,6 +388,7 @@ export class TradesmanService {
       phoneNumber?: string;
       email?: string;
       firstName?: string;
+      profileImage?: string;
       lastName?: string;
       profession?: string;
       bio?: string;
@@ -407,6 +408,9 @@ export class TradesmanService {
     data.zipCode = updateTradesmanDto?.zipCode;
     data.street = updateTradesmanDto?.street;
     let updatedImages = isTradesManExist.images;
+    if (updateTradesmanDto?.profileImage) {
+      data.profileImage = updateTradesmanDto?.profileImage;
+    }
 
     if (updateTradesmanDto.images && updateTradesmanDto.images.length > 0) {
       updatedImages = [...isTradesManExist.images]; // copy
