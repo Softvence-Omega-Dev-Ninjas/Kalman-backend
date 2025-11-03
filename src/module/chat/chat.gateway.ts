@@ -10,31 +10,45 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
+import { Logger } from '@nestjs/common';
 
-@WebSocketGateway({ cors: { origin: ['*', 'http://localhost:3000','http://localhost:5173'] } })
+@WebSocketGateway({
+  cors: {
+    origin: [
+      'https://pravaruka.sk',
+      'http://localhost:3000',
+      'http://localhost:5173',
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  },
+})
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  private logger: Logger = new Logger(ChatGateway.name);
+
   constructor(private chatService: ChatService) {}
   @WebSocketServer() server: Server;
 
   afterInit(server: Server) {
-    console.log('Chat Gateway Initialized');
+    console.log('Chat Gateway Initialized', server.adapter.name);
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
+    this.logger.log(`Client connected: ${client.id}`, client.handshake);
     const userId = client.handshake.query.userId as string;
     if (!userId) {
       client.disconnect(true);
       return;
     }
-    client.join(userId);
-    console.log(`Client connected: ${client.id} (User: ${userId})`);
+    await client.join(userId);
+    this.logger.log(`Client connected: ${client.id} (User: ${userId})`);
   }
 
   handleDisconnect(client: Socket) {
     const userId = client.handshake.query.userId as string;
-    console.log(`Client disconnected: ${client.id} (User: ${userId})`);
+    this.logger.log(`Client disconnected: ${client.id} (User: ${userId})`);
   }
 
   @SubscribeMessage('send_message')
@@ -48,6 +62,7 @@ export class ChatGateway
     },
     @ConnectedSocket() client: Socket,
   ) {
+    this.logger.log(`Message received: ${JSON.stringify(data)}`, client.id);
     const { senderId, reciverId, message, file } = data;
 
     if (!message && !file) return;

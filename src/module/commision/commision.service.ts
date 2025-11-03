@@ -8,8 +8,8 @@ export class CommisionService {
 
   // create the commission if alredy exist the commision will update
   async create(createCommisionDto: CreateCommisionDto) {
-    if(createCommisionDto.commisssion_rate<=0){
-      throw new Error('Commission rate must be greater than 0')
+    if (createCommisionDto.commisssion_rate <= 0) {
+      throw new Error('Commission rate must be greater than 0');
     }
     const comTable = await this.prisma.commision.findFirst();
     if (comTable) {

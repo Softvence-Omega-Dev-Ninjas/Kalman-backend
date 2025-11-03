@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class GetAllUserDto {
-
   @ApiProperty({
     description: 'The search query for filtering users.',
     required: false,
@@ -13,7 +12,7 @@ export class GetAllUserDto {
   @IsString()
   @IsOptional()
   search?: string;
-  
+
   @ApiProperty({
     description: 'The current page number (1-based).',
     required: false,

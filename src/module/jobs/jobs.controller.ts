@@ -51,8 +51,8 @@ export class JobsController {
             contact_method: 'Email',
             skills_needed: ['Roofing', 'Waterproofing'],
             price: 150.0,
-            budget_type:BudgeType.FIXED,
-            subCategories:['roofing','waterproofing']
+            budget_type: BudgeType.FIXED,
+            subCategories: ['roofing', 'waterproofing'],
           }),
         },
         images: {
@@ -90,16 +90,15 @@ export class JobsController {
     return this.jobsService.create(createJobDto, user, files);
   }
 
-
-// ------------------------------get all user jobs--------------------------------
-   @Get('user-jobs')
+  // ------------------------------get all user jobs--------------------------------
+  @Get('user-jobs')
   findUserJobs(@Req() req: any) {
-   try{
-     const user = req.user;
-    return this.jobsService.findUserJobs(user);
-   }catch(e){
-    throw new BadRequestException(e.message)
-   }
+    try {
+      const user = req.user;
+      return this.jobsService.findUserJobs(user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
   // ----------------------------------get all jobs using fillter-----------------------------
   @Get()
@@ -110,10 +109,10 @@ export class JobsController {
     description: 'List of jobs retrieved successfully.',
   })
   findAll(@Query() filterDto: GetJobsFilterDto) {
-    try{
+    try {
       return this.jobsService.findAll(filterDto);
-    }catch(e){
-      throw new BadRequestException(e.message)
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -121,24 +120,22 @@ export class JobsController {
   @Get(':id')
   @Public()
   findOne(@Param('id') id: string) {
-    try{
+    try {
       return this.jobsService.findOne(id);
-    }catch(e){
-      throw new BadRequestException(e.message)
+    } catch (e) {
+      throw new BadRequestException(e.message);
     }
   }
 
   // -------------------------------delete job by it's creator and admin--------------------
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req: any) {
-   try{
-     const user = req.user;
-    console.log(user);
-    return this.jobsService.remove(id, user);
-   }catch(e){
-    throw new BadRequestException(e.message)
-   }  
+    try {
+      const user = req.user;
+      console.log(user);
+      return this.jobsService.remove(id, user);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
   }
-
- 
 }

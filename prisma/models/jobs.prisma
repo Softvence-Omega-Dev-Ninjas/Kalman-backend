@@ -15,7 +15,7 @@ model Jobs {
   userId         String
   skills_needed  String[]
   price Float?
-  customer       User          @relation(fields: [userId], references: [id])
+  customer       User          @relation(fields: [userId], references: [id],onDelete: Cascade)
   proposal Proposal[]
   jobActivity    Job_Activity?
   userJobShortList JobShortlist[]
@@ -35,7 +35,7 @@ model Job_Activity {
   total_interested Int   @default(0)
   shortlisted   Int      @default(0)
   jobId         String   @unique
-  jobs          Jobs     @relation(fields: [jobId], references: [id])
+  jobs          Jobs     @relation(fields: [jobId], references: [id],onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -45,9 +45,9 @@ model JobShortlist {
   jobId         String 
   tradesmanId   String 
 
-  user          User     @relation("JobSeekerAction", fields: [customerId], references: [id])
-  job           Jobs     @relation(fields: [jobId], references: [id])
-  tradesman     User     @relation("TradesmanTarget", fields: [tradesmanId], references: [id])
+  user          User     @relation("JobSeekerAction", fields: [customerId], references: [id],onDelete: Cascade)
+  job           Jobs     @relation(fields: [jobId], references: [id],onDelete: Cascade)
+  tradesman     User     @relation("TradesmanTarget", fields: [tradesmanId], references: [id],onDelete: Cascade)
   
   createdAt     DateTime @default(now())
 

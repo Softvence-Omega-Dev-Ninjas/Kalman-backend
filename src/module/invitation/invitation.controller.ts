@@ -18,10 +18,10 @@ export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 
   @Post()
-  create(@Body() createInvitationDto: CreateInvitationDto,@Req() req:any) {
-    const user=req.user
-    console.log(user)
-    return this.invitationService.create(createInvitationDto,user.id);
+  create(@Body() createInvitationDto: CreateInvitationDto, @Req() req: any) {
+    const user = req.user;
+    console.log(user);
+    return this.invitationService.create(createInvitationDto, user.id);
   }
 
   @Get()
