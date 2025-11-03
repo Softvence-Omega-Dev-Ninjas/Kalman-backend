@@ -4,9 +4,9 @@ model Proposal {
     jobId String
     jobs Jobs @relation(fields: [jobId],references: [id])
     tradesManId String
-    tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
+    tradesMan TradesMan @relation(fields: [tradesManId],references: [id],onDelete: Cascade)
     userId String
-    user User @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id],onDelete: Cascade)
     status ProposalStatus @default(PENDING)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

@@ -6,7 +6,7 @@ model Payment {
     amount  Float
     transactionId String
     tradesManId String
-    tradesMan TradesMan @relation(fields: [tradesManId],references: [id])
+    tradesMan TradesMan @relation(fields: [tradesManId],references: [id],onDelete: Cascade)
     type PaymentType @default(SHORTLISTED_FEE)
 
     createdAt       DateTime @default(now())

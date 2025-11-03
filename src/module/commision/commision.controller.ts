@@ -26,20 +26,20 @@ export class CommisionController {
   @Roles(Role.ADMIN)
   @ApiBody({ type: CreateCommisionDto })
   create_commision_rate(@Body() createCommisionDto: CreateCommisionDto) {
-    try{
-     return this.commisionService.create(createCommisionDto);;
-    }catch(e){
-      throw new HttpException(e.message, 400)
+    try {
+      return this.commisionService.create(createCommisionDto);
+    } catch (e) {
+      throw new HttpException(e.message, 400);
     }
   }
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
   get_commision_rate() {
-    try{
+    try {
       return this.commisionService.getCommisionRate();
-    }catch(e){
-      throw new HttpException(e.message,400)
+    } catch (e) {
+      throw new HttpException(e.message, 400);
     }
   }
 }

@@ -30,14 +30,14 @@ export class InvitationService {
       });
       const invitation = await tx.invitation.create({
         data: {
-          messgae: createInvitationDto?.message as string,
-          tradesManId: createInvitationDto?.tradesManId as string,
+          messgae: createInvitationDto?.message,
+          tradesManId: createInvitationDto?.tradesManId,
           userId: userId,
-          location: createInvitationDto?.location as string,
-          title: createInvitationDto?.title as string,
-          date: createInvitationDto?.date as string,
+          location: createInvitationDto?.location,
+          title: createInvitationDto?.title,
+          date: createInvitationDto?.date,
           jobId: createInvitationDto?.jobId,
-          time_slot: createInvitationDto?.time_slot as string,
+          time_slot: createInvitationDto?.time_slot,
         },
       });
       return invitation;

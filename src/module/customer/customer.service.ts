@@ -9,10 +9,9 @@ export class CustomerService {
   constructor(private prisma: PrismaService) {}
 
   async find_All_jobs_with_stat(user: User) {
-    
     const userId = user.id;
-    if(!userId){
-      throw new HttpException('UserId is required', 404)
+    if (!userId) {
+      throw new HttpException('UserId is required', 404);
     }
 
     const startOfCurrentMonth = new Date(new Date().setDate(1));
@@ -54,8 +53,8 @@ export class CustomerService {
 
   async get_me(user: User) {
     const userId = user.id;
-    if(!userId){
-      throw new HttpException('You have to login first', 404)
+    if (!userId) {
+      throw new HttpException('You have to login first', 404);
     }
     const [activeJobs, profile, totalJobs] = await Promise.all([
       this.prisma.jobs.count({
@@ -87,8 +86,11 @@ export class CustomerService {
     updateCustomerDto: UpdateCustomerDto,
     files,
   ) {
-    if(!id){
-      throw new HttpException('you have login first then you can update you profile', 404)
+    if (!id) {
+      throw new HttpException(
+        'you have login first then you can update you profile',
+        404,
+      );
     }
     const filePath = files.map((file) => buildFileUrl(file.filename));
     return this.prisma.user.update({
@@ -101,5 +103,4 @@ export class CustomerService {
       },
     });
   }
-
 }

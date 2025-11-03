@@ -41,8 +41,6 @@ export class CreateTradesManDto {
   @Transform(({ value }) =>
     typeof value === 'string' ? value.split(',') : value,
   )
-  subCategories: string[];
-
   @ApiProperty({ example: 'dsd' })
   name: string;
 

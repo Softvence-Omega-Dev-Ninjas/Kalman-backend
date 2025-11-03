@@ -8,10 +8,19 @@ import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './module/prisma/prisma.service';
 import { JwtGuard } from './common/guard/jwt.guard';
 import * as fs from 'fs';
-import { MaintenanceGuard } from './common/guard/maintence.guard';
 import appMetadata from './app-metadata/app-metadata';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: [
+      'https://pravaruka.sk',
+      'http://localhost:5173',
+      'https://api.pravaruka.sk',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Serve static files
   const public_dir = join(process.cwd(), 'public');
@@ -53,11 +62,6 @@ async function bootstrap() {
     }),
   );
   // app.useGlobalFilters(new AllExceptionsFilter());
-  app.enableCors({
-    origin: ['http://localhost:5173'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
   await app.listen(process.env.PORT ?? 6000);
 }
 

@@ -10,7 +10,7 @@ export class ProposalService {
   constructor(
     private prisma: PrismaService,
     private stripe: StripeService,
-    private mail:MailService
+    private mail: MailService,
   ) {}
   async create(createProposalDto: CreateProposalDto, tradesMan: any) {
     const isJobExist = await this.prisma.jobs.findUnique({
@@ -200,25 +200,29 @@ export class ProposalService {
         },
       });
 
-    
-      const job=await this.prisma.jobs.findFirst({
-        where:{
-          id:isProposalExist?.jobId
-        },include:{
-          customer:true
-        }
-      })
-      const tradeMan=await this.prisma.tradesMan.findFirst({
-        where:{
-          id:isProposalExist?.tradesManId
-        }
-      })
+      const job = await this.prisma.jobs.findFirst({
+        where: {
+          id: isProposalExist?.jobId,
+        },
+        include: {
+          customer: true,
+        },
+      });
+      const tradeMan = await this.prisma.tradesMan.findFirst({
+        where: {
+          id: isProposalExist?.tradesManId,
+        },
+      });
       // send mail to trade man when his requested proposal is accept by customer
-        await this.mail.sendMail({
+      await this.mail.sendMail({
         to: tradeMan?.email as string,
         subject: 'Congratuletion! your job proposal is Accepted',
-        html:proposalAcceptedTemplate({acceptedBy:job?.customer.name as string,proposalTitle:job?.title as string,traderName:tradeMan?.firstName as string}),
-      })
+        html: proposalAcceptedTemplate({
+          acceptedBy: job?.customer.name as string,
+          proposalTitle: job?.title as string,
+          traderName: tradeMan?.firstName as string,
+        }),
+      });
       return result;
     });
     return result;

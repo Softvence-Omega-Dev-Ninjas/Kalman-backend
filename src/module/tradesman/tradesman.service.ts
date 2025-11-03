@@ -26,9 +26,15 @@ export class TradesmanService {
     createTradesmanDto: CreateTradesManDto,
     files: Express.Multer.File[],
   ) {
-    const { docs, businessDetail, serviceArea, paymentMethod, ...restData } =
-      createTradesmanDto;
-    console.log({ restData });
+    const {
+      docs,
+      businessDetail,
+      serviceArea,
+      paymentMethod,
+      subCategories,
+      ...restData
+    } = createTradesmanDto;
+    console.log({ createTradesmanDto });
     try {
       if (!files?.find((el) => el.fieldname === 'doc')!) {
         throw new HttpException(
@@ -62,13 +68,13 @@ export class TradesmanService {
           email: createTradesmanDto?.email,
         },
       });
+      console.log({ subCategories });
       if (isTradesManExist) {
         throw new HttpException(
           'This email is already used',
           HttpStatus.BAD_REQUEST,
         );
       }
-
       const doc = await saveFileAndGetUrl(
         files?.find((el) => el.fieldname === 'doc')!,
       );
@@ -96,6 +102,7 @@ export class TradesmanService {
       const tradesman = await this.prisma.tradesMan.create({
         data: {
           ...restData,
+          subCategories,
           userId: isUserExist?.id,
           stripeConnectId: stripeConnect.id,
 
@@ -161,7 +168,7 @@ export class TradesmanService {
           paymentMethod: true,
         },
       });
-
+      console.log({ tradesman });
       return {
         success: true,
         message: 'Tradesman created successfully',
@@ -388,7 +395,7 @@ export class TradesmanService {
       zipCode?: number;
       street?: string;
     } = {};
-    let imagesLinks = [];
+    const imagesLinks = [];
     console.log({ id });
     console.log(files);
     data.images = imagesLinks;
@@ -418,6 +425,19 @@ export class TradesmanService {
       data: { ...data },
     });
     return result;
+  }
+
+  async updateProfile(id: string, file: Express.Multer.File) {
+    const { url } = await saveFile(file);
+    const result = await this.prisma.tradesMan.update({
+      where: { userId: id },
+      data: {
+        profileImage: url,
+      },
+    });
+    return {
+      result,
+    };
   }
 
   remove(id: number) {
