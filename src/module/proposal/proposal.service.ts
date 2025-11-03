@@ -210,7 +210,6 @@ export class ProposalService {
         },
       });
 
-<<<<<<< HEAD
     
       const job=await this.prisma.jobs.findFirst({
         where:{
@@ -234,21 +233,6 @@ export class ProposalService {
           shortlisted:{increment:1}
         }
       })
-=======
-      const job = await this.prisma.jobs.findFirst({
-        where: {
-          id: isProposalExist?.jobId,
-        },
-        include: {
-          customer: true,
-        },
-      });
-      const tradeMan = await this.prisma.tradesMan.findFirst({
-        where: {
-          id: isProposalExist?.tradesManId,
-        },
-      });
->>>>>>> 36847e157c5f063ffe266ba9900effc61c39cd20
       // send mail to trade man when his requested proposal is accept by customer
       await this.mail.sendMail({
         to: tradeMan?.email as string,
