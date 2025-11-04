@@ -498,6 +498,11 @@ export class TradesmanService {
             },
           },
         },
+        user:{
+          select:{
+            profile_image:true,
+          }
+        }
       },
     });
 
