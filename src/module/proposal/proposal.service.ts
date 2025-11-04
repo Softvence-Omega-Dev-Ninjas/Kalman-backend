@@ -241,6 +241,7 @@ export class ProposalService {
           acceptedBy: job?.customer.name as string,
           proposalTitle: job?.title as string,
           traderName: tradeMan?.firstName as string,
+          proposalLink:`${process.env.SERVER_URL}/${isProposalExist?.id}`
         }),
       });
       return result;
