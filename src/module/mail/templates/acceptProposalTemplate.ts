@@ -4,6 +4,7 @@ export interface ProposalAcceptedProps {
   traderName: string;
   proposalTitle: string;
   acceptedBy: string;
+  proposalLink:string
 }
 
 export const proposalAcceptedTemplate = (props: ProposalAcceptedProps) => `
@@ -27,7 +28,7 @@ export const proposalAcceptedTemplate = (props: ProposalAcceptedProps) => `
       </p>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="#" style="background-color: #0d6efd; color: white; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-weight: bold;">View Proposal</a>
+        <a href="${props.proposalLink}" style="background-color: #0d6efd; color: white; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-weight: bold;">View Proposal</a>
       </div>
 
       <p style="font-size: 14px; color: #777;">If you have any questions, feel free to contact our support team.</p>
