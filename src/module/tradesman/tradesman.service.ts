@@ -382,6 +382,7 @@ export class TradesmanService {
     if (!isTradesManExist) {
       throw new HttpException('Tradesman not found', HttpStatus.NOT_FOUND);
     }
+    // console.log()
     const data: {
       images?: string[];
       phoneNumber?: string;
@@ -395,10 +396,6 @@ export class TradesmanService {
       zipCode?: number;
       street?: string;
     } = {};
-    const imagesLinks = [];
-    console.log({ id });
-    console.log(files);
-    data.images = imagesLinks;
     data.phoneNumber = updateTradesmanDto?.phone;
     ((data.email = updateTradesmanDto?.email),
       (data.firstName = updateTradesmanDto?.firstName));
@@ -409,14 +406,23 @@ export class TradesmanService {
     data.state = updateTradesmanDto?.state;
     data.zipCode = updateTradesmanDto?.zipCode;
     data.street = updateTradesmanDto?.street;
-    if (files?.images) {
-      const arr = await Promise.all(
-        files.images.map(async (el) => {
-          return await saveFile(el);
-        }),
-      );
-      data.images = arr.map((el) => el.url);
+    let updatedImages = isTradesManExist.images;
+
+    if (updateTradesmanDto.images && updateTradesmanDto.images.length > 0) {
+      updatedImages = [...isTradesManExist.images]; // copy
+
+      updateTradesmanDto.images.forEach(({ index, url }) => {
+        // replace if valid index
+        if (index >= 0 && index < updatedImages.length) {
+          updatedImages[index] = url;
+        } else if (index === updatedImages.length) {
+          // optional: handle newly added image
+          updatedImages.push(url);
+        }
+      });
+      data.images = updatedImages;
     }
+    console.log({ updatedImages });
 
     const result = await this.prisma.tradesMan.update({
       where: {

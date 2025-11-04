@@ -9,8 +9,18 @@ import {
   IsArray,
   ArrayMaxSize,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 
+class PortfolioImage {
+  @ApiProperty({ example: 0 })
+  @IsNumber()
+  index: number;
+
+  @ApiProperty({ example: 'Expert' })
+  @IsString()
+  url: string;
+}
 export class UpdateTradesManDto {
   @ApiProperty({ example: 'John' })
   @IsString()
@@ -57,24 +67,31 @@ export class UpdateTradesManDto {
   @IsString()
   state: string;
 
+  @ApiProperty({ example: 'Dhaka Division', required: false })
+  @IsString()
+  @IsOptional()
+  profileImage: string;
+
   @ApiProperty({ example: 1207 })
   @IsOptional()
   @Type(() => Number) // ✅ converts string to number
   @IsNumber()
   zipCode?: number;
 
+
+
+  @ApiProperty({ example: 'John' })
+  @IsString()
+  name: string;
+
   @ApiProperty({
-    description: 'Upload up to 5 images',
-    type: 'string',
-    format: 'binary',
-    isArray: true,
-    required: false,
+    type: [PortfolioImage],
+    description: 'Array of skill objects',
   })
-  @IsOptional()
-  // @ValidateIf((_, value) => value !== undefined && value !== null)
-  @IsArray({ message: 'images must be an array' })
-  @ArrayMaxSize(5, { message: 'You can upload up to 5 images only' })
-  images?: Express.Multer.File[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PortfolioImage)
+  images: PortfolioImage[];
 }
 
 export class UpdateTradesmanProfileDto {

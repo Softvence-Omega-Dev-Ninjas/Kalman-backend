@@ -239,8 +239,6 @@ export class TradesmanController {
   }
 
   @Patch('update-tradesman')
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   update(
     @Req() req: any,
     @Body() updateTradesmanDto: UpdateTradesManDto,
@@ -249,7 +247,7 @@ export class TradesmanController {
   ) {
     try {
       const user = req.user;
-      console.log(user);
+
       return this.tradesmanService.update(user?.id, updateTradesmanDto, files);
     } catch (error) {
       return {
