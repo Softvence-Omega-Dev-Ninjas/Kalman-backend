@@ -319,6 +319,11 @@ export class TradesmanService {
             createdAt: 'desc',
           },
         },
+        user:{
+          select:{
+            profile_image:true
+          }
+        }
       },
       take: limit,
       skip,
@@ -360,6 +365,11 @@ export class TradesmanService {
             createdAt: 'desc',
           },
         },
+        user:{
+          select:{
+            profile_image:true
+          }
+        }
       },
     });
     console.log({ result });
